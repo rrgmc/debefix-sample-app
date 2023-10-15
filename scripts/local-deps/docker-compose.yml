@@ -1,0 +1,16 @@
+version: '3'
+services:
+  db:
+    image: postgres:13
+#    container_name: db
+    environment:
+      POSTGRES_DB: debefix-sample-app
+      POSTGRES_USER: sample-user
+      POSTGRES_PASSWORD: sample-password
+    ports:
+      - 5438:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:

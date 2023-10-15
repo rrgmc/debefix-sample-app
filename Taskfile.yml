@@ -4,3 +4,15 @@ tasks:
   run:
     cmds:
       - SERVER_CONFIG_FILE=./config/config.local.yaml go run ./cmd/server
+
+  local-deps:
+    cmds:
+      - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up"
+
+  local-deps-stop:
+    cmds:
+      - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml down"
+
+  local-deps-logs:
+    cmds:
+      - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml logs"
