@@ -4,8 +4,8 @@ services:
     image: postgres:13
     environment:
       POSTGRES_DB: debefix-sample-app
-      POSTGRES_USER: sample-user
-      POSTGRES_PASSWORD: sample-password
+      POSTGRES_USER: sample_user
+      POSTGRES_PASSWORD: sample_password
     ports:
       - 5438:5432
     volumes:

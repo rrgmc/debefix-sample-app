@@ -25,6 +25,7 @@ CREATE TABLE posts (
 CREATE TABLE posts_tags (
     post_id UUID NOT NULL CONSTRAINT posts_tags_post_fk REFERENCES posts(post_id),
     tag_id UUID NOT NULL CONSTRAINT posts_tags_tag_fk REFERENCES tags(tag_id),
+    PRIMARY KEY (post_id, tag_id)
 );
 
 CREATE TABLE comments (

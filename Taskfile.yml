@@ -17,6 +17,15 @@ tasks:
   local-deps-logs:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml logs"
+  local-deps-setup:
+    cmds:
+      - task: local-deps-destroy
+      - task: local-deps
+      - "sleep 3"
+      - task: db-migration-up
+  local-deps-destroy:
+    cmds:
+      - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml down -v"
 
   db-migration-create:
     cmds:
@@ -29,3 +38,8 @@ tasks:
   db-migration-down:
     cmds:
       - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL down 1"
+  db-migration-force:
+    cmds:
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL force {{.VERSION}}"
+    requires:
+      vars: ["VERSION"]
