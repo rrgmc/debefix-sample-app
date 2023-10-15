@@ -8,6 +8,10 @@ tasks:
     cmds:
       - SERVER_CONFIG_FILE=./config/config.local.yaml go run ./cmd/server
 
+  gen:
+    cmds:
+      - "go run github.com/vektra/mockery/v2"
+
   local-deps:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up -d"

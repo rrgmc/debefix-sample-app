@@ -1,0 +1,9 @@
+with-expecter: True
+log-level: warn
+dir: "{{.InterfaceDir}}/mocks"
+outpkg: "mocks"
+mockname: "{{.InterfaceName}}"
+packages:
+  github.com/RangelReale/debefix-sample-app/internal/storage:
+    interfaces:
+      TagStorage:
