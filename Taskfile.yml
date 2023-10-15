@@ -1,5 +1,8 @@
 version: 3
 
+env:
+  LOCAL_DB_URL: "postgres://sample_user:sample_password@localhost:5438/debefix-sample-app?sslmode=disable"
+
 tasks:
   run:
     cmds:
@@ -8,11 +11,21 @@ tasks:
   local-deps:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up -d"
-
   local-deps-stop:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml down"
-
   local-deps-logs:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml logs"
+
+  db-migration-create:
+    cmds:
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ create -ext sql -dir /migrations -seq {{.NAME}}"
+    requires:
+      vars: ["NAME"]
+  db-migration-up:
+    cmds:
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL up"
+  db-migration-down:
+    cmds:
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL down 1"
