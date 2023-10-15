@@ -10,9 +10,6 @@ import (
 )
 
 func TestDBMigration(t *testing.T) {
-	migrationsPath, err := dbtest.MigrationsPath()
-	require.NoError(t, err)
-
-	err = dbtest.DBMigrationTest("debefix-sample-app", migrationsPath)
+	err := dbtest.DBMigrationTest("debefix-sample-app")
 	require.NoError(t, err)
 }

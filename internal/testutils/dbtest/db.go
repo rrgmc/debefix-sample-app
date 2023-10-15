@@ -20,8 +20,7 @@ import (
 // DBForTest spins up a postgres container, creates the test database on it, migrates it, and returns
 // the db and a close function. The "name" parameter will become the test database name with
 // a "_test" suffix as required by testfixtures.
-func DBForTest(name string, migrationsPath string,
-	opts ...DBForTestOption) (db *sql.DB, closeFunc func() error, err error) {
+func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func() error, err error) {
 	if name == "" {
 		return nil, nil, stderrors.New("test name is required")
 	}
@@ -54,7 +53,7 @@ func DBForTest(name string, migrationsPath string,
 	}()
 
 	// migration
-	mig, err := NewDBPGMigrator(db, migrationsPath)
+	mig, err := NewDBPGMigrator(db)
 	if err != nil {
 		return db, closeFunc, err
 	}
@@ -70,8 +69,8 @@ func DBForTest(name string, migrationsPath string,
 }
 
 // DBMigrationTest tests the complete migration (up and down).
-func DBMigrationTest(name string, migrationsPath string) (err error) {
-	db, closeFunc, err := DBForTest(name, migrationsPath)
+func DBMigrationTest(name string) (err error) {
+	db, closeFunc, err := DBForTest(name)
 	if err != nil {
 		return err
 	}
@@ -81,7 +80,7 @@ func DBMigrationTest(name string, migrationsPath string) (err error) {
 	}()
 
 	// test down migration
-	mig, err := NewDBPGMigrator(db, migrationsPath)
+	mig, err := NewDBPGMigrator(db)
 	if err != nil {
 		return err
 	}
@@ -156,7 +155,12 @@ func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Con
 }
 
 // NewDBPGMigrator creates a migrator instance
-func NewDBPGMigrator(db *sql.DB, migrationsPath string) (*migrate.Migrate, error) {
+func NewDBPGMigrator(db *sql.DB) (*migrate.Migrate, error) {
+	migrationsPath, err := MigrationsPath()
+	if err != nil {
+		return nil, err
+	}
+
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		return nil, errors.Errorf("failed to create migrator driver: %s", err)
