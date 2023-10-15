@@ -38,7 +38,6 @@ func getDefaultTagsColumns() []any {
 func (t tagStorage) GetTags(ctx context.Context, filter entity.TagsFilter) ([]entity.Tag, error) {
 	query := psql.Select(
 		sm.Columns(getColumnsWithAlias(getDefaultTagsColumns(), "d")...),
-		sm.Columns("COUNT(*) OVER() AS count"),
 		sm.From("tags").As("d"),
 		sm.OrderBy(`d.created_at DESC`),
 		sm.Limit(filter.Limit),

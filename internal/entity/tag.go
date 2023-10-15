@@ -9,7 +9,7 @@ import (
 // data
 
 type Tag struct {
-	ID        uuid.UUID
+	TagID     uuid.UUID
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
