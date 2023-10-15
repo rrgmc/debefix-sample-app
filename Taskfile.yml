@@ -12,6 +12,10 @@ tasks:
     cmds:
       - "go run github.com/vektra/mockery/v2"
 
+  test-db-migrations:
+    cmds:
+      - "go test -race --tags=dbmigrationtest ./internal/storage/integration_test/..."
+
   local-deps:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up -d"
@@ -37,17 +41,17 @@ tasks:
       - "DATABASE_URL=$LOCAL_DB_URL go run ./scripts/db-seed"
   db-migration-create:
     cmds:
-      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ create -ext sql -dir /migrations -seq {{.NAME}}"
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate:4 -path=/migrations/ create -ext sql -dir /migrations -seq {{.NAME}}"
     requires:
       vars: ["NAME"]
   db-migration-up:
     cmds:
-      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL up"
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate:4 -path=/migrations/ -database $LOCAL_DB_URL up"
   db-migration-down:
     cmds:
-      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL down 1"
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate:4 -path=/migrations/ -database $LOCAL_DB_URL down 1"
   db-migration-force:
     cmds:
-      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate -path=/migrations/ -database $LOCAL_DB_URL force {{.VERSION}}"
+      - "docker run -v ./scripts/db-migrations:/migrations --network host migrate/migrate:4 -path=/migrations/ -database $LOCAL_DB_URL force {{.VERSION}}"
     requires:
       vars: ["VERSION"]
