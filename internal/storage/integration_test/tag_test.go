@@ -9,6 +9,7 @@ import (
 
 	"github.com/RangelReale/debefix-sample-app/internal/entity"
 	"github.com/RangelReale/debefix-sample-app/internal/storage"
+	"github.com/RangelReale/debefix-sample-app/internal/testutils"
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/dbtest"
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/testdata"
 	"github.com/stretchr/testify/require"
@@ -36,6 +37,6 @@ func TestDBTagStorageGetTags(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Len(t, returnedTags, 3)
-		require.Equal(t, expectedTags, returnedTags)
+		testutils.Equal(t, expectedTags, returnedTags)
 	})
 }
