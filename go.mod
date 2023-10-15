@@ -6,7 +6,6 @@ require (
 	github.com/RangelReale/debefix v0.7.2
 	github.com/docker/go-connections v0.4.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
-	github.com/google/go-cmp v0.5.9
 	github.com/google/uuid v1.3.1
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/pkg/errors v0.9.1
@@ -40,6 +39,7 @@ require (
 	github.com/goccy/go-yaml v1.11.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
