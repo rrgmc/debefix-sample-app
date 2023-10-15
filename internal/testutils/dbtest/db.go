@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	stderrors "errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
@@ -17,6 +16,10 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
+
+func init() {
+	testcontainers.Logger = nullLogger{}
+}
 
 // DBForTest spins up a postgres container, creates the test database on it, migrates it, and returns
 // the db and a close function. The "name" parameter will become the test database name with
@@ -111,6 +114,12 @@ func WithDBForTestFixturesTags(fixturesTags []string) DBForTestOption {
 	}
 }
 
+type nullLogger struct {
+}
+
+func (t nullLogger) Printf(format string, v ...interface{}) {
+}
+
 // CreateDBTestContainer spins up a Postgres database container
 func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Container, *sql.DB, error) {
 	dbName := fmt.Sprintf("%s_test", name) // database name must end with "_test" or will be rejected
@@ -132,6 +141,7 @@ func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Con
 				WithOccurrence(2).
 				WithStartupTimeout(30 * time.Second),
 		},
+		Logger:  nullLogger{},
 		Started: true,
 	}
 	container, err := testcontainers.GenericContainer(ctx, req)
@@ -149,7 +159,7 @@ func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Con
 		return container, nil, errors.Errorf("failed to get container host: %s", err)
 	}
 
-	log.Printf("postgres container ready and running at %s:%s\n", host, mappedPort.Port())
+	// log.Printf("postgres container ready and running at %s:%s\n", host, mappedPort.Port())
 
 	url := fmt.Sprintf("postgres://postgres:password@%s:%s/%s?sslmode=disable", host, mappedPort.Port(), dbName)
 	db, err := sql.Open("postgres", url)
