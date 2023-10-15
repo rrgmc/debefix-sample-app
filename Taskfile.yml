@@ -1,0 +1,6 @@
+version: 3
+
+tasks:
+  run:
+    cmds:
+      - SERVER_CONFIG_FILE=./config/config.local.yaml go run ./cmd/server

@@ -1,0 +1,2 @@
+storage:
+  databaseURL: "postgres://sample_user:sample_password@localhost:5438/debefix-sample-app?sslmode=disable"
