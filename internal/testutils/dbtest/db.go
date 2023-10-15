@@ -8,6 +8,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
 	"github.com/docker/go-connections/nat"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -63,7 +64,12 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func
 		return db, closeFunc, err
 	}
 
-	// TODO: load fixtures
+	// load fixtures
+	err = fixtures.DBSeedFixtures(db,
+		fixtures.WithTags(optns.fixturesTags))
+	if err != nil {
+		return db, closeFunc, err
+	}
 
 	return db, closeFunc, nil
 }
@@ -94,14 +100,14 @@ func DBMigrationTest(name string) (err error) {
 }
 
 type dbForTestOptions struct {
-	fixturesPath string
+	fixturesTags []string
 }
 
 type DBForTestOption func(*dbForTestOptions)
 
-func WithDBForTestFixturesPath(fixturesPath string) DBForTestOption {
+func WithDBForTestFixturesTags(fixturesTags []string) DBForTestOption {
 	return func(o *dbForTestOptions) {
-		o.fixturesPath = fixturesPath
+		o.fixturesTags = fixturesTags
 	}
 }
 
