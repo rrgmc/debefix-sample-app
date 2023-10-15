@@ -39,7 +39,7 @@ func (t tagStorage) GetTags(ctx context.Context, filter entity.TagsFilter) ([]en
 	query := psql.Select(
 		sm.Columns(getColumnsWithAlias(getDefaultTagsColumns(), "d")...),
 		sm.From("tags").As("d"),
-		sm.OrderBy(`d.created_at DESC`),
+		sm.OrderBy(`d.name`),
 		sm.Limit(filter.Limit),
 		sm.Offset(filter.Offset),
 	)

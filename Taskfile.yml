@@ -29,7 +29,7 @@ tasks:
     cmds:
       - task: local-deps-destroy
       - task: local-deps
-      - "sleep 3"
+      - "sleep 3" # wait db initialization
       - task: db-migration-up
       - task: db-seed
   local-deps-destroy:
