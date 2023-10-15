@@ -1,0 +1,16 @@
+users:
+  rows:
+    - user_id: !uuid "2b6b9dba-df4e-4617-9e61-117746fcc203"
+      name: "John Doe"
+      email: "john@example.com"
+      created_at: !!timestamp 2023-01-01T12:30:12Z
+      updated_at: !!timestamp 2023-01-01T12:30:12Z
+      _dbfconfig:
+        refid: "johndoe"
+    - user_id: !uuid "4f411009-24d4-4328-9722-a0bd26662b86"
+      name: "Jane Doe"
+      email: "jane@example.com"
+      created_at: !!timestamp 2023-01-04T12:30:12Z
+      updated_at: !!timestamp 2023-01-04T12:30:12Z
+      _dbfconfig:
+        refid: "janedoe"
