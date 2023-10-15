@@ -2,7 +2,6 @@ version: '3'
 services:
   db:
     image: postgres:13
-#    container_name: db
     environment:
       POSTGRES_DB: debefix-sample-app
       POSTGRES_USER: sample-user

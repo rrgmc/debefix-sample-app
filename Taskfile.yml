@@ -7,7 +7,7 @@ tasks:
 
   local-deps:
     cmds:
-      - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up"
+      - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up -d"
 
   local-deps-stop:
     cmds:
