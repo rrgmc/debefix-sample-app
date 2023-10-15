@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/dbtest"
-	"github.com/stretchr/testify/require"
+	"gotest.tools/v3/assert"
 )
 
 func TestDBMigration(t *testing.T) {
 	err := dbtest.DBMigrationTest("debefix-sample-app")
-	require.NoError(t, err)
+	assert.NilError(t, err)
 }

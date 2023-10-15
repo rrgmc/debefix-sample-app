@@ -6,18 +6,20 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/RangelReale/debefix-sample-app/internal/entity"
 	"github.com/RangelReale/debefix-sample-app/internal/storage"
-	"github.com/RangelReale/debefix-sample-app/internal/testutils"
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/dbtest"
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/testdata"
-	"github.com/stretchr/testify/require"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/assert/opt"
 )
 
 func testDBTagStorage(t *testing.T, testFn func(*sql.DB, storage.TagStorage)) {
 	db, dbCloseFunc, err := dbtest.DBForTest("olympus")
-	require.NoError(t, err)
+	assert.NilError(t, err)
 	defer dbCloseFunc()
 
 	ts := storage.NewTagStorage(db)
@@ -34,9 +36,11 @@ func TestDBTagStorageGetTags(t *testing.T) {
 			Offset: 0,
 			Limit:  100,
 		})
-		require.NoError(t, err)
+		assert.NilError(t, err)
 
-		require.Len(t, returnedTags, 3)
-		testutils.Equal(t, expectedTags, returnedTags)
+		assert.Assert(t, is.Len(returnedTags, 3))
+		assert.DeepEqual(t, expectedTags, returnedTags,
+			opt.TimeWithThreshold(time.Hour))
+		// testutils.Equal(t, expectedTags, returnedTags)
 	})
 }
