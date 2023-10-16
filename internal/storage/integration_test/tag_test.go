@@ -29,8 +29,10 @@ func testDBTagStorage(t *testing.T, testFn func(*sql.DB, storage.TagStorage)) {
 
 func TestDBTagStorageGetTags(t *testing.T) {
 	testDBTagStorage(t, func(db *sql.DB, ts storage.TagStorage) {
-		expectedTags := testdata.GetTags([]string{"go", "javascript", "cpp"},
-			testdata.WithSort("name"))
+		expectedTags := testdata.GetTags(
+			testdata.WithFilterAll(true),
+			testdata.WithSort("name"),
+		)
 
 		returnedTags, err := ts.GetTags(context.Background(), entity.TagsFilter{
 			Offset: 0,
@@ -41,6 +43,5 @@ func TestDBTagStorageGetTags(t *testing.T) {
 		assert.Assert(t, is.Len(returnedTags, 3))
 		assert.DeepEqual(t, expectedTags, returnedTags,
 			opt.TimeWithThreshold(time.Hour))
-		// testutils.Equal(t, expectedTags, returnedTags)
 	})
 }

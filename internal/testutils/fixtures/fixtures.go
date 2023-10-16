@@ -66,8 +66,15 @@ func WithTags(tags []string) ResolveFixtureOption {
 	}
 }
 
+func WithOutput(output bool) ResolveFixtureOption {
+	return func(o *resolveFixturesOptions) {
+		o.output = output
+	}
+}
+
 type resolveFixturesOptions struct {
-	tags []string
+	tags   []string
+	output bool
 }
 
 func resolveCallback(ctx debefix.ResolveContext, fields map[string]any) error {

@@ -3,36 +3,65 @@ package testdata
 import (
 	"fmt"
 	"slices"
+	"time"
 
 	"github.com/RangelReale/debefix"
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
+	"github.com/google/go-cmp/cmp"
+	"gotest.tools/v3/assert/opt"
 )
 
-func resolveData[T any](refIDs []string, tableID string, f func(row debefix.Row) T, options ...TestDataOption) []T {
+func resolveData[T any](tableID string, f func(row debefix.Row) (T, error), options ...TestDataOption) []T {
 	optns := parseOptions(options...)
 
-	loaded := map[string]T{}
+	var ret []T
 	_, err := fixtures.
 		MustResolveFixtures(fixtures.WithTags(optns.tags)).
 		ExtractRows(func(table *debefix.Table, row debefix.Row) (bool, error) {
 			if table.ID == tableID {
-				if slices.Contains(refIDs, row.Config.RefID) {
-					loaded[row.Config.RefID] = f(row)
+				include := optns.filterAll
+
+				// filter refID
+				if len(optns.filterRefIDs) > 0 {
+					include = slices.Contains(optns.filterRefIDs, row.Config.RefID)
+				}
+
+				// filter fields
+				if len(optns.filterFields) > 0 {
+					isFilter := 0
+					for filterField, filterValue := range optns.filterFields {
+						fieldValue, isField := optns.filterFields[filterField]
+						if !isField {
+							return false, fmt.Errorf("field '%s' does not exists")
+						}
+						if cmp.Equal(filterValue, fieldValue, opt.TimeWithThreshold(time.Hour)) {
+							isFilter++
+						}
+					}
+					include = isFilter == len(optns.filterFields)
+				}
+
+				// filter func
+				if optns.filterRow != nil {
+					isRow, err := optns.filterRow(row)
+					if err != nil {
+						return false, fmt.Errorf("error filtering row: %s", err)
+					}
+					include = isRow
+				}
+
+				if include {
+					data, err := f(row)
+					if err != nil {
+						return false, err
+					}
+					ret = append(ret, data)
 				}
 			}
 			return true, nil
 		})
 	if err != nil {
 		panic(fmt.Sprintf("error loading fixture for '%s`: %s", tableID, err))
-	}
-
-	var ret []T
-	for _, refID := range refIDs {
-		data, ok := loaded[refID]
-		if !ok {
-			panic(fmt.Sprintf("fixture refID '%s' for '%s' not found", refID, tableID))
-		}
-		ret = append(ret, data)
 	}
 
 	return ret

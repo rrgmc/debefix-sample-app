@@ -69,7 +69,9 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func
 
 	// load fixtures
 	err = fixtures.DBSeedFixtures(db,
-		fixtures.WithTags(optns.fixturesTags))
+		fixtures.WithTags(optns.fixturesTags),
+		fixtures.WithOutput(optns.debugOutput),
+	)
 	if err != nil {
 		return db, closeFunc, err
 	}
@@ -104,6 +106,7 @@ func DBMigrationTest(name string) (err error) {
 
 type dbForTestOptions struct {
 	fixturesTags []string
+	debugOutput  bool
 }
 
 type DBForTestOption func(*dbForTestOptions)
@@ -111,6 +114,12 @@ type DBForTestOption func(*dbForTestOptions)
 func WithDBForTestFixturesTags(fixturesTags []string) DBForTestOption {
 	return func(o *dbForTestOptions) {
 		o.fixturesTags = fixturesTags
+	}
+}
+
+func WithDBForTestDebugOutput(debugOutput bool) DBForTestOption {
+	return func(o *dbForTestOptions) {
+		o.debugOutput = debugOutput
 	}
 }
 

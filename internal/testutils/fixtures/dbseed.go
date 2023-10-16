@@ -20,6 +20,8 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) error {
 	return postgres.Resolve(sql2.NewSQLQueryInterface(db), fixtures,
 		debefix.WithResolveTags(optns.tags),
 		debefix.WithResolveProgress(func(tableID, tableName string) {
-			fmt.Printf("Loading table '%s'...\n", tableName)
+			if optns.output {
+				fmt.Printf("Loading table '%s'...\n", tableName)
+			}
 		}))
 }

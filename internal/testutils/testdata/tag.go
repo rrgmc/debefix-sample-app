@@ -11,14 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetTags(refIDs []string, options ...TestDataOption) []entity.Tag {
-	ret := resolveData[entity.Tag](refIDs, "tags", func(row debefix.Row) entity.Tag {
+func GetTags(options ...TestDataOption) []entity.Tag {
+	ret := resolveData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
 		return entity.Tag{
 			TagID:     row.Fields["tag_id"].(uuid.UUID),
 			Name:      row.Fields["name"].(string),
 			CreatedAt: row.Fields["created_at"].(time.Time),
 			UpdatedAt: row.Fields["updated_at"].(time.Time),
-		}
+		}, nil
 	}, options...)
 
 	optns := parseOptions(options...)
@@ -35,6 +35,10 @@ func GetTags(refIDs []string, options ...TestDataOption) []entity.Tag {
 	return ret
 }
 
-func GetTag(refID string, options ...TestDataOption) entity.Tag {
-	return GetTags([]string{refID}, options...)[0]
+func GetTag(options ...TestDataOption) entity.Tag {
+	ret := GetTags(options...)
+	if len(ret) != 1 {
+		panic(fmt.Sprintf("incorrect amount of data returned: expected %d got %d", 1, len(ret)))
+	}
+	return ret[0]
 }
