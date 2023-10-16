@@ -8,8 +8,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/RangelReale/debefix"
 	"github.com/google/uuid"
+	"github.com/rrgmc/debefix"
 )
 
 var (

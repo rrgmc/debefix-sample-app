@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	entity "github.com/RangelReale/debefix-sample-app/internal/entity"
+	entity "github.com/rrgmc/debefix-sample-app/internal/entity"
 	mock "github.com/stretchr/testify/mock"
 
 	uuid "github.com/google/uuid"

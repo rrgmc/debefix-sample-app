@@ -3,8 +3,8 @@ package storage
 import (
 	"context"
 
-	"github.com/RangelReale/debefix-sample-app/internal/entity"
 	"github.com/google/uuid"
+	"github.com/rrgmc/debefix-sample-app/internal/entity"
 )
 
 type TagStorage interface {

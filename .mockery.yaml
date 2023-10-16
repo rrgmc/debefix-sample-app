@@ -4,6 +4,6 @@ dir: "{{.InterfaceDir}}/mocks"
 outpkg: "mocks"
 mockname: "{{.InterfaceName}}"
 packages:
-  github.com/RangelReale/debefix-sample-app/internal/storage:
+  github.com/rrgmc/debefix-sample-app/internal/storage:
     interfaces:
       TagStorage:

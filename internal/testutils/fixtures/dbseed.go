@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/RangelReale/debefix"
-	sql2 "github.com/RangelReale/debefix/db/sql"
-	"github.com/RangelReale/debefix/db/sql/postgres"
+	"github.com/rrgmc/debefix"
+	sql2 "github.com/rrgmc/debefix/db/sql"
+	"github.com/rrgmc/debefix/db/sql/postgres"
 )
 
 func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) error {

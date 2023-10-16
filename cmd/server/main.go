@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/RangelReale/debefix-sample-app/pkg/app"
-	"github.com/RangelReale/debefix-sample-app/pkg/config"
+	"github.com/rrgmc/debefix-sample-app/pkg/app"
+	"github.com/rrgmc/debefix-sample-app/pkg/config"
 )
 
 func main() {

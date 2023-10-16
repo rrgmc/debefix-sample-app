@@ -1,6 +1,6 @@
 package testdata
 
-import "github.com/RangelReale/debefix"
+import "github.com/rrgmc/debefix"
 
 type testDataOptions struct {
 	filterAll    bool

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/rrgmc/debefix-sample-app/internal/testutils/fixtures"
 )
 
 func main() {

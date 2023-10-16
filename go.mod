@@ -1,9 +1,9 @@
-module github.com/RangelReale/debefix-sample-app
+module github.com/rrgmc/debefix-sample-app
 
 go 1.21
 
 require (
-	github.com/RangelReale/debefix v0.7.2
+	github.com/rrgmc/debefix v0.8.0
 	github.com/docker/go-connections v0.4.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/google/uuid v1.3.1

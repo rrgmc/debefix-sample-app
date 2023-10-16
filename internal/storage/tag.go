@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/RangelReale/debefix-sample-app/internal/entity"
 	"github.com/google/uuid"
+	"github.com/rrgmc/debefix-sample-app/internal/entity"
 	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"

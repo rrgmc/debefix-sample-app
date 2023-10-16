@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/RangelReale/debefix-sample-app/pkg/config"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/rrgmc/debefix-sample-app/pkg/config"
 )
 
 type App struct {

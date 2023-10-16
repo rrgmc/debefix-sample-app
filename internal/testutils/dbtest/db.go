@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
 	"github.com/docker/go-connections/nat"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/pkg/errors"
+	"github.com/rrgmc/debefix-sample-app/internal/testutils/fixtures"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )

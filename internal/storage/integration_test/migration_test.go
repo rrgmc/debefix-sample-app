@@ -5,7 +5,7 @@ package integration_test
 import (
 	"testing"
 
-	"github.com/RangelReale/debefix-sample-app/internal/testutils/dbtest"
+	"github.com/rrgmc/debefix-sample-app/internal/testutils/dbtest"
 	"gotest.tools/v3/assert"
 )
 

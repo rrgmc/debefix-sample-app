@@ -5,11 +5,11 @@ import (
 	"slices"
 	"time"
 
-	"github.com/RangelReale/debefix"
-	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
 	"github.com/google/go-cmp/cmp"
 	"github.com/iancoleman/strcase"
 	"github.com/mitchellh/mapstructure"
+	"github.com/rrgmc/debefix"
+	"github.com/rrgmc/debefix-sample-app/internal/testutils/fixtures"
 	"gotest.tools/v3/assert/opt"
 )
 

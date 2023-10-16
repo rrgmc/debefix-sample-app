@@ -5,8 +5,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/RangelReale/debefix"
-	"github.com/RangelReale/debefix-sample-app/internal/entity"
+	"github.com/rrgmc/debefix"
+	"github.com/rrgmc/debefix-sample-app/internal/entity"
 )
 
 func GetTags(options ...TestDataOption) []entity.Tag {
