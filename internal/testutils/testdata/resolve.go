@@ -28,11 +28,11 @@ func resolveData[T any](refIDs []string, tableID string, f func(row debefix.Row)
 
 	var ret []T
 	for _, refID := range refIDs {
-		customer, ok := loaded[refID]
+		data, ok := loaded[refID]
 		if !ok {
 			panic(fmt.Sprintf("fixture refID '%s' for '%s' not found", refID, tableID))
 		}
-		ret = append(ret, customer)
+		ret = append(ret, data)
 	}
 
 	return ret
