@@ -7,7 +7,7 @@ type testDataOptions struct {
 	filterRefIDs []string
 	filterFields map[string]any
 	filterRow    func(row debefix.Row) (bool, error)
-	tags         []string
+	resolveTags  []string
 	sort         string
 }
 
@@ -48,7 +48,7 @@ func WithFilterRow(filterRow func(row debefix.Row) (bool, error)) TestDataOption
 // WithResolveTags sets the tags for the data resolver.
 func WithResolveTags(tags []string) TestDataOption {
 	return func(o *testDataOptions) {
-		o.tags = tags
+		o.resolveTags = tags
 	}
 }
 

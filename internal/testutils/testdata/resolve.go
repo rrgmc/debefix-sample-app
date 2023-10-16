@@ -18,7 +18,7 @@ func resolveData[T any](tableID string, f func(row debefix.Row) (T, error), opti
 
 	var ret []T
 	_, err := fixtures.
-		MustResolveFixtures(fixtures.WithTags(optns.tags)).
+		MustResolveFixtures(fixtures.WithTags(optns.resolveTags)).
 		ExtractRows(func(table *debefix.Table, row debefix.Row) (bool, error) {
 			if table.ID == tableID {
 				include := optns.filterAll
