@@ -18,7 +18,7 @@ import (
 )
 
 func testDBTagStorage(t *testing.T, testFn func(*sql.DB, storage.TagStorage)) {
-	db, dbCloseFunc, err := dbtest.DBForTest("olympus")
+	db, dbCloseFunc, err := dbtest.DBForTest("debefix-sample-app")
 	assert.NilError(t, err)
 	defer dbCloseFunc()
 
