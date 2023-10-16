@@ -12,6 +12,12 @@ tasks:
     cmds:
       - "go run github.com/vektra/mockery/v2"
 
+  test:
+    cmds:
+      - "go test -race ./..."
+  test-db:
+    cmds:
+      - "go test -race --tags=dbtest ./internal/storage/integration_test/..."
   test-db-migrations:
     cmds:
       - "go test -race --tags=dbmigrationtest ./internal/storage/integration_test/..."

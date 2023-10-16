@@ -28,7 +28,7 @@ func GetTags(options ...TestDataOption) []entity.Tag {
 			case "name":
 				return strings.Compare(a.Name, b.Name)
 			default:
-				panic(fmt.Sprintf("unknown sort '%s' for tag testdata", optns.sort))
+				panic(fmt.Sprintf("unknown sort '%s' for 'tag' testdata", optns.sort))
 			}
 		})
 	}
@@ -38,7 +38,7 @@ func GetTags(options ...TestDataOption) []entity.Tag {
 func GetTag(options ...TestDataOption) entity.Tag {
 	ret := GetTags(options...)
 	if len(ret) != 1 {
-		panic(fmt.Sprintf("incorrect amount of data returned: expected %d got %d", 1, len(ret)))
+		panic(fmt.Sprintf("incorrect amount of data returned for 'tag': expected %d got %d", 1, len(ret)))
 	}
 	return ret[0]
 }
