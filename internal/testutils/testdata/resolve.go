@@ -8,6 +8,8 @@ import (
 	"github.com/RangelReale/debefix"
 	"github.com/RangelReale/debefix-sample-app/internal/testutils/fixtures"
 	"github.com/google/go-cmp/cmp"
+	"github.com/iancoleman/strcase"
+	"github.com/mitchellh/mapstructure"
 	"gotest.tools/v3/assert/opt"
 )
 
@@ -65,4 +67,19 @@ func resolveData[T any](tableID string, f func(row debefix.Row) (T, error), opti
 	}
 
 	return ret
+}
+
+func mapToStruct[T any](input any) (T, error) {
+	var ret T
+	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		Result: &ret,
+		MatchName: func(mapKey, fieldName string) bool {
+			return strcase.ToSnake(fieldName) == mapKey
+		},
+	})
+	if err != nil {
+		return ret, nil
+	}
+	err = dec.Decode(input)
+	return ret, err
 }

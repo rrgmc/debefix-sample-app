@@ -4,21 +4,14 @@ import (
 	"fmt"
 	"slices"
 	"strings"
-	"time"
 
 	"github.com/RangelReale/debefix"
 	"github.com/RangelReale/debefix-sample-app/internal/entity"
-	"github.com/google/uuid"
 )
 
 func GetTags(options ...TestDataOption) []entity.Tag {
 	ret := resolveData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
-		return entity.Tag{
-			TagID:     row.Fields["tag_id"].(uuid.UUID),
-			Name:      row.Fields["name"].(string),
-			CreatedAt: row.Fields["created_at"].(time.Time),
-			UpdatedAt: row.Fields["updated_at"].(time.Time),
-		}, nil
+		return mapToStruct[entity.Tag](row.Fields)
 	}, options...)
 
 	optns := parseOptions(options...)
