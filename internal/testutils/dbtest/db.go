@@ -81,7 +81,7 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func
 
 // DBMigrationTest tests the complete migration (up and down).
 func DBMigrationTest(name string) (err error) {
-	db, closeFunc, err := DBForTest(name)
+	db, closeFunc, err := DBForTest(name, WithDBForTestDebugOutput(true))
 	if err != nil {
 		return err
 	}
