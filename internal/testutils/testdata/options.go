@@ -7,11 +7,18 @@ import (
 
 type testDataOptions struct {
 	filterDataOptions []filter.FilterDataOption
+	mergeData         *debefix.Data
 	resolveTags       []string
 	sort              string
 }
 
 type TestDataOption func(*testDataOptions)
+
+func WithMergeData(data *debefix.Data) TestDataOption {
+	return func(o *testDataOptions) {
+		o.mergeData = data
+	}
+}
 
 // WithFilterAll include all records by default, depending on other filters if they exist.
 // All requested filters must return true to select the row.

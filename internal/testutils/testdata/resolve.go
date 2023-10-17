@@ -14,7 +14,10 @@ func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
 	options ...TestDataOption) (result []T, sort string) {
 	optns := parseOptions(options...)
 
-	ret, err := filter.FilterData[T](fixtures.MustResolveFixtures(fixtures.WithTags(optns.resolveTags)),
+	ret, err := filter.FilterData[T](
+		fixtures.MustResolveFixtures(
+			fixtures.WithTags(optns.resolveTags),
+			fixtures.WithMergeData(optns.mergeData)),
 		tableID, f, optns.filterDataOptions...)
 	if err != nil {
 		panic(fmt.Sprintf("error loading fixture for '%s`: %s", tableID, err))
