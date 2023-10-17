@@ -1,14 +1,14 @@
 package testdata
 
-import "github.com/rrgmc/debefix"
+import (
+	"github.com/rrgmc/debefix"
+	"github.com/rrgmc/debefix/filter"
+)
 
 type testDataOptions struct {
-	filterAll    bool
-	filterRefIDs []string
-	filterFields map[string]any
-	filterRow    func(row debefix.Row) (bool, error)
-	resolveTags  []string
-	sort         string
+	filterDataOptions []filter.FilterDataOption
+	resolveTags       []string
+	sort              string
 }
 
 type TestDataOption func(*testDataOptions)
@@ -17,7 +17,7 @@ type TestDataOption func(*testDataOptions)
 // All requested filters must return true to select the row.
 func WithFilterAll(filterAll bool) TestDataOption {
 	return func(o *testDataOptions) {
-		o.filterAll = filterAll
+		o.filterDataOptions = append(o.filterDataOptions, filter.WithFilterAll(filterAll))
 	}
 }
 
@@ -25,7 +25,7 @@ func WithFilterAll(filterAll bool) TestDataOption {
 // All requested filters must return true to select the row.
 func WithFilterRefIDs(refIDs []string) TestDataOption {
 	return func(o *testDataOptions) {
-		o.filterRefIDs = refIDs
+		o.filterDataOptions = append(o.filterDataOptions, filter.WithFilterRefIDs(refIDs))
 	}
 }
 
@@ -33,7 +33,7 @@ func WithFilterRefIDs(refIDs []string) TestDataOption {
 // All requested filters must return true to select the row.
 func WithFilterFields(fields map[string]any) TestDataOption {
 	return func(o *testDataOptions) {
-		o.filterFields = fields
+		o.filterDataOptions = append(o.filterDataOptions, filter.WithFilterFields(fields))
 	}
 }
 
@@ -41,7 +41,7 @@ func WithFilterFields(fields map[string]any) TestDataOption {
 // All requested filters must return true to select the row.
 func WithFilterRow(filterRow func(row debefix.Row) (bool, error)) TestDataOption {
 	return func(o *testDataOptions) {
-		o.filterRow = filterRow
+		o.filterDataOptions = append(o.filterDataOptions, filter.WithFilterRow(filterRow))
 	}
 }
 

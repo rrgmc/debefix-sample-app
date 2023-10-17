@@ -10,18 +10,17 @@ import (
 )
 
 func GetTags(options ...TestDataOption) []entity.Tag {
-	ret := resolveData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
+	ret, sort := filterData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
 		return mapToStruct[entity.Tag](row.Fields)
 	}, options...)
 
-	optns := parseOptions(options...)
-	if optns.sort != "" {
+	if sort != "" {
 		slices.SortFunc(ret, func(a, b entity.Tag) int {
-			switch optns.sort {
+			switch sort {
 			case "name":
 				return strings.Compare(a.Name, b.Name)
 			default:
-				panic(fmt.Sprintf("unknown sort '%s' for 'tag' testdata", optns.sort))
+				panic(fmt.Sprintf("unknown sort '%s' for 'tag' testdata", sort))
 			}
 		})
 	}
