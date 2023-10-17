@@ -52,7 +52,6 @@ func TestDBTagStorageGetTagByID(t *testing.T) {
 	mergeData := &debefix.Data{
 		Tables: map[string]*debefix.Table{
 			"tags": {
-				ID: "tags",
 				Rows: debefix.Rows{
 					{
 						Config: debefix.RowConfig{
@@ -60,7 +59,6 @@ func TestDBTagStorageGetTagByID(t *testing.T) {
 							Tags:  []string{"01-base"},
 						},
 						Fields: map[string]any{
-							// "tag_id":     uuid.MustParse("eda9e1ae-f3e4-4664-98ab-15481552b4af"),
 							"tag_id":     &debefix.ValueGenerated{},
 							"name":       "Test Tag",
 							"created_at": time.Now(),
