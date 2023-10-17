@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/go-connections/nat"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -40,7 +41,7 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, resolvedData *
 
 	ctx := context.Background()
 	// container and database
-	container, db, err := CreateDBTestContainer(ctx, name)
+	container, db, err := CreateDBTestContainer(ctx, name, !optns.inDisk)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -113,6 +114,7 @@ type dbForTestOptions struct {
 	mergeData    *debefix.Data
 	fixturesTags []string
 	debugOutput  bool
+	inDisk       bool // if false, will create tmpfs
 }
 
 type DBForTestOption func(*dbForTestOptions)
@@ -135,6 +137,12 @@ func WithDBForTestDebugOutput(debugOutput bool) DBForTestOption {
 	}
 }
 
+func WithDBForTestInDisk(inDisk bool) DBForTestOption {
+	return func(o *dbForTestOptions) {
+		o.inDisk = inDisk
+	}
+}
+
 type nullLogger struct {
 }
 
@@ -142,7 +150,7 @@ func (t nullLogger) Printf(format string, v ...interface{}) {
 }
 
 // CreateDBTestContainer spins up a Postgres database container
-func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Container, *sql.DB, error) {
+func CreateDBTestContainer(ctx context.Context, name string, inMemory bool) (testcontainers.Container, *sql.DB, error) {
 	dbName := fmt.Sprintf("%s_test", name) // database name must end with "_test" or will be rejected
 
 	env := map[string]string{
@@ -152,12 +160,28 @@ func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Con
 	}
 	dockerPort := "5432/tcp"
 
+	var mounts testcontainers.ContainerMounts
+	if inMemory {
+		mounts = testcontainers.Mounts(
+			testcontainers.ContainerMount{
+				Source: testcontainers.DockerTmpfsMountSource{
+					TmpfsOptions: &mount.TmpfsOptions{
+						SizeBytes: 50 * 1024 * 1024,
+						Mode:      0o644,
+					},
+				},
+				Target: "/var/lib/postgresql/data",
+			},
+		)
+	}
+
 	req := testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
 			Image:        "postgres:13",
 			ExposedPorts: []string{dockerPort},
 			Cmd:          []string{"postgres", "-c", "fsync=off"},
 			Env:          env,
+			Mounts:       mounts,
 			WaitingFor: wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
 				WithStartupTimeout(30 * time.Second),
@@ -183,11 +207,6 @@ func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Con
 	// log.Printf("postgres container ready and running at %s:%s\n", host, mappedPort.Port())
 
 	url := fmt.Sprintf("postgres://postgres:password@%s:%s/%s?sslmode=disable", host, mappedPort.Port(), dbName)
-
-	// db, err := sql.Open("postgres", url)
-	// if err != nil {
-	// 	return container, db, errors.Errorf("failed to establish database connection: %s", err)
-	// }
 
 	connConfig, err := pgx.ParseConfig(url)
 	if err != nil {
