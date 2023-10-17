@@ -60,7 +60,6 @@ func (t tagStorage) GetTags(ctx context.Context, filter entity.TagsFilter) ([]en
 func (t tagStorage) GetTagByID(ctx context.Context, tagID uuid.UUID) (entity.Tag, error) {
 	query := psql.Select(
 		sm.Columns(getColumnsWithAlias(getDefaultTagsColumns(), "d")...),
-		sm.Columns("COUNT(*) OVER() AS count"),
 		sm.From("tags").As("d"),
 		sm.Where(psql.Raw(`d.tag_id = ?`, psql.Arg(tagID))),
 	)

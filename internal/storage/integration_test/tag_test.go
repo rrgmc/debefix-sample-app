@@ -45,3 +45,17 @@ func TestDBTagStorageGetTags(t *testing.T) {
 			opt.TimeWithThreshold(time.Hour))
 	})
 }
+
+func TestDBTagStorageGetTagByID(t *testing.T) {
+	testDBTagStorage(t, func(db *sql.DB, ts storage.TagStorage) {
+		expectedTag := testdata.GetTag(
+			testdata.WithFilterRefIDs([]string{"javascript"}),
+		)
+
+		returnedTag, err := ts.GetTagByID(context.Background(), expectedTag.TagID)
+		assert.NilError(t, err)
+
+		assert.DeepEqual(t, expectedTag, returnedTag,
+			opt.TimeWithThreshold(time.Hour))
+	})
+}
