@@ -34,7 +34,7 @@ func init() {
 
 func ResolveFixtures(options ...ResolveFixtureOption) (*debefix.Data, error) {
 	optns := &resolveFixturesOptions{
-		tags: []string{"base"},
+		tags: []string{"01-base"},
 	}
 	for _, opt := range options {
 		opt(optns)
@@ -59,8 +59,8 @@ type ResolveFixtureOption func(*resolveFixturesOptions)
 func WithTags(tags []string) ResolveFixtureOption {
 	return func(o *resolveFixturesOptions) {
 		o.tags = nil
-		if !slices.Contains(tags, "base") {
-			o.tags = append(o.tags, "base")
+		if !slices.Contains(tags, "01-base") {
+			o.tags = append(o.tags, "01-base")
 		}
 		o.tags = append(o.tags, tags...)
 	}
