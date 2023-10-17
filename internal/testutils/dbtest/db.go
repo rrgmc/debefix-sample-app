@@ -11,10 +11,14 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
+	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/testutils/fixtures"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
+	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
 
 func init() {
@@ -24,9 +28,9 @@ func init() {
 // DBForTest spins up a postgres container, creates the test database on it, migrates it, and returns
 // the db and a close function. The "name" parameter will become the test database name with
 // a "_test" suffix as required by testfixtures.
-func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func() error, err error) {
+func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, resolvedData *debefix.Data, closeFunc func() error, err error) {
 	if name == "" {
-		return nil, nil, stderrors.New("test name is required")
+		return nil, nil, nil, stderrors.New("test name is required")
 	}
 
 	var optns dbForTestOptions
@@ -38,7 +42,7 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func
 	// container and database
 	container, db, err := CreateDBTestContainer(ctx, name)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	closeFunc = func() error {
@@ -59,29 +63,30 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, closeFunc func
 	// migration
 	mig, err := NewDBPGMigrator(db)
 	if err != nil {
-		return db, closeFunc, err
+		return db, nil, closeFunc, err
 	}
 
 	err = mig.Up()
 	if err != nil {
-		return db, closeFunc, err
+		return db, nil, closeFunc, err
 	}
 
 	// load fixtures
-	err = fixtures.DBSeedFixtures(db,
+	resolvedData, err = fixtures.DBSeedFixtures(db,
 		fixtures.WithTags(optns.fixturesTags),
 		fixtures.WithOutput(optns.debugOutput),
+		fixtures.WithMergeData(optns.mergeData),
 	)
 	if err != nil {
-		return db, closeFunc, err
+		return db, nil, closeFunc, err
 	}
 
-	return db, closeFunc, nil
+	return db, resolvedData, closeFunc, nil
 }
 
 // DBMigrationTest tests the complete migration (up and down).
 func DBMigrationTest(name string) (err error) {
-	db, closeFunc, err := DBForTest(name, WithDBForTestDebugOutput(true))
+	db, _, closeFunc, err := DBForTest(name, WithDBForTestDebugOutput(true))
 	if err != nil {
 		return err
 	}
@@ -105,11 +110,18 @@ func DBMigrationTest(name string) (err error) {
 }
 
 type dbForTestOptions struct {
+	mergeData    *debefix.Data
 	fixturesTags []string
 	debugOutput  bool
 }
 
 type DBForTestOption func(*dbForTestOptions)
+
+func WithDBForTestMergeData(data *debefix.Data) DBForTestOption {
+	return func(o *dbForTestOptions) {
+		o.mergeData = data
+	}
+}
 
 func WithDBForTestFixturesTags(fixturesTags []string) DBForTestOption {
 	return func(o *dbForTestOptions) {
@@ -171,9 +183,25 @@ func CreateDBTestContainer(ctx context.Context, name string) (testcontainers.Con
 	// log.Printf("postgres container ready and running at %s:%s\n", host, mappedPort.Port())
 
 	url := fmt.Sprintf("postgres://postgres:password@%s:%s/%s?sslmode=disable", host, mappedPort.Port(), dbName)
-	db, err := sql.Open("postgres", url)
+
+	// db, err := sql.Open("postgres", url)
+	// if err != nil {
+	// 	return container, db, errors.Errorf("failed to establish database connection: %s", err)
+	// }
+
+	connConfig, err := pgx.ParseConfig(url)
 	if err != nil {
-		return container, db, errors.Errorf("failed to establish database connection: %s", err)
+		return container, nil, errors.Errorf("error connecting to database: %s", err)
+	}
+
+	db := stdlib.OpenDB(*connConfig, stdlib.OptionAfterConnect(func(ctx context.Context, conn *pgx.Conn) error {
+		pgxUUID.Register(conn.TypeMap())
+		return nil
+	}))
+
+	err = db.PingContext(ctx)
+	if err != nil {
+		return container, nil, errors.Errorf("error connecting to database: %s", err)
 	}
 
 	return container, db, nil

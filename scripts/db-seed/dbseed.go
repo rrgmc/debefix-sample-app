@@ -24,5 +24,6 @@ func run() error {
 	}
 	defer db.Close()
 
-	return fixtures.DBSeedFixtures(db)
+	_, err = fixtures.DBSeedFixtures(db)
+	return err
 }

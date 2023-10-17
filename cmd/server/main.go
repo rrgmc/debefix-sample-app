@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -15,8 +16,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	ctx := context.Background()
+
 	serverApp := app.NewApp(cfg)
-	err = serverApp.Run()
+	err = serverApp.Run(ctx)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "error running application: %s", err)
 		os.Exit(1)

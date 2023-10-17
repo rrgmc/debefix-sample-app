@@ -7,16 +7,16 @@ import (
 
 type testDataOptions struct {
 	filterDataOptions []filter.FilterDataOption
-	mergeData         *debefix.Data
+	resolvedData      *debefix.Data
 	resolveTags       []string
 	sort              string
 }
 
 type TestDataOption func(*testDataOptions)
 
-func WithMergeData(data *debefix.Data) TestDataOption {
+func WithResolvedData(data *debefix.Data) TestDataOption {
 	return func(o *testDataOptions) {
-		o.mergeData = data
+		o.resolvedData = data
 	}
 }
 

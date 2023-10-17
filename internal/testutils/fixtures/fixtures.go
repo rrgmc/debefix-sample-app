@@ -41,12 +41,9 @@ func ResolveFixtures(options ...ResolveFixtureOption) (*debefix.Data, error) {
 	}
 
 	sourceData := fixtures
-	if optns.mergeData != nil {
-		var err error
-		sourceData, err = debefix.MergeData(fixtures, optns.mergeData)
-		if err != nil {
-			return nil, fmt.Errorf("error merging data: %w", err)
-		}
+	if optns.resolvedData != nil {
+		sourceData = optns.resolvedData
+		optns.tags = nil // don't filter tags if already resolved data
 	}
 
 	data, err := debefix.Resolve(sourceData, resolveCallback, debefix.WithResolveTags(optns.tags))
@@ -72,6 +69,12 @@ func WithMergeData(data *debefix.Data) ResolveFixtureOption {
 	}
 }
 
+func WithResolvedData(data *debefix.Data) ResolveFixtureOption {
+	return func(o *resolveFixturesOptions) {
+		o.resolvedData = data
+	}
+}
+
 func WithTags(tags []string) ResolveFixtureOption {
 	return func(o *resolveFixturesOptions) {
 		o.tags = nil
@@ -89,9 +92,10 @@ func WithOutput(output bool) ResolveFixtureOption {
 }
 
 type resolveFixturesOptions struct {
-	mergeData *debefix.Data
-	tags      []string
-	output    bool
+	mergeData    *debefix.Data
+	resolvedData *debefix.Data
+	tags         []string
+	output       bool
 }
 
 func resolveCallback(ctx debefix.ResolveContext, fields map[string]any) error {

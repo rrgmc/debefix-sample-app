@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/storage"
@@ -19,18 +18,19 @@ import (
 	"gotest.tools/v3/assert/opt"
 )
 
-func testDBTagStorage(t *testing.T, testFn func(*sql.DB, storage.TagStorage)) {
-	db, dbCloseFunc, err := dbtest.DBForTest("debefix-sample-app")
+func testDBTagStorage(t *testing.T, testFn func(*sql.DB, *debefix.Data, storage.TagStorage),
+	options ...dbtest.DBForTestOption) {
+	db, resolvedData, dbCloseFunc, err := dbtest.DBForTest("debefix-sample-app", options...)
 	assert.NilError(t, err)
 	defer dbCloseFunc()
 
 	ts := storage.NewTagStorage(db)
 
-	testFn(db, ts)
+	testFn(db, resolvedData, ts)
 }
 
 func TestDBTagStorageGetTags(t *testing.T) {
-	testDBTagStorage(t, func(db *sql.DB, ts storage.TagStorage) {
+	testDBTagStorage(t, func(db *sql.DB, resolvedData *debefix.Data, ts storage.TagStorage) {
 		expectedTags := testdata.GetTags(
 			testdata.WithFilterAll(true),
 			testdata.WithSort("name"),
@@ -49,30 +49,33 @@ func TestDBTagStorageGetTags(t *testing.T) {
 }
 
 func TestDBTagStorageGetTagByID(t *testing.T) {
-	testDBTagStorage(t, func(db *sql.DB, ts storage.TagStorage) {
-		expectedTag := testdata.GetTag(
-			testdata.WithFilterRefIDs([]string{"test.TestDBTagStorageGetTagByID"}),
-			testdata.WithMergeData(&debefix.Data{
-				Tables: map[string]*debefix.Table{
-					"tags": {
-						ID: "tags",
-						Rows: debefix.Rows{
-							{
-								Config: debefix.RowConfig{
-									RefID: "test.TestDBTagStorageGetTagByID",
-									Tags:  []string{"01-base"},
-								},
-								Fields: map[string]any{
-									"tag_id":     uuid.MustParse("eda9e1ae-f3e4-4664-98ab-15481552b4af"),
-									"name":       "Test Tag",
-									"created_at": time.Now(),
-									"updated_at": time.Now(),
-								},
-							},
+	mergeData := &debefix.Data{
+		Tables: map[string]*debefix.Table{
+			"tags": {
+				ID: "tags",
+				Rows: debefix.Rows{
+					{
+						Config: debefix.RowConfig{
+							RefID: "test.TestDBTagStorageGetTagByID",
+							Tags:  []string{"01-base"},
+						},
+						Fields: map[string]any{
+							// "tag_id":     uuid.MustParse("eda9e1ae-f3e4-4664-98ab-15481552b4af"),
+							"tag_id":     &debefix.ValueGenerated{},
+							"name":       "Test Tag",
+							"created_at": time.Now(),
+							"updated_at": time.Now(),
 						},
 					},
 				},
-			}),
+			},
+		},
+	}
+
+	testDBTagStorage(t, func(db *sql.DB, resolvedData *debefix.Data, ts storage.TagStorage) {
+		expectedTag := testdata.GetTag(
+			testdata.WithFilterRefIDs([]string{"test.TestDBTagStorageGetTagByID"}),
+			testdata.WithResolvedData(resolvedData),
 		)
 
 		returnedTag, err := ts.GetTagByID(context.Background(), expectedTag.TagID)
@@ -80,5 +83,5 @@ func TestDBTagStorageGetTagByID(t *testing.T) {
 
 		assert.DeepEqual(t, expectedTag, returnedTag,
 			opt.TimeWithThreshold(time.Hour))
-	})
+	}, dbtest.WithDBForTestMergeData(mergeData))
 }
