@@ -31,10 +31,11 @@ func testDBTagStorage(t *testing.T, testFn func(*sql.DB, *debefix.Data, storage.
 
 func TestDBTagStorageGetTags(t *testing.T) {
 	testDBTagStorage(t, func(db *sql.DB, resolvedData *debefix.Data, ts storage.TagStorage) {
-		expectedTags := testdata.GetTags(
+		expectedTags, err := testdata.GetTags(
 			testdata.WithFilterAll(true),
 			testdata.WithSort("name"),
 		)
+		assert.NilError(t, err)
 
 		returnedTags, err := ts.GetTags(context.Background(), entity.TagsFilter{
 			Offset: 0,
@@ -71,10 +72,11 @@ func TestDBTagStorageGetTagByID(t *testing.T) {
 	}
 
 	testDBTagStorage(t, func(db *sql.DB, resolvedData *debefix.Data, ts storage.TagStorage) {
-		expectedTag := testdata.GetTag(
+		expectedTag, err := testdata.GetTag(
 			testdata.WithFilterRefIDs([]string{"test.TestDBTagStorageGetTagByID"}),
 			testdata.WithResolvedData(resolvedData),
 		)
+		assert.NilError(t, err)
 
 		returnedTag, err := ts.GetTagByID(context.Background(), expectedTag.TagID)
 		assert.NilError(t, err)

@@ -13,7 +13,7 @@ import (
 )
 
 func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
-	options ...TestDataOption) (result []T, sort string) {
+	options ...TestDataOption) (result []T, sort string, err error) {
 	optns := parseOptions(options...)
 
 	ret, err := filter.FilterData[T](
@@ -22,9 +22,9 @@ func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
 			fixtures.WithResolvedData(optns.resolvedData)),
 		tableID, f, optns.filterDataOptions...)
 	if err != nil {
-		panic(fmt.Sprintf("error loading fixture for '%s`: %s", tableID, err))
+		return nil, "", fmt.Errorf("error loading fixture for '%s`: %s", tableID, err)
 	}
-	return ret, optns.sort
+	return ret, optns.sort, nil
 }
 
 func mapToStruct[T any](input any) (T, error) {
