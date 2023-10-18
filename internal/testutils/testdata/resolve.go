@@ -13,18 +13,25 @@ import (
 )
 
 func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
-	options ...TestDataOption) (result []T, sort string, err error) {
+	sortCompare func(sort string, a, b T) int, options ...TestDataOption) (result []T, err error) {
 	optns := parseOptions(options...)
+
+	var filterSortCompare func(a, b T) int
+	if sortCompare != nil {
+		filterSortCompare = func(a, b T) int {
+			return sortCompare(optns.sort, a, b)
+		}
+	}
 
 	ret, err := filter.FilterData[T](
 		fixtures.MustResolveFixtures(
 			fixtures.WithTags(optns.resolveTags),
 			fixtures.WithResolvedData(optns.resolvedData)),
-		tableID, f, optns.filterDataOptions...)
+		tableID, f, filterSortCompare, optns.filterDataOptions...)
 	if err != nil {
-		return nil, "", fmt.Errorf("error loading fixture for '%s`: %s", tableID, err)
+		return nil, fmt.Errorf("error loading fixture for '%s`: %s", tableID, err)
 	}
-	return ret, optns.sort, nil
+	return ret, nil
 }
 
 func mapToStruct[T any](input any) (T, error) {

@@ -52,6 +52,13 @@ func WithFilterRow(filterRow func(row debefix.Row) (bool, error)) TestDataOption
 	}
 }
 
+// WithOffsetLimit filters the returning array from the offset, with limit amount of records.
+func WithOffsetLimit(offset int, limit int) TestDataOption {
+	return func(o *testDataOptions) {
+		o.filterDataOptions = append(o.filterDataOptions, filter.WithOffsetLimit(offset, limit))
+	}
+}
+
 // WithResolveTags sets the tags for the data resolver.
 func WithResolveTags(tags []string) TestDataOption {
 	return func(o *testDataOptions) {

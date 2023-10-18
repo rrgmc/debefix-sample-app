@@ -31,19 +31,22 @@ func testDBTagStorage(t *testing.T, testFn func(*sql.DB, *debefix.Data, storage.
 
 func TestDBTagStorageGetTags(t *testing.T) {
 	testDBTagStorage(t, func(db *sql.DB, resolvedData *debefix.Data, ts storage.TagStorage) {
+		filter := entity.TagsFilter{
+			Offset: 1,
+			Limit:  2,
+		}
+
 		expectedTags, err := testdata.GetTags(
 			testdata.WithFilterAll(true),
 			testdata.WithSort("name"),
+			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
 		)
 		assert.NilError(t, err)
 
-		returnedTags, err := ts.GetTags(context.Background(), entity.TagsFilter{
-			Offset: 0,
-			Limit:  100,
-		})
+		returnedTags, err := ts.GetTags(context.Background(), filter)
 		assert.NilError(t, err)
 
-		assert.Assert(t, is.Len(returnedTags, 3))
+		assert.Assert(t, is.Len(returnedTags, 2))
 		assert.DeepEqual(t, expectedTags, returnedTags,
 			opt.TimeWithThreshold(time.Hour))
 	})

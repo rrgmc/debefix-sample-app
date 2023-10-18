@@ -2,7 +2,6 @@ package testdata
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/rrgmc/debefix"
@@ -10,22 +9,18 @@ import (
 )
 
 func GetTags(options ...TestDataOption) ([]entity.Tag, error) {
-	ret, sort, err := filterData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
+	ret, err := filterData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
 		return mapToStruct[entity.Tag](row.Fields)
+	}, func(sort string, a, b entity.Tag) int {
+		switch sort {
+		case "name":
+			return strings.Compare(a.Name, b.Name)
+		default:
+			panic(fmt.Sprintf("unknown sort '%s' for 'tag' testdata", sort))
+		}
 	}, options...)
 	if err != nil {
 		return nil, err
-	}
-
-	if sort != "" {
-		slices.SortFunc(ret, func(a, b entity.Tag) int {
-			switch sort {
-			case "name":
-				return strings.Compare(a.Name, b.Name)
-			default:
-				panic(fmt.Sprintf("unknown sort '%s' for 'tag' testdata", sort))
-			}
-		})
 	}
 	return ret, nil
 }
