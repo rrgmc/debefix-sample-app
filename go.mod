@@ -3,6 +3,7 @@ module github.com/rrgmc/debefix-sample-app
 go 1.21
 
 require (
+	github.com/docker/docker v24.0.6+incompatible
 	github.com/docker/go-connections v0.4.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/google/uuid v1.3.1
@@ -10,8 +11,8 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/rrgmc/debefix v0.10.1
-	github.com/rrgmc/debefix/filter v0.10.1
+	github.com/rrgmc/debefix v0.11.0
+	github.com/rrgmc/debefix/filter v0.11.0
 	github.com/stephenafamo/bob v0.22.0
 	github.com/stephenafamo/scan v0.4.2
 	github.com/stretchr/testify v1.8.4
@@ -35,7 +36,6 @@ require (
 	github.com/cpuguy83/dockercfg v0.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
-	github.com/docker/docker v24.0.6+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
