@@ -74,7 +74,9 @@ func WithSort(sort string) TestDataOption {
 }
 
 func parseOptions(options ...TestDataOption) testDataOptions {
-	var optns testDataOptions
+	optns := testDataOptions{
+		resolveTags: []string{"base", "tests.base"},
+	}
 	for _, opt := range options {
 		opt(&optns)
 	}

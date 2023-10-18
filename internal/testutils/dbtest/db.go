@@ -34,7 +34,9 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, resolvedData *
 		return nil, nil, nil, stderrors.New("test name is required")
 	}
 
-	var optns dbForTestOptions
+	optns := dbForTestOptions{
+		fixturesTags: []string{"base", "tests.base"},
+	}
 	for _, opt := range opts {
 		opt(&optns)
 	}
