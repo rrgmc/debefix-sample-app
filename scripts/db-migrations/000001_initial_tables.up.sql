@@ -8,7 +8,7 @@ CREATE INDEX tags_name_idx ON tags(name);
 
 CREATE TABLE countries (
     country_id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL
 );
 CREATE INDEX countries_name_idx ON tags(name);
 
@@ -16,6 +16,7 @@ CREATE TABLE users (
     user_id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(200) NOT NULL,
+    country_id UUID NOT NULL CONSTRAINT users_countries_fk REFERENCES countries(country_id),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );

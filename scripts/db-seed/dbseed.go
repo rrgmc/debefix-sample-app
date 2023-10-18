@@ -15,7 +15,7 @@ import (
 func main() {
 	err := run()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error seeding data: %s", err)
+		_, _ = fmt.Fprintf(os.Stderr, "error seeding data: %s\n", err)
 		os.Exit(1)
 	}
 }
@@ -37,6 +37,6 @@ func run() error {
 		return errors.Errorf("error connecting to database: %s", err)
 	}
 
-	_, err = fixtures.DBSeedFixtures(db)
+	_, err = fixtures.DBSeedFixtures(db, fixtures.WithTags([]string{"base", "seed"}))
 	return err
 }
