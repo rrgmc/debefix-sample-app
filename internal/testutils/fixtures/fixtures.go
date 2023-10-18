@@ -23,7 +23,8 @@ func init() {
 	}
 
 	fixtures, err = debefix.Load(
-		debefix.NewDirectoryFileProvider(curDir, debefix.WithDirectoryAsTag()),
+		debefix.NewDirectoryFileProvider(curDir,
+			debefix.WithDirectoryTagFunc(debefix.StripNumberPunctuationPrefixDirectoryTagFunc)),
 		debefix.WithLoadTaggedValueParser(
 			debefix.ValueParserUUID(),
 		))
@@ -34,7 +35,7 @@ func init() {
 
 func ResolveFixtures(options ...ResolveFixtureOption) (*debefix.Data, error) {
 	optns := &resolveFixturesOptions{
-		tags: []string{"01-base"},
+		tags: []string{"base"},
 	}
 	for _, opt := range options {
 		opt(optns)
@@ -78,8 +79,8 @@ func WithResolvedData(data *debefix.Data) ResolveFixtureOption {
 func WithTags(tags []string) ResolveFixtureOption {
 	return func(o *resolveFixturesOptions) {
 		o.tags = nil
-		if !slices.Contains(tags, "01-base") {
-			o.tags = append(o.tags, "01-base")
+		if !slices.Contains(tags, "base") {
+			o.tags = append(o.tags, "base")
 		}
 		o.tags = append(o.tags, tags...)
 	}

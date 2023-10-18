@@ -11,7 +11,7 @@ import (
 
 func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data, error) {
 	optns := &resolveFixturesOptions{
-		tags: []string{"01-base"},
+		tags: []string{"base"},
 	}
 	for _, opt := range options {
 		opt(optns)
