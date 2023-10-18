@@ -55,8 +55,8 @@ func TestDBTagStorageGetTagByID(t *testing.T) {
 				Rows: debefix.Rows{
 					{
 						Config: debefix.RowConfig{
-							RefID: "test.TestDBTagStorageGetTagByID",
-							Tags:  []string{"base"},
+							RefID:      "test.TestDBTagStorageGetTagByID",
+							IgnoreTags: true,
 						},
 						Fields: map[string]any{
 							"tag_id":     &debefix.ValueGenerated{},
