@@ -6,6 +6,12 @@ CREATE TABLE tags (
 );
 CREATE INDEX tags_name_idx ON tags(name);
 
+CREATE TABLE countries (
+    country_id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+);
+CREATE INDEX countries_name_idx ON tags(name);
+
 CREATE TABLE users (
     user_id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
