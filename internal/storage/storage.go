@@ -19,3 +19,11 @@ type TagStorage interface {
 	UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag entity.Tag) (entity.Tag, error)
 	DeleteTagByID(ctx context.Context, tagID uuid.UUID) error
 }
+
+type UserStorage interface {
+	GetUserList(ctx context.Context, filter entity.UserFilter) ([]entity.User, error)
+	GetUserByID(ctx context.Context, userID uuid.UUID) (entity.User, error)
+	AddUser(ctx context.Context, user entity.User) (entity.User, error)
+	UpdateUserByID(ctx context.Context, userID uuid.UUID, user entity.User) (entity.User, error)
+	DeleteUserByID(ctx context.Context, userID uuid.UUID) error
+}
