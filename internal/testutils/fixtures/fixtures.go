@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 )
 
 var (
@@ -34,12 +34,11 @@ func init() {
 }
 
 func ResolveFixtures(options ...ResolveFixtureOption) (*debefix.Data, error) {
-	optns := &resolveFixturesOptions{
-		tags: []string{"base"},
-	}
+	var optns resolveFixturesOptions
 	for _, opt := range options {
-		opt(optns)
+		opt(&optns)
 	}
+	optns.tags = utils.EnsureSliceContains(optns.tags, []string{"base"})
 
 	sourceData := fixtures
 	if optns.resolvedData != nil {
@@ -78,11 +77,7 @@ func WithResolvedData(data *debefix.Data) ResolveFixtureOption {
 
 func WithTags(tags []string) ResolveFixtureOption {
 	return func(o *resolveFixturesOptions) {
-		o.tags = nil
-		if !slices.Contains(tags, "base") {
-			o.tags = append(o.tags, "base")
-		}
-		o.tags = append(o.tags, tags...)
+		o.tags = tags
 	}
 }
 

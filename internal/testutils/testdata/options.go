@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"github.com/rrgmc/debefix"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"github.com/rrgmc/debefix/filter"
 )
 
@@ -74,11 +75,10 @@ func WithSort(sort string) TestDataOption {
 }
 
 func parseOptions(options ...TestDataOption) testDataOptions {
-	optns := testDataOptions{
-		resolveTags: []string{"base", "tests.base"},
-	}
+	var optns testDataOptions
 	for _, opt := range options {
 		opt(&optns)
 	}
+	optns.resolveTags = utils.EnsureSliceContains(optns.resolveTags, []string{"base", "tests.base"})
 	return optns
 }
