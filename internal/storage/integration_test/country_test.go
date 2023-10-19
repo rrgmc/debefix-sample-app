@@ -40,6 +40,7 @@ func TestDBCountryStorageGetCountrys(t *testing.T) {
 			testdata.WithFilterAll(true),
 			testdata.WithSort("name"),
 			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
+			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 		assert.Assert(t, is.Len(expectedCountrys, 2))

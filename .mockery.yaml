@@ -8,3 +8,4 @@ packages:
     interfaces:
       TagStorage:
       CountryStorage:
+      UserStorage:

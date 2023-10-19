@@ -12,6 +12,14 @@ type CountryStorage interface {
 	GetCountryByID(ctx context.Context, CountryID uuid.UUID) (entity.Country, error)
 }
 
+type PostStorage interface {
+	GetPostList(ctx context.Context, filter entity.PostFilter) ([]entity.Post, error)
+	GetPostByID(ctx context.Context, postID uuid.UUID) (entity.Post, error)
+	AddPost(ctx context.Context, post entity.Post) (entity.Post, error)
+	UpdatePostByID(ctx context.Context, postID uuid.UUID, post entity.Post) (entity.Post, error)
+	DeletePostByID(ctx context.Context, postID uuid.UUID) error
+}
+
 type TagStorage interface {
 	GetTagList(ctx context.Context, filter entity.TagFilter) ([]entity.Tag, error)
 	GetTagByID(ctx context.Context, tagID uuid.UUID) (entity.Tag, error)
