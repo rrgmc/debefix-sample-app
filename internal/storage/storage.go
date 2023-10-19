@@ -7,6 +7,14 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/entity"
 )
 
+type CommentStorage interface {
+	GetCommentList(ctx context.Context, filter entity.CommentFilter) ([]entity.Comment, error)
+	GetCommentByID(ctx context.Context, commentID uuid.UUID) (entity.Comment, error)
+	AddComment(ctx context.Context, comment entity.Comment) (entity.Comment, error)
+	UpdateCommentByID(ctx context.Context, commentID uuid.UUID, comment entity.Comment) (entity.Comment, error)
+	DeleteCommentByID(ctx context.Context, commentID uuid.UUID) error
+}
+
 type CountryStorage interface {
 	GetCountryList(ctx context.Context, filter entity.CountryFilter) ([]entity.Country, error)
 	GetCountryByID(ctx context.Context, CountryID uuid.UUID) (entity.Country, error)
