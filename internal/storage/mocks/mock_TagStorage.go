@@ -173,16 +173,16 @@ func (_c *TagStorage_GetTagByID_Call) RunAndReturn(run func(context.Context, uui
 	return _c
 }
 
-// GetTags provides a mock function with given fields: ctx, filter
-func (_m *TagStorage) GetTags(ctx context.Context, filter entity.TagsFilter) ([]entity.Tag, error) {
+// GetTagList provides a mock function with given fields: ctx, filter
+func (_m *TagStorage) GetTagList(ctx context.Context, filter entity.TagFilter) ([]entity.Tag, error) {
 	ret := _m.Called(ctx, filter)
 
 	var r0 []entity.Tag
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, entity.TagsFilter) ([]entity.Tag, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, entity.TagFilter) ([]entity.Tag, error)); ok {
 		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, entity.TagsFilter) []entity.Tag); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, entity.TagFilter) []entity.Tag); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -190,7 +190,7 @@ func (_m *TagStorage) GetTags(ctx context.Context, filter entity.TagsFilter) ([]
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, entity.TagsFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.TagFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)
@@ -199,31 +199,31 @@ func (_m *TagStorage) GetTags(ctx context.Context, filter entity.TagsFilter) ([]
 	return r0, r1
 }
 
-// TagStorage_GetTags_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTags'
-type TagStorage_GetTags_Call struct {
+// TagStorage_GetTagList_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTagList'
+type TagStorage_GetTagList_Call struct {
 	*mock.Call
 }
 
-// GetTags is a helper method to define mock.On call
+// GetTagList is a helper method to define mock.On call
 //   - ctx context.Context
-//   - filter entity.TagsFilter
-func (_e *TagStorage_Expecter) GetTags(ctx interface{}, filter interface{}) *TagStorage_GetTags_Call {
-	return &TagStorage_GetTags_Call{Call: _e.mock.On("GetTags", ctx, filter)}
+//   - filter entity.TagFilter
+func (_e *TagStorage_Expecter) GetTagList(ctx interface{}, filter interface{}) *TagStorage_GetTagList_Call {
+	return &TagStorage_GetTagList_Call{Call: _e.mock.On("GetTagList", ctx, filter)}
 }
 
-func (_c *TagStorage_GetTags_Call) Run(run func(ctx context.Context, filter entity.TagsFilter)) *TagStorage_GetTags_Call {
+func (_c *TagStorage_GetTagList_Call) Run(run func(ctx context.Context, filter entity.TagFilter)) *TagStorage_GetTagList_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(entity.TagsFilter))
+		run(args[0].(context.Context), args[1].(entity.TagFilter))
 	})
 	return _c
 }
 
-func (_c *TagStorage_GetTags_Call) Return(_a0 []entity.Tag, _a1 error) *TagStorage_GetTags_Call {
+func (_c *TagStorage_GetTagList_Call) Return(_a0 []entity.Tag, _a1 error) *TagStorage_GetTagList_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *TagStorage_GetTags_Call) RunAndReturn(run func(context.Context, entity.TagsFilter) ([]entity.Tag, error)) *TagStorage_GetTags_Call {
+func (_c *TagStorage_GetTagList_Call) RunAndReturn(run func(context.Context, entity.TagFilter) ([]entity.Tag, error)) *TagStorage_GetTagList_Call {
 	_c.Call.Return(run)
 	return _c
 }

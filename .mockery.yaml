@@ -7,3 +7,4 @@ packages:
   github.com/rrgmc/debefix-sample-app/internal/storage:
     interfaces:
       TagStorage:
+      CountryStorage:

@@ -8,7 +8,7 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/entity"
 )
 
-func GetTags(options ...TestDataOption) ([]entity.Tag, error) {
+func GetTagList(options ...TestDataOption) ([]entity.Tag, error) {
 	ret, err := filterData[entity.Tag]("tags", func(row debefix.Row) (entity.Tag, error) {
 		return mapToStruct[entity.Tag](row.Fields)
 	}, func(sort string, a, b entity.Tag) int {
@@ -26,7 +26,7 @@ func GetTags(options ...TestDataOption) ([]entity.Tag, error) {
 }
 
 func GetTag(options ...TestDataOption) (entity.Tag, error) {
-	ret, err := GetTags(options...)
+	ret, err := GetTagList(options...)
 	if err != nil {
 		return entity.Tag{}, err
 	}

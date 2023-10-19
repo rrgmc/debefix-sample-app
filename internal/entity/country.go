@@ -1,23 +1,19 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
 // data
 
-type Tag struct {
-	TagID     uuid.UUID
+type Country struct {
+	CountryID uuid.UUID
 	Name      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
 }
 
 // helpers
 
-type TagFilter struct {
+type CountryFilter struct {
 	Offset int
 	Limit  int
 }
