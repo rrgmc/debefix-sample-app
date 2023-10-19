@@ -5,31 +5,24 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/georgysavva/scany/v2/sqlscan"
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/util"
-	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"
 	"github.com/stephenafamo/bob/dialect/psql/im"
 	"github.com/stephenafamo/bob/dialect/psql/sm"
 	"github.com/stephenafamo/bob/dialect/psql/um"
-	"github.com/stephenafamo/scan"
 )
 
 type postStorage struct {
-	db         *sql.DB
-	q          scan.Queryer
-	postMapper scan.Mapper[entity.Post]
+	db *sql.DB
 }
 
 func NewPostStorage(db *sql.DB) PostStorage {
-	postsMapper := scan.StructMapper[entity.Post]()
-
 	return &postStorage{
-		db:         db,
-		q:          bob.NewQueryer(db),
-		postMapper: postsMapper,
+		db: db,
 	}
 }
 
@@ -77,7 +70,8 @@ func (t postStorage) GetPostList(ctx context.Context, filter entity.PostFilter) 
 		return nil, err
 	}
 
-	list, err := scan.All(ctx, t.q, t.postMapper, queryStr, args...)
+	var list []entity.Post
+	err = sqlscan.Select(ctx, t.db, &list, queryStr, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +91,8 @@ func (t postStorage) GetPostByID(ctx context.Context, postID uuid.UUID) (entity.
 		return entity.Post{}, err
 	}
 
-	item, err := scan.One(ctx, t.q, t.postMapper, queryStr, args...)
+	var item entity.Post
+	err = sqlscan.Get(ctx, t.db, &item, queryStr, args...)
 	if err != nil {
 		return entity.Post{}, err
 	}
@@ -117,7 +112,8 @@ func (t postStorage) AddPost(ctx context.Context, post entity.Post) (entity.Post
 		return entity.Post{}, err
 	}
 
-	item, err := scan.One(ctx, t.q, t.postMapper, queryStr, args...)
+	var item entity.Post
+	err = sqlscan.Get(ctx, t.db, &item, queryStr, args...)
 	if err != nil {
 		return entity.Post{}, err
 	}
@@ -140,7 +136,8 @@ func (t postStorage) UpdatePostByID(ctx context.Context, postID uuid.UUID, post 
 		return entity.Post{}, err
 	}
 
-	item, err := scan.One(ctx, t.q, t.postMapper, queryStr, args...)
+	var item entity.Post
+	err = sqlscan.Get(ctx, t.db, &item, queryStr, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entity.Post{}, util.ErrResourceNotFound
