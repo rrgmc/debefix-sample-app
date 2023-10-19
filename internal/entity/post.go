@@ -23,5 +23,5 @@ type Post struct {
 type PostFilter struct {
 	Offset int
 	Limit  int
-	Tags   []uuid.UUID
+	UserID *uuid.UUID
 }

@@ -46,6 +46,18 @@ func (t commentStorage) GetCommentList(ctx context.Context, filter entity.Commen
 		sm.Offset(filter.Offset),
 	)
 
+	if filter.PostID != nil {
+		query.Apply(
+			sm.Where(psql.Raw(`d.post_id = ?`, psql.Arg(*filter.PostID))),
+		)
+	}
+
+	if filter.UserID != nil {
+		query.Apply(
+			sm.Where(psql.Raw(`d.user_id = ?`, psql.Arg(*filter.UserID))),
+		)
+	}
+
 	queryStr, args, err := query.Build()
 	if err != nil {
 		return nil, err

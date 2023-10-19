@@ -46,6 +46,12 @@ func (t postStorage) GetPostList(ctx context.Context, filter entity.PostFilter) 
 		sm.Offset(filter.Offset),
 	)
 
+	if filter.UserID != nil {
+		query.Apply(
+			sm.Where(psql.Raw(`d.user_id = ?`, psql.Arg(*filter.UserID))),
+		)
+	}
+
 	queryStr, args, err := query.Build()
 	if err != nil {
 		return nil, err

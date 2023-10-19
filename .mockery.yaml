@@ -9,3 +9,5 @@ packages:
       TagStorage:
       CountryStorage:
       UserStorage:
+      PostStorage:
+      CommentStorage:

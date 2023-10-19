@@ -22,6 +22,6 @@ type Comment struct {
 type CommentFilter struct {
 	Offset int
 	Limit  int
-	PostID uuid.UUID
+	PostID *uuid.UUID
 	UserID *uuid.UUID
 }
