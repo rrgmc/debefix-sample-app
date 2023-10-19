@@ -38,8 +38,28 @@ func getDefaultPostColumns() []any {
 }
 
 func (t postStorage) GetPostList(ctx context.Context, filter entity.PostFilter) ([]entity.Post, error) {
+	/*
+		select p.post_id, p.title,
+		 	(select pt.tag_id from posts_tags pt where p.post_id = pt.post_id limit 1) as first_tag
+		from posts p
+	*/
+
 	query := psql.Select(
 		sm.Columns(getColumnsWithAlias(getDefaultPostColumns(), "d")...),
+		// sm.Columns(
+		// 	psql.Group(
+		// 		psql.Select(
+		// 			sm.Columns(`array_agg(row_to_json(ptt))`),
+		// 			sm.From(
+		// 				psql.Select(
+		// 					sm.Columns("t.*"),
+		// 					sm.From("posts_tags pt"),
+		// 					sm.InnerJoin("tags t").On(psql.Raw(`d.post_id = pt.post_id and pt.tag_id = t.tag_id`)),
+		// 				),
+		// 			).As("ptt"),
+		// 		),
+		// 	).As("tags"),
+		// ),
 		sm.From("posts").As("d"),
 		sm.OrderBy(`d.title`),
 		sm.Limit(filter.Limit),

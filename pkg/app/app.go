@@ -37,11 +37,5 @@ func (a *App) Run(ctx context.Context) error {
 		return errors.Errorf("error connecting to database: %s", err)
 	}
 
-	// db, err := sql.Open("pgx", a.config.Storage.DatabaseURL)
-	// if err != nil {
-	// 	return fmt.Errorf("error connecting to database: %w\n", err)
-	// }
-	// defer db.Close()
-
 	return nil
 }
