@@ -3,9 +3,11 @@ package storage
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/entity"
+	"github.com/rrgmc/debefix-sample-app/internal/util"
 	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"
@@ -112,6 +114,9 @@ func (t tagStorage) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag enti
 
 	item, err := scan.One(ctx, t.q, t.tagsMapper, queryStr, args...)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return entity.Tag{}, util.ErrResourceNotFound
+		}
 		return entity.Tag{}, err
 	}
 
@@ -129,6 +134,18 @@ func (t tagStorage) DeleteTagByID(ctx context.Context, tagID uuid.UUID) error {
 		return err
 	}
 
-	_, err = t.db.ExecContext(ctx, queryStr, args...)
+	result, err := t.db.ExecContext(ctx, queryStr, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected != 1 {
+		return util.ErrResourceNotFound
+	}
 	return err
 }

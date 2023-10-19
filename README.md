@@ -15,7 +15,8 @@ storage separations.
 - `scripts/db-seed`: database seeding using `debefix` fixtures.
 - `scripts/local-deps`: `docker-compose` scripts to run the local dependencies (PostgreSQL).
 - `internal/testutils/fixtures`: fixtures for tests and seeding using `debefix`.
-- `internal/testutils/dbtest`: `testcontainers-go` method to start a test PostgreSQL server, run the migrations, and apply the fixtures.
+- `internal/testutils/dbtest`: `testcontainers-go` method to start a test PostgreSQL server, run the migrations, and 
+  apply the fixtures. The database is created in a `tmpfs` to be faster and avoid disk usage.
 - `internal/testutils/testdata`: extract test data objects from fixtures, with a simple query filter to mimic some SQL operations.
 - `internal/storage`: storage layer, the only part that has database access.
 - `internal/storage/integration_test`: storage layer tests that uses a real database.
