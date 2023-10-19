@@ -13,6 +13,10 @@ posts:
           rows:
             - post_id: !dbfexpr "parent:post_id"
               tag_id: !dbfexpr "refid:tags:go:tag_id"
+            - post_id: !dbfexpr "parent:post_id"
+              tag_id: !dbfexpr "refid:tags:javascript:tag_id"
+            - post_id: !dbfexpr "parent:post_id"
+              tag_id: !dbfexpr "refid:tags:cpp:tag_id"
         comments:
           rows:
             - comment_id: !dbfexpr "generated"
