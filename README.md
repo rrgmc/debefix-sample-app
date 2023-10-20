@@ -14,13 +14,13 @@ storage separations.
 - `scripts/db-migrations`: database migrations using `golang-migrate`.
 - `scripts/db-seed`: database seeding using `debefix` fixtures.
 - `scripts/local-deps`: `docker-compose` scripts to run the local dependencies (PostgreSQL).
-- `internal/testutils/fixtures`: fixtures for tests and seeding using `debefix`.
-- `internal/testutils/dbtest`: `testcontainers-go` method to start a test PostgreSQL server, run the migrations, and 
+- `internal/infrastructure/database/testutils/fixtures`: fixtures for tests and seeding using `debefix`.
+- `internal/infrastructure/database/testutils/dbtest`: `testcontainers-go` method to start a test PostgreSQL server, run the migrations, and 
   apply the fixtures. The database is created in a `tmpfs` to be faster and avoid disk usage.
-- `internal/testutils/testdata`: extract test data objects from fixtures, with a simple query filter to mimic some SQL operations.
-- `internal/storage`: storage layer, the only part that has database access.
-- `internal/storage/integration_test`: storage layer tests that uses a real database.
-- `internal/entity`: entities used by `storage` and `service` layers.
+- `internal/infrastructure/database/testutils/testdata`: extract test data objects from fixtures, with a simple query filter to mimic some SQL operations.
+- `internal/infrastructure/database`: storage layer, the only part that has database access.
+- `internal/infrastructure/database/integration_test`: storage layer tests that uses a real database.
+- `internal/domain/model`: entities used by `storage` and `service` layers.
 
 ## Task rules
 
@@ -36,7 +36,7 @@ storage separations.
 
 ## Fixtures
 
-The `debefix` fixtures are in the `internal/testutils/fixtures` folder. The directories are numbered because
+The `debefix` fixtures are in the `internal/infrastructure/database/testutils/fixtures` folder. The directories are numbered because
 `debefix` loads them in order, and the order matters. Each folder is assigned a tag by removing the number and
 dash prefixes, and for inner directories concatenating all folders with a dot.
 
