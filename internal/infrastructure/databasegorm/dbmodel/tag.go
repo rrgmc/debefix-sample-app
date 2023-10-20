@@ -34,3 +34,12 @@ func TagListToEntity(list []Tag) []model.Tag {
 	}
 	return ret
 }
+
+func TagFromEntity(item model.Tag) Tag {
+	return Tag{
+		TagID:     item.TagID,
+		Name:      item.Name,
+		CreatedAt: item.CreatedAt,
+		UpdatedAt: item.UpdatedAt,
+	}
+}

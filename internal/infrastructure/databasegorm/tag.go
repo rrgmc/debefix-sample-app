@@ -2,12 +2,15 @@ package databasegorm
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/databasegorm/dbmodel"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type tagRepository struct {
@@ -45,13 +48,49 @@ func (t tagRepository) GetTagByID(ctx context.Context, tagID uuid.UUID) (model.T
 }
 
 func (t tagRepository) AddTag(ctx context.Context, tag model.Tag) (model.Tag, error) {
-	return model.Tag{}, nil
+	item := dbmodel.TagFromEntity(tag)
+	item.CreatedAt = time.Now()
+	item.UpdatedAt = time.Now()
+
+	result := t.db.
+		Clauses(clause.Returning{}).
+		Select("name", "created_at", "updated_at").
+		Create(&item)
+	if result.Error != nil {
+		return model.Tag{}, result.Error
+	}
+
+	return item.ToEntity(), nil
 }
 
 func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag model.Tag) (model.Tag, error) {
-	return model.Tag{}, nil
+	item := dbmodel.TagFromEntity(tag)
+	item.UpdatedAt = time.Now()
+
+	result := t.db.
+		Clauses(clause.Returning{}).
+		Select("name", "created_at", "updated_at").
+		Where("tag_id = ?", tagID).
+		Updates(&item)
+	if result.Error != nil {
+		return model.Tag{}, result.Error
+	}
+	if result.RowsAffected != 1 {
+		return model.Tag{}, utils.ErrResourceNotFound
+	}
+
+	return item.ToEntity(), nil
+
 }
 
 func (t tagRepository) DeleteTagByID(ctx context.Context, tagID uuid.UUID) error {
+	result := t.db.
+		Delete(dbmodel.Tag{}, tagID)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected != 1 {
+		return utils.ErrResourceNotFound
+	}
 	return nil
 }
