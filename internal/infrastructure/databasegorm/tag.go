@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
-	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/databasegorm/dbmodel"
+	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/databasegorm/internal/dbmodel"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
