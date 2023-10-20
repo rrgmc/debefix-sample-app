@@ -37,7 +37,7 @@ func testDBTagRepository(t *testing.T, testFn func(*gorm.DB, *debefix.Data, repo
 	testFn(gormDB, resolvedData, ts)
 }
 
-func TestDBTagRepositoryGetTags(t *testing.T) {
+func TestDBTagRepositoryGetTagList(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
 		filter := model.TagFilter{
 			Offset: 1,

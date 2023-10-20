@@ -26,3 +26,11 @@ func (t Tag) ToEntity() model.Tag {
 		UpdatedAt: t.UpdatedAt,
 	}
 }
+
+func TagListToEntity(list []Tag) []model.Tag {
+	var ret []model.Tag
+	for _, item := range list {
+		ret = append(ret, item.ToEntity())
+	}
+	return ret
+}
