@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
-	"github.com/rrgmc/debefix-sample-app/internal/testutils/fixtures"
+	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/fixtures"
 	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
 
