@@ -27,7 +27,6 @@ func NewTagRepository(db *gorm.DB) repository.TagRepository {
 func (t tagRepository) GetTagList(ctx context.Context, filter model.TagFilter) ([]model.Tag, error) {
 	var list []dbmodel.Tag
 	result := t.db.WithContext(ctx).
-		Where("").
 		Order("name").
 		Offset(filter.Offset).
 		Limit(filter.Limit).

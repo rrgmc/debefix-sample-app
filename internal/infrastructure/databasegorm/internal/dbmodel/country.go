@@ -16,10 +16,10 @@ func (Country) TableName() string {
 	return "countries"
 }
 
-func (t Country) ToEntity() model.Country {
+func (m Country) ToEntity() model.Country {
 	return model.Country{
-		CountryID: t.CountryID,
-		Name:      t.Name,
+		CountryID: m.CountryID,
+		Name:      m.Name,
 	}
 }
 
@@ -31,9 +31,9 @@ func CountryListToEntity(list []Country) []model.Country {
 	return ret
 }
 
-func CountryFromEntity(item model.Country) Country {
+func CountryFromEntity(m model.Country) Country {
 	return Country{
-		CountryID: item.CountryID,
-		Name:      item.Name,
+		CountryID: m.CountryID,
+		Name:      m.Name,
 	}
 }

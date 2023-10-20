@@ -18,12 +18,12 @@ func (Tag) TableName() string {
 	return "tags"
 }
 
-func (t Tag) ToEntity() model.Tag {
+func (m Tag) ToEntity() model.Tag {
 	return model.Tag{
-		TagID:     t.TagID,
-		Name:      t.Name,
-		CreatedAt: t.CreatedAt,
-		UpdatedAt: t.UpdatedAt,
+		TagID:     m.TagID,
+		Name:      m.Name,
+		CreatedAt: m.CreatedAt,
+		UpdatedAt: m.UpdatedAt,
 	}
 }
 
@@ -35,11 +35,11 @@ func TagListToEntity(list []Tag) []model.Tag {
 	return ret
 }
 
-func TagFromEntity(item model.Tag) Tag {
+func TagFromEntity(m model.Tag) Tag {
 	return Tag{
-		TagID:     item.TagID,
-		Name:      item.Name,
-		CreatedAt: item.CreatedAt,
-		UpdatedAt: item.UpdatedAt,
+		TagID:     m.TagID,
+		Name:      m.Name,
+		CreatedAt: m.CreatedAt,
+		UpdatedAt: m.UpdatedAt,
 	}
 }

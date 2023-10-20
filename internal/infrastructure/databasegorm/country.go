@@ -25,7 +25,6 @@ func NewCountryRepository(db *gorm.DB) repository.CountryRepository {
 func (t countryRepository) GetCountryList(ctx context.Context, filter model.CountryFilter) ([]model.Country, error) {
 	var list []dbmodel.Country
 	result := t.db.WithContext(ctx).
-		Where("").
 		Order("name").
 		Offset(filter.Offset).
 		Limit(filter.Limit).

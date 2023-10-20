@@ -27,7 +27,6 @@ func NewUserRepository(db *gorm.DB) repository.UserRepository {
 func (t userRepository) GetUserList(ctx context.Context, filter model.UserFilter) ([]model.User, error) {
 	var list []dbmodel.User
 	result := t.db.WithContext(ctx).
-		Where("").
 		Order("name").
 		Offset(filter.Offset).
 		Limit(filter.Limit).
