@@ -30,7 +30,9 @@ func testDBTagRepository(t *testing.T, testFn func(*gorm.DB, *debefix.Data, repo
 
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		// Logger: logger.Default.LogMode(logger.Info),
+	})
 
 	ts := databasegorm.NewTagRepository(gormDB)
 
