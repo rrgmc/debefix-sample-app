@@ -14,9 +14,11 @@ type Post struct {
 	Title     string
 	Text      string
 	UserID    uuid.UUID
-	Tags      []Tag `gorm:"many2many:posts_tags;joinForeignKey:post_id"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	User *User `gorm:"references:UserID"`
+	Tags []Tag `gorm:"many2many:posts_tags;foreignKey:PostID;joinForeignKey:PostID;References:TagID;joinReferences:TagID"`
 }
 
 func (Post) TableName() string {

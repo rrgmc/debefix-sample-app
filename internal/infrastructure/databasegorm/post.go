@@ -40,7 +40,6 @@ func (t postRepository) GetPostList(ctx context.Context, filter model.PostFilter
 func (t postRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (model.Post, error) {
 	var item dbmodel.Post
 	result := t.db.WithContext(ctx).
-		// Model(dbmodel.Post{}).
 		Preload("Tags").
 		First(&item, postID)
 	if result.Error != nil {

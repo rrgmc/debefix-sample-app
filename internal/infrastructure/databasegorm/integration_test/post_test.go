@@ -70,7 +70,6 @@ func TestDBPostRepositoryGetPostByID(t *testing.T) {
 	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
 		expectedPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
-			// testdata.WithFilterRefIDs([]string{"post_1"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
@@ -80,7 +79,6 @@ func TestDBPostRepositoryGetPostByID(t *testing.T) {
 
 		assert.DeepEqual(t, expectedPost, returnedPost,
 			opt.TimeWithThreshold(time.Hour))
-		// })
 	}, dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
 }
 
