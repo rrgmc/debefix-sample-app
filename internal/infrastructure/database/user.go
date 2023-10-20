@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
-	"github.com/rrgmc/debefix-sample-app/internal/util"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"
@@ -118,7 +118,7 @@ func (t userRepository) UpdateUserByID(ctx context.Context, userID uuid.UUID, us
 	item, err := scan.One(ctx, t.q, t.userMapper, queryStr, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return model.User{}, util.ErrResourceNotFound
+			return model.User{}, utils.ErrResourceNotFound
 		}
 		return model.User{}, err
 	}
@@ -148,7 +148,7 @@ func (t userRepository) DeleteUserByID(ctx context.Context, userID uuid.UUID) er
 	}
 
 	if rowsAffected != 1 {
-		return util.ErrResourceNotFound
+		return utils.ErrResourceNotFound
 	}
 	return err
 }

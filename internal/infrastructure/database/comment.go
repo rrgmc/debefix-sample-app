@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
-	"github.com/rrgmc/debefix-sample-app/internal/util"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"
@@ -130,7 +130,7 @@ func (t commentRepository) UpdateCommentByID(ctx context.Context, commentID uuid
 	item, err := scan.One(ctx, t.q, t.commentMapper, queryStr, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return model.Comment{}, util.ErrResourceNotFound
+			return model.Comment{}, utils.ErrResourceNotFound
 		}
 		return model.Comment{}, err
 	}
@@ -160,7 +160,7 @@ func (t commentRepository) DeleteCommentByID(ctx context.Context, commentID uuid
 	}
 
 	if rowsAffected != 1 {
-		return util.ErrResourceNotFound
+		return utils.ErrResourceNotFound
 	}
 	return err
 }

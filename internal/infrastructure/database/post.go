@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
-	"github.com/rrgmc/debefix-sample-app/internal/util"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"
 	"github.com/stephenafamo/bob/dialect/psql/im"
@@ -123,7 +123,7 @@ func (t postRepository) UpdatePostByID(ctx context.Context, postID uuid.UUID, po
 	err = sqlscan.Get(ctx, t.db, &item, queryStr, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return model.Post{}, util.ErrResourceNotFound
+			return model.Post{}, utils.ErrResourceNotFound
 		}
 		return model.Post{}, err
 	}
@@ -153,7 +153,7 @@ func (t postRepository) DeletePostByID(ctx context.Context, postID uuid.UUID) er
 	}
 
 	if rowsAffected != 1 {
-		return util.ErrResourceNotFound
+		return utils.ErrResourceNotFound
 	}
 	return err
 }

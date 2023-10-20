@@ -15,7 +15,7 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
-	"github.com/rrgmc/debefix-sample-app/internal/util"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 	"gotest.tools/v3/assert/opt"
@@ -136,7 +136,7 @@ func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
 		}
 
 		_, err = ts.UpdatePostByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedPost)
-		assert.ErrorIs(t, err, util.ErrResourceNotFound)
+		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
 	})
 }
 
@@ -156,7 +156,7 @@ func TestDBPostRepositoryDeletePostByID(t *testing.T) {
 func TestDBPostRepositoryDeletePostByIDNotFound(t *testing.T) {
 	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
 		err := ts.DeletePostByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
-		assert.ErrorIs(t, err, util.ErrResourceNotFound)
+		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
 	})
 }
 

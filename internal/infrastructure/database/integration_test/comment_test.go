@@ -16,7 +16,7 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
-	"github.com/rrgmc/debefix-sample-app/internal/util"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 	"gotest.tools/v3/assert/opt"
@@ -150,7 +150,7 @@ func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
 		}
 
 		_, err = ts.UpdateCommentByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedComment)
-		assert.ErrorIs(t, err, util.ErrResourceNotFound)
+		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
 	}, dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
 }
 
@@ -170,7 +170,7 @@ func TestDBCommentRepositoryDeleteCommentByID(t *testing.T) {
 func TestDBCommentRepositoryDeleteCommentByIDNotFound(t *testing.T) {
 	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		err := ts.DeleteCommentByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
-		assert.ErrorIs(t, err, util.ErrResourceNotFound)
+		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
 	})
 }
 

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
-	"github.com/rrgmc/debefix-sample-app/internal/util"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/dm"
@@ -116,7 +116,7 @@ func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag m
 	item, err := scan.One(ctx, t.q, t.tagMapper, queryStr, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return model.Tag{}, util.ErrResourceNotFound
+			return model.Tag{}, utils.ErrResourceNotFound
 		}
 		return model.Tag{}, err
 	}
@@ -146,7 +146,7 @@ func (t tagRepository) DeleteTagByID(ctx context.Context, tagID uuid.UUID) error
 	}
 
 	if rowsAffected != 1 {
-		return util.ErrResourceNotFound
+		return utils.ErrResourceNotFound
 	}
 	return err
 }
