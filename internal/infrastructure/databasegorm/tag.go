@@ -2,6 +2,7 @@ package databasegorm
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -42,6 +43,9 @@ func (t tagRepository) GetTagByID(ctx context.Context, tagID uuid.UUID) (model.T
 	result := t.db.WithContext(ctx).
 		First(&item, tagID)
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return model.Tag{}, utils.ErrResourceNotFound
+		}
 		return model.Tag{}, result.Error
 	}
 	return item.ToEntity(), nil
