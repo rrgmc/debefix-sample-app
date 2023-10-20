@@ -26,7 +26,7 @@ func (t tagRepository) GetTagList(ctx context.Context, filter model.TagFilter) (
 
 func (t tagRepository) GetTagByID(ctx context.Context, tagID uuid.UUID) (model.Tag, error) {
 	var item dbmodel.Tag
-	result := t.db.First(&item, tagID)
+	result := t.db.WithContext(ctx).First(&item, tagID)
 	if result.Error != nil {
 		return model.Tag{}, result.Error
 	}
