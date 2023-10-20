@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
+	"github.com/rrgmc/debefix-sample-app/internal/util"
 )
 
 var (
@@ -38,7 +38,7 @@ func ResolveFixtures(options ...ResolveFixtureOption) (*debefix.Data, error) {
 	for _, opt := range options {
 		opt(&optns)
 	}
-	optns.tags = utils.EnsureSliceContains(optns.tags, []string{"base"})
+	optns.tags = util.EnsureSliceContains(optns.tags, []string{"base"})
 
 	sourceData := fixtures
 	if optns.resolvedData != nil {

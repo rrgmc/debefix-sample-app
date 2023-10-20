@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
+	"github.com/rrgmc/debefix-sample-app/internal/util"
 	sql2 "github.com/rrgmc/debefix/db/sql"
 	"github.com/rrgmc/debefix/db/sql/postgres"
 )
@@ -15,7 +15,7 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 	for _, opt := range options {
 		opt(&optns)
 	}
-	optns.tags = utils.EnsureSliceContains(optns.tags, []string{"base"})
+	optns.tags = util.EnsureSliceContains(optns.tags, []string{"base"})
 
 	sourceData := fixtures
 	if optns.mergeData != nil {

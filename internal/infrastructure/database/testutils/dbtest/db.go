@@ -17,7 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/fixtures"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
+	"github.com/rrgmc/debefix-sample-app/internal/util"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
@@ -39,7 +39,7 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, resolvedData *
 	for _, opt := range opts {
 		opt(&optns)
 	}
-	optns.fixturesTags = utils.EnsureSliceContains(optns.fixturesTags, []string{"base", "tests.base"})
+	optns.fixturesTags = util.EnsureSliceContains(optns.fixturesTags, []string{"base", "tests.base"})
 
 	ctx := context.Background()
 	// container and database
