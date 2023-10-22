@@ -18,6 +18,7 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 	"gotest.tools/v3/assert/opt"
@@ -32,7 +33,7 @@ func testDBPostRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repo
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		// Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	ts := databasegorm.NewPostRepository(gormDB)
@@ -89,10 +90,17 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
+		findTags, err := testdata.GetTagList(
+			testdata.WithFilterRefIDs([]string{"javascript", "go"}),
+			testdata.WithResolvedData(resolvedData),
+		)
+		assert.NilError(t, err)
+
 		newPost := model.Post{
 			Title:  "new title",
 			Text:   "new text",
 			UserID: findUser.UserID,
+			Tags:   findTags,
 		}
 
 		returnedPost, err := ts.AddPost(context.Background(), newPost)

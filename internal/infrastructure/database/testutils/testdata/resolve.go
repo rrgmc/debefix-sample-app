@@ -17,7 +17,7 @@ func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
 	optns := parseOptions(options...)
 
 	var filterSortCompare func(a, b T) int
-	if sortCompare != nil {
+	if optns.sort != "" && sortCompare != nil {
 		filterSortCompare = func(a, b T) int {
 			return sortCompare(optns.sort, a, b)
 		}
