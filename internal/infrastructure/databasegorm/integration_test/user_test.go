@@ -178,6 +178,5 @@ users:
       updated_at: !!timestamp 2023-03-04T12:30:12Z
       _dbfconfig:
         refid: "test.DBUserRepositoryTestMergeData"
-        ignoreTags: true
 `}
 }

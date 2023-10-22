@@ -10,7 +10,9 @@ func MergeData(source *debefix.Data, mergeData []string) (*debefix.Data, error) 
 		return nil, err
 	}
 
-	newData, err = debefix.Load(debefix.NewStringFileProvider(mergeData), debefix.WithLoadInitialData(newData))
+	newData, err = debefix.Load(debefix.NewStringFileProvider(mergeData),
+		debefix.WithLoadInitialData(newData),
+		debefix.WithLoadRowsSetIgnoreTags(true))
 	if err != nil {
 		return nil, err
 	}
