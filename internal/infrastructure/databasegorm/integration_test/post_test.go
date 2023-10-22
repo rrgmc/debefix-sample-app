@@ -176,31 +176,68 @@ func TestDBPostRepositoryDeletePostByIDNotFound(t *testing.T) {
 	})
 }
 
-func dbPostRepositoryTestMergeData() *debefix.Data {
-	return &debefix.Data{
-		Tables: map[string]*debefix.Table{
-			"posts": {
-				Rows: debefix.Rows{
-					{
-						Config: debefix.RowConfig{
-							RefID:      "test.DBPostRepositoryTestMergeData",
-							IgnoreTags: true,
-						},
-						Fields: map[string]any{
-							"post_id": &debefix.ValueGenerated{},
-							"title":   "Test Title",
-							"text":    "Test Text",
-							"user_id": &debefix.ValueRefID{
-								TableID:   "users",
-								RefID:     "janedoe",
-								FieldName: "user_id",
-							},
-							"created_at": time.Now(),
-							"updated_at": time.Now(),
-						},
-					},
-				},
-			},
-		},
-	}
+func dbPostRepositoryTestMergeData() []string {
+	return []string{`
+posts:
+  rows:
+    - post_id: !dbfexpr generated
+      title: "Test Title"
+      text: "Test Text"
+      user_id: !dbfexpr "refid:users:janedoe:user_id"
+      created_at: !!timestamp 2023-03-01T12:30:12Z
+      updated_at: !!timestamp 2023-03-01T12:30:12Z
+      _dbfconfig:
+        refid: "test.DBPostRepositoryTestMergeData"
+        ignoreTags: true
+      _dbfdeps:
+        posts_tags:
+          rows:
+            - post_id: !dbfexpr "parent:post_id"
+              tag_id: !dbfexpr "refid:tags:javascript:tag_id"
+`}
 }
+
+// func dbPostRepositoryTestMergeData() *debefix.Data {
+// 	return &debefix.Data{
+// 		Tables: map[string]*debefix.Table{
+// 			"posts": {
+// 				Rows: debefix.Rows{
+// 					{
+// 						Config: debefix.RowConfig{
+// 							RefID:      "test.DBPostRepositoryTestMergeData",
+// 							IgnoreTags: true,
+// 						},
+// 						Fields: map[string]any{
+// 							"post_id": &debefix.ValueGenerated{},
+// 							"title":   "Test Title",
+// 							"text":    "Test Text",
+// 							"user_id": &debefix.ValueRefID{
+// 								TableID:   "users",
+// 								RefID:     "janedoe",
+// 								FieldName: "user_id",
+// 							},
+// 							"created_at": time.Now(),
+// 							"updated_at": time.Now(),
+// 							"_dbfdeps": map[string]any{
+// 								"post_tags": &debefix.Table{
+// 									Rows: debefix.Rows{
+// 										{
+// 											Fields: map[string]any{
+// 												"post_id": ValuePa,
+// 												"tag_id": debefix.ValueRefID{
+// 													TableID:   "tag",
+// 													RefID:     "javascript",
+// 													FieldName: "tag_id",
+// 												},
+// 											},
+// 										},
+// 									},
+// 								},
+// 							},
+// 						},
+// 					},
+// 				},
+// 			},
+// 		},
+// 	}
+// }

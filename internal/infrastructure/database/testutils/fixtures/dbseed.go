@@ -18,9 +18,9 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 	optns.tags = utils.EnsureSliceContains(optns.tags, []string{"base"})
 
 	sourceData := fixtures
-	if optns.mergeData != nil {
+	if len(optns.mergeData) > 0 {
 		var err error
-		sourceData, err = debefix.MergeData(fixtures, optns.mergeData)
+		sourceData, err = MergeData(sourceData, optns.mergeData)
 		if err != nil {
 			return nil, err
 		}

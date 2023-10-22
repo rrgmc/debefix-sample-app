@@ -63,7 +63,7 @@ func MustResolveFixtures(options ...ResolveFixtureOption) *debefix.Data {
 
 type ResolveFixtureOption func(*resolveFixturesOptions)
 
-func WithMergeData(data *debefix.Data) ResolveFixtureOption {
+func WithMergeData(data []string) ResolveFixtureOption {
 	return func(o *resolveFixturesOptions) {
 		o.mergeData = data
 	}
@@ -88,8 +88,8 @@ func WithOutput(output bool) ResolveFixtureOption {
 }
 
 type resolveFixturesOptions struct {
-	mergeData    *debefix.Data
 	resolvedData *debefix.Data
+	mergeData    []string
 	tags         []string
 	output       bool
 }

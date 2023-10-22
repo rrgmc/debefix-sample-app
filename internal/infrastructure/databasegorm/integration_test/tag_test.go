@@ -141,25 +141,39 @@ func TestDBTagRepositoryDeleteTagByIDNotFound(t *testing.T) {
 	})
 }
 
-func dbTagRepositoryTestMergeData() *debefix.Data {
-	return &debefix.Data{
-		Tables: map[string]*debefix.Table{
-			"tags": {
-				Rows: debefix.Rows{
-					{
-						Config: debefix.RowConfig{
-							RefID:      "test.DBTagRepositoryTestMergeData",
-							IgnoreTags: true,
-						},
-						Fields: map[string]any{
-							"tag_id":     &debefix.ValueGenerated{},
-							"name":       "Test Tag",
-							"created_at": time.Now(),
-							"updated_at": time.Now(),
-						},
-					},
-				},
-			},
-		},
-	}
+func dbTagRepositoryTestMergeData() []string {
+	return []string{`
+tags:
+  rows:
+    - tag_id: !dbfexpr generated
+      name: "Test Tag"
+      created_at: !!timestamp 2023-03-01T12:30:12Z
+      updated_at: !!timestamp 2023-03-01T12:30:12Z
+      _dbfconfig:
+        refid: "test.DBTagRepositoryTestMergeData"
+        ignoreTags: true
+`}
 }
+
+// func dbTagRepositoryTestMergeData() *debefix.Data {
+// 	return &debefix.Data{
+// 		Tables: map[string]*debefix.Table{
+// 			"tags": {
+// 				Rows: debefix.Rows{
+// 					{
+// 						Config: debefix.RowConfig{
+// 							RefID:      "test.DBTagRepositoryTestMergeData",
+// 							IgnoreTags: true,
+// 						},
+// 						Fields: map[string]any{
+// 							"tag_id":     &debefix.ValueGenerated{},
+// 							"name":       "Test Tag",
+// 							"created_at": time.Now(),
+// 							"updated_at": time.Now(),
+// 						},
+// 					},
+// 				},
+// 			},
+// 		},
+// 	}
+// }

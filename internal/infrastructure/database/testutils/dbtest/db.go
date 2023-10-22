@@ -113,7 +113,7 @@ func DBMigrationTest(name string) (err error) {
 }
 
 type dbForTestOptions struct {
-	mergeData    *debefix.Data
+	mergeData    []string
 	fixturesTags []string
 	debugOutput  bool
 	inDisk       bool // if false, will create tmpfs
@@ -121,7 +121,7 @@ type dbForTestOptions struct {
 
 type DBForTestOption func(*dbForTestOptions)
 
-func WithDBForTestMergeData(data *debefix.Data) DBForTestOption {
+func WithDBForTestMergeData(data []string) DBForTestOption {
 	return func(o *dbForTestOptions) {
 		o.mergeData = data
 	}

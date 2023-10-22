@@ -58,7 +58,7 @@ func (t postRepository) AddPost(ctx context.Context, post model.Post) (model.Pos
 
 	result := t.db.
 		Clauses(clause.Returning{}).
-		Select("title", "text", "user_id", "created_at", "updated_at").
+		Select("title", "text", "user_id", "created_at", "updated_at", "Tags").
 		Create(&item)
 	if result.Error != nil {
 		return model.Post{}, result.Error

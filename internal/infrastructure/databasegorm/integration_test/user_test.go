@@ -166,31 +166,47 @@ func TestDBUserRepositoryDeleteUserByIDNotFound(t *testing.T) {
 	})
 }
 
-func dbUserRepositoryTestMergeData() *debefix.Data {
-	return &debefix.Data{
-		Tables: map[string]*debefix.Table{
-			"users": {
-				Rows: debefix.Rows{
-					{
-						Config: debefix.RowConfig{
-							RefID:      "test.DBUserRepositoryTestMergeData",
-							IgnoreTags: true,
-						},
-						Fields: map[string]any{
-							"user_id": &debefix.ValueGenerated{},
-							"name":    "Test User",
-							"email":   "Test Email",
-							"country_id": &debefix.ValueRefID{
-								TableID:   "countries",
-								RefID:     "usa",
-								FieldName: "country_id",
-							},
-							"created_at": time.Now(),
-							"updated_at": time.Now(),
-						},
-					},
-				},
-			},
-		},
-	}
+func dbUserRepositoryTestMergeData() []string {
+	return []string{`
+users:
+  rows:
+    - user_id: !dbfexpr generated
+      name: "Test User"
+      email: "Test Email"
+      country_id: !dbfexpr "refid:countries:usa:country_id"
+      created_at: !!timestamp 2023-03-04T12:30:12Z
+      updated_at: !!timestamp 2023-03-04T12:30:12Z
+      _dbfconfig:
+        refid: "test.DBUserRepositoryTestMergeData"
+        ignoreTags: true
+`}
 }
+
+// func dbUserRepositoryTestMergeData() *debefix.Data {
+// 	return &debefix.Data{
+// 		Tables: map[string]*debefix.Table{
+// 			"users": {
+// 				Rows: debefix.Rows{
+// 					{
+// 						Config: debefix.RowConfig{
+// 							RefID:      "test.DBUserRepositoryTestMergeData",
+// 							IgnoreTags: true,
+// 						},
+// 						Fields: map[string]any{
+// 							"user_id": &debefix.ValueGenerated{},
+// 							"name":    "Test User",
+// 							"email":   "Test Email",
+// 							"country_id": &debefix.ValueRefID{
+// 								TableID:   "countries",
+// 								RefID:     "usa",
+// 								FieldName: "country_id",
+// 							},
+// 							"created_at": time.Now(),
+// 							"updated_at": time.Now(),
+// 						},
+// 					},
+// 				},
+// 			},
+// 		},
+// 	}
+// }

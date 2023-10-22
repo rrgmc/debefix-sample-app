@@ -5,7 +5,6 @@ package integration_test
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 	"time"
 
@@ -182,41 +181,57 @@ func TestDBCommentRepositoryDeleteCommentByIDNotFound(t *testing.T) {
 	})
 }
 
-func dbCommentRepositoryTestMergeData() *debefix.Data {
-	ret, err := debefix.MergeData(
-		dbPostRepositoryTestMergeData(),
-		&debefix.Data{
-			Tables: map[string]*debefix.Table{
-				"comments": {
-					Rows: debefix.Rows{
-						{
-							Config: debefix.RowConfig{
-								RefID:      "test.DBCommentRepositoryTestMergeData",
-								IgnoreTags: true,
-							},
-							Fields: map[string]any{
-								"comment_id": &debefix.ValueGenerated{},
-								"post_id": &debefix.ValueRefID{
-									TableID:   "posts",
-									RefID:     "test.DBPostRepositoryTestMergeData",
-									FieldName: "post_id",
-								},
-								"user_id": &debefix.ValueRefID{
-									TableID:   "users",
-									RefID:     "janedoe",
-									FieldName: "user_id",
-								},
-								"text":       "Test Text",
-								"created_at": time.Now(),
-								"updated_at": time.Now(),
-							},
-						},
-					},
-				},
-			},
-		})
-	if err != nil {
-		panic(fmt.Sprintf("error merging test data: %s", err))
-	}
-	return ret
+func dbCommentRepositoryTestMergeData() []string {
+	return append(dbPostRepositoryTestMergeData(), `
+comments:
+  rows:
+    - comment_id: !dbfexpr generated
+      post_id: !dbfexpr "refid:posts:test.DBPostRepositoryTestMergeData:post_id"
+      user_id: !dbfexpr "refid:users:janedoe:user_id"
+      text: "Test Text"
+      created_at: !!timestamp 2023-03-04T12:30:12Z
+      updated_at: !!timestamp 2023-03-04T12:30:12Z
+      _dbfconfig:
+        refid: "test.DBCommentRepositoryTestMergeData"
+        ignoreTags: true
+`)
 }
+
+// func dbCommentRepositoryTestMergeData() *debefix.Data {
+// 	ret, err := debefix.MergeData(
+// 		dbPostRepositoryTestMergeData(),
+// 		&debefix.Data{
+// 			Tables: map[string]*debefix.Table{
+// 				"comments": {
+// 					Rows: debefix.Rows{
+// 						{
+// 							Config: debefix.RowConfig{
+// 								RefID:      "test.DBCommentRepositoryTestMergeData",
+// 								IgnoreTags: true,
+// 							},
+// 							Fields: map[string]any{
+// 								"comment_id": &debefix.ValueGenerated{},
+// 								"post_id": &debefix.ValueRefID{
+// 									TableID:   "posts",
+// 									RefID:     "test.DBPostRepositoryTestMergeData",
+// 									FieldName: "post_id",
+// 								},
+// 								"user_id": &debefix.ValueRefID{
+// 									TableID:   "users",
+// 									RefID:     "janedoe",
+// 									FieldName: "user_id",
+// 								},
+// 								"text":       "Test Text",
+// 								"created_at": time.Now(),
+// 								"updated_at": time.Now(),
+// 							},
+// 						},
+// 					},
+// 				},
+// 			},
+// 		})
+// 	if err != nil {
+// 		panic(fmt.Sprintf("error merging test data: %s", err))
+// 	}
+// 	return ret
+// }
