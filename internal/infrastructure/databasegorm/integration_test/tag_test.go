@@ -154,26 +154,3 @@ tags:
         ignoreTags: true
 `}
 }
-
-// func dbTagRepositoryTestMergeData() *debefix.Data {
-// 	return &debefix.Data{
-// 		Tables: map[string]*debefix.Table{
-// 			"tags": {
-// 				Rows: debefix.Rows{
-// 					{
-// 						Config: debefix.RowConfig{
-// 							RefID:      "test.DBTagRepositoryTestMergeData",
-// 							IgnoreTags: true,
-// 						},
-// 						Fields: map[string]any{
-// 							"tag_id":     &debefix.ValueGenerated{},
-// 							"name":       "Test Tag",
-// 							"created_at": time.Now(),
-// 							"updated_at": time.Now(),
-// 						},
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}
-// }

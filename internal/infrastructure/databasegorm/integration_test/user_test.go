@@ -181,32 +181,3 @@ users:
         ignoreTags: true
 `}
 }
-
-// func dbUserRepositoryTestMergeData() *debefix.Data {
-// 	return &debefix.Data{
-// 		Tables: map[string]*debefix.Table{
-// 			"users": {
-// 				Rows: debefix.Rows{
-// 					{
-// 						Config: debefix.RowConfig{
-// 							RefID:      "test.DBUserRepositoryTestMergeData",
-// 							IgnoreTags: true,
-// 						},
-// 						Fields: map[string]any{
-// 							"user_id": &debefix.ValueGenerated{},
-// 							"name":    "Test User",
-// 							"email":   "Test Email",
-// 							"country_id": &debefix.ValueRefID{
-// 								TableID:   "countries",
-// 								RefID:     "usa",
-// 								FieldName: "country_id",
-// 							},
-// 							"created_at": time.Now(),
-// 							"updated_at": time.Now(),
-// 						},
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}
-// }
