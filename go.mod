@@ -12,8 +12,8 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/rrgmc/debefix v0.12.1
-	github.com/rrgmc/debefix/filter v0.12.1
+	github.com/rrgmc/debefix v0.13.0
+	github.com/rrgmc/debefix/filter v0.13.0
 	github.com/stephenafamo/bob v0.22.0
 	github.com/stephenafamo/scan v0.4.2
 	github.com/testcontainers/testcontainers-go v0.25.0
