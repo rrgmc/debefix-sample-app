@@ -11,9 +11,9 @@ import (
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
+	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
-	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/databasegorm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gotest.tools/v3/assert"
@@ -33,7 +33,7 @@ func testDBCountryRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, r
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	ts := databasegorm.NewCountryRepository(gormDB)
+	ts := database.NewCountryRepository(gormDB)
 
 	testFn(db, resolvedData, ts)
 }

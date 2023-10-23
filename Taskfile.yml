@@ -18,9 +18,6 @@ tasks:
   test-db:
     cmds:
       - "go test -race --tags=dbtest ./internal/infrastructure/database/integration_test/..."
-  test-db2:
-    cmds:
-      - "go test -race --tags=dbtest ./internal/infrastructure/databasegorm/integration_test/..."
   test-db-migrations:
     cmds:
       - "go test -race --tags=dbmigrationtest ./internal/infrastructure/database/storage/integration_test/..."

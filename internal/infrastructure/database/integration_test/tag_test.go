@@ -11,9 +11,9 @@ import (
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
+	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
-	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/databasegorm"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -34,7 +34,7 @@ func testDBTagRepository(t *testing.T, testFn func(*gorm.DB, *debefix.Data, repo
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	ts := databasegorm.NewTagRepository(gormDB)
+	ts := database.NewTagRepository(gormDB)
 
 	testFn(gormDB, resolvedData, ts)
 }

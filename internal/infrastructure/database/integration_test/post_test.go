@@ -12,9 +12,9 @@ import (
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
+	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
-	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/databasegorm"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,7 +35,7 @@ func testDBPostRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repo
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	ts := databasegorm.NewPostRepository(gormDB)
+	ts := database.NewPostRepository(gormDB)
 
 	testFn(db, resolvedData, ts)
 }
