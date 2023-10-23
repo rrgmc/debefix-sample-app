@@ -27,7 +27,7 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 	}
 
 	qi := sql2.NewSQLQueryInterface(db)
-	qi = sql2.NewDebugResultQueryInterface(qi, nil)
+	// qi = sql2.NewDebugResultQueryInterface(qi, nil)
 
 	return postgres.Resolve(qi, sourceData,
 		debefix.WithResolveTags(optns.tags),
@@ -35,5 +35,6 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 			if optns.output {
 				fmt.Printf("Loading table '%s'...\n", tableName)
 			}
-		}))
+		}),
+		debefix.WithResolvedValueParser(&debefix.ResolvedValueParserUUID{}))
 }

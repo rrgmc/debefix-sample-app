@@ -185,7 +185,7 @@ func dbCommentRepositoryTestMergeData() []string {
 	return append(dbPostRepositoryTestMergeData(), `
 comments:
   rows:
-    - comment_id: !dbfexpr generated
+    - comment_id: !dbfexpr generated:uuid
       post_id: !dbfexpr "refid:posts:test.DBPostRepositoryTestMergeData:post_id"
       user_id: !dbfexpr "refid:users:janedoe:user_id"
       text: "Test Text"

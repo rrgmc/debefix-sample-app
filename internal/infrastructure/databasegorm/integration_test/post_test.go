@@ -18,7 +18,6 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 	"gotest.tools/v3/assert/opt"
@@ -33,7 +32,7 @@ func testDBPostRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repo
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	ts := databasegorm.NewPostRepository(gormDB)
@@ -180,7 +179,7 @@ func dbPostRepositoryTestMergeData() []string {
 	return []string{`
 posts:
   rows:
-    - post_id: !dbfexpr generated
+    - post_id: !dbfexpr generated:uuid
       title: "Test Title"
       text: "Test Text"
       user_id: !dbfexpr "refid:users:janedoe:user_id"

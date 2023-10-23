@@ -170,7 +170,7 @@ func dbUserRepositoryTestMergeData() []string {
 	return []string{`
 users:
   rows:
-    - user_id: !dbfexpr generated
+    - user_id: !dbfexpr generated:uuid
       name: "Test User"
       email: "Test Email"
       country_id: !dbfexpr "refid:countries:usa:country_id"
