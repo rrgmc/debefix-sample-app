@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/docker/docker v24.0.6+incompatible
 	github.com/docker/go-connections v0.4.0
-	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/google/uuid v1.3.1
 	github.com/iancoleman/strcase v0.2.0
@@ -14,8 +13,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rrgmc/debefix v0.13.0
 	github.com/rrgmc/debefix/filter v0.13.0
-	github.com/stephenafamo/bob v0.22.0
-	github.com/stephenafamo/scan v0.4.2
 	github.com/testcontainers/testcontainers-go v0.25.0
 	github.com/vektra/mockery/v2 v2.35.4
 	github.com/vgarvardt/pgx-google-uuid/v5 v5.0.0
@@ -30,8 +27,6 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Microsoft/hcsshim v0.11.0 // indirect
-	github.com/aarondl/json v0.0.0-20221020222930-8b0db17ef1bf // indirect
-	github.com/aarondl/opt v0.0.0-20230114172057-b91f370c41f0 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/chigopher/pathlib v0.15.0 // indirect
 	github.com/containerd/containerd v1.7.6 // indirect
@@ -56,6 +51,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.16.0 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
@@ -71,7 +67,6 @@ require (
 	github.com/opencontainers/runc v1.1.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
-	github.com/qdm12/reprint v0.0.0-20200326205758-722754a53494 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/rs/zerolog v1.29.0 // indirect
 	github.com/shirou/gopsutil/v3 v3.23.8 // indirect
