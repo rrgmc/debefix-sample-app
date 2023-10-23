@@ -34,8 +34,8 @@ CREATE TABLE posts (
 CREATE INDEX posts_user_id_idx ON posts(user_id);
 
 CREATE TABLE posts_tags (
-    post_id UUID NOT NULL CONSTRAINT posts_tags_post_fk REFERENCES posts(post_id),
-    tag_id UUID NOT NULL CONSTRAINT posts_tags_tag_fk REFERENCES tags(tag_id),
+    post_id UUID NOT NULL CONSTRAINT posts_tags_post_fk REFERENCES posts(post_id) ON DELETE CASCADE,
+    tag_id UUID NOT NULL CONSTRAINT posts_tags_tag_fk REFERENCES tags(tag_id) ON DELETE RESTRICT,
     PRIMARY KEY (post_id, tag_id)
 );
 

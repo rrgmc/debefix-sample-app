@@ -55,7 +55,7 @@ func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, e
 		return nil, err
 	}
 
-	return GetTagList(WithFilterRow(func(row debefix.Row) (bool, error) {
+	tags, err := GetTagList(WithFilterRow(func(row debefix.Row) (bool, error) {
 		for _, pt := range postsTags {
 			if row.Fields["tag_id"].(uuid.UUID) == pt["tag_id"].(uuid.UUID) {
 				return true, nil
@@ -63,4 +63,11 @@ func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, e
 		}
 		return false, nil
 	}), WithSort("name"), WithResolvedData(optns.resolvedData))
+	if err != nil {
+		return nil, err
+	}
+	if len(tags) != len(postsTags) {
+		return nil, fmt.Errorf("unexpected amount of records returned, expected %d got %d", len(postsTags), len(tags))
+	}
+	return tags, nil
 }

@@ -27,6 +27,7 @@ func NewPostRepository(db *gorm.DB) repository.PostRepository {
 func (t postRepository) GetPostList(ctx context.Context, filter model.PostFilter) ([]model.Post, error) {
 	var list []dbmodel.Post
 	result := t.db.WithContext(ctx).
+		Preload("Tags").
 		Order("title").
 		Offset(filter.Offset).
 		Limit(filter.Limit).
