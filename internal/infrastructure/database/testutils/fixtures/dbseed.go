@@ -26,7 +26,10 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 		}
 	}
 
-	return postgres.Resolve(sql2.NewSQLQueryInterface(db), sourceData,
+	qi := sql2.NewSQLQueryInterface(db)
+	qi = sql2.NewDebugResultQueryInterface(qi, nil)
+
+	return postgres.Resolve(qi, sourceData,
 		debefix.WithResolveTags(optns.tags),
 		debefix.WithResolveProgress(func(tableID, tableName string) {
 			if optns.output {
