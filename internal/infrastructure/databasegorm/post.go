@@ -27,7 +27,9 @@ func NewPostRepository(db *gorm.DB) repository.PostRepository {
 func (t postRepository) GetPostList(ctx context.Context, filter model.PostFilter) ([]model.Post, error) {
 	var list []dbmodel.Post
 	result := t.db.WithContext(ctx).
-		Preload("Tags").
+		Preload("Tags", func(db *gorm.DB) *gorm.DB {
+			return db.Order("tags.name")
+		}).
 		Order("title").
 		Offset(filter.Offset).
 		Limit(filter.Limit).
@@ -41,7 +43,9 @@ func (t postRepository) GetPostList(ctx context.Context, filter model.PostFilter
 func (t postRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (model.Post, error) {
 	var item dbmodel.Post
 	result := t.db.WithContext(ctx).
-		Preload("Tags").
+		Preload("Tags", func(db *gorm.DB) *gorm.DB {
+			return db.Order("tags.name")
+		}).
 		First(&item, postID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
