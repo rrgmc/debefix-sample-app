@@ -24,7 +24,7 @@ func GetPostList(options ...TestDataOption) ([]model.Post, error) {
 		return nil, err
 	}
 	for i := 0; i < len(ret); i++ {
-		ret[i].Tags, err = GetPostTagList(ret[i].PostID)
+		ret[i].Tags, err = GetPostTagList(ret[i].PostID, options...)
 		if err != nil {
 			return nil, err
 		}
@@ -44,11 +44,13 @@ func GetPost(options ...TestDataOption) (model.Post, error) {
 }
 
 func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, error) {
+	optns := parseOptions(options...)
+
 	postsTags, err := filterData[map[string]any]("posts_tags", func(row debefix.Row) (map[string]any, error) {
 		return row.Fields, nil
 	}, nil, WithFilterFields(map[string]any{
 		"post_id": postID,
-	}))
+	}), WithResolvedData(optns.resolvedData))
 	if err != nil {
 		return nil, err
 	}
@@ -60,5 +62,5 @@ func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, e
 			}
 		}
 		return false, nil
-	}), WithSort("name"))
+	}), WithSort("name"), WithResolvedData(optns.resolvedData))
 }
