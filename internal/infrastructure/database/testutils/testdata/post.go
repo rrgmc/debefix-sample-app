@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
 )
@@ -22,6 +23,12 @@ func GetPostList(options ...TestDataOption) ([]model.Post, error) {
 	if err != nil {
 		return nil, err
 	}
+	for i := 0; i < len(ret); i++ {
+		ret[i].Tags, err = GetPostTagList(ret[i].PostID)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return ret, nil
 }
 
@@ -34,4 +41,24 @@ func GetPost(options ...TestDataOption) (model.Post, error) {
 		return model.Post{}, fmt.Errorf("incorrect amount of data returned for 'post': expected %d got %d", 1, len(ret))
 	}
 	return ret[0], nil
+}
+
+func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, error) {
+	postsTags, err := filterData[map[string]any]("posts_tags", func(row debefix.Row) (map[string]any, error) {
+		return row.Fields, nil
+	}, nil, WithFilterFields(map[string]any{
+		"post_id": postID,
+	}))
+	if err != nil {
+		return nil, err
+	}
+
+	return GetTagList(WithFilterRow(func(row debefix.Row) (bool, error) {
+		for _, pt := range postsTags {
+			if row.Fields["tag_id"].(uuid.UUID) == pt["tag_id"].(uuid.UUID) {
+				return true, nil
+			}
+		}
+		return false, nil
+	}), WithSort("name"))
 }
