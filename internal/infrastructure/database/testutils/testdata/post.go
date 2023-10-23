@@ -49,7 +49,7 @@ func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, e
 	postsTags, err := filterData[map[string]any]("posts_tags", func(row debefix.Row) (map[string]any, error) {
 		return row.Fields, nil
 	}, nil, WithFilterFields(map[string]any{
-		"post_id": postID,
+		"post_id": postID.String(),
 	}), WithResolvedData(optns.resolvedData))
 	if err != nil {
 		return nil, err
