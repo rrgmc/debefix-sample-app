@@ -52,6 +52,7 @@ func TestDBPostRepositoryGetPosts(t *testing.T) {
 			testdata.WithSort("title"),
 			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
 			testdata.WithResolvedData(resolvedData),
+			testdata.WithResolveTags([]string{"tests.lists"}),
 		)
 		assert.NilError(t, err)
 		assert.Assert(t, is.Len(expectedPosts, 1))
@@ -62,7 +63,7 @@ func TestDBPostRepositoryGetPosts(t *testing.T) {
 		assert.Assert(t, is.Len(returnedPosts, 1))
 		assert.DeepEqual(t, expectedPosts, returnedPosts,
 			opt.TimeWithThreshold(time.Hour))
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.lists"}))
 }
 
 func TestDBPostRepositoryGetPostByID(t *testing.T) {

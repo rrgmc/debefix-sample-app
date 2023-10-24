@@ -61,6 +61,7 @@ func WithOffsetLimit(offset int, limit int) TestDataOption {
 }
 
 // WithResolveTags sets the tags for the data resolver.
+// "base" and "tests.base" are always included automatically.
 func WithResolveTags(tags []string) TestDataOption {
 	return func(o *testDataOptions) {
 		o.resolveTags = tags

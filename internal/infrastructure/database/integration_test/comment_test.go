@@ -52,6 +52,7 @@ func TestDBCommentRepositoryGetComments(t *testing.T) {
 			testdata.WithSort("created_at"),
 			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
 			testdata.WithResolvedData(resolvedData),
+			testdata.WithResolveTags([]string{"tests.lists"}),
 		)
 		assert.NilError(t, err)
 		assert.Assert(t, is.Len(expectedComments, 1))
@@ -62,7 +63,7 @@ func TestDBCommentRepositoryGetComments(t *testing.T) {
 		assert.Assert(t, is.Len(returnedComments, 1))
 		assert.DeepEqual(t, expectedComments, returnedComments,
 			opt.TimeWithThreshold(time.Hour))
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.lists"}))
 }
 
 func TestDBCommentRepositoryGetCommentByID(t *testing.T) {
