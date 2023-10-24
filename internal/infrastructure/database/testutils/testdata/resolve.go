@@ -13,7 +13,7 @@ import (
 )
 
 func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
-	sortCompare func(sort string, a, b T) int, options ...TestDataOption) (result []T, err error) {
+	sortCompare func(sort string, a, b T) int, options ...TestDataOption) ([]T, error) {
 	optns := parseOptions(options...)
 
 	var filterSortCompare func(a, b T) int
@@ -23,15 +23,56 @@ func filterData[T any](tableID string, f func(row debefix.Row) (T, error),
 		}
 	}
 
-	ret, err := filter.FilterData[T](
-		fixtures.MustResolveFixtures(
-			fixtures.WithTags(optns.resolveTags),
-			fixtures.WithResolvedData(optns.resolvedData)),
+	ret, err := filter.FilterData[T](filterDataGetData(optns),
 		tableID, f, filterSortCompare, optns.filterDataOptions...)
 	if err != nil {
 		return nil, fmt.Errorf("error loading fixture for '%s`: %s", tableID, err)
 	}
 	return ret, nil
+}
+
+func filterDataRows[T any](tableID string, f func(row debefix.Row) (T, error),
+	sortCompare func(sort string, a, b filter.FilterItem[T]) int, options ...TestDataOption) ([]filter.FilterItem[T], error) {
+	optns := parseOptions(options...)
+
+	var filterSortCompare func(a, b filter.FilterItem[T]) int
+	if optns.sort != "" && sortCompare != nil {
+		filterSortCompare = func(a, b filter.FilterItem[T]) int {
+			return sortCompare(optns.sort, a, b)
+		}
+	}
+
+	ret, err := filter.FilterDataRows[T](filterDataGetData(optns),
+		tableID, f, filterSortCompare, optns.filterDataOptions...)
+	if err != nil {
+		return nil, fmt.Errorf("error loading fixture for '%s`: %s", tableID, err)
+	}
+	return ret, nil
+}
+
+func filterDataRefID[T any](tableID string, f func(row debefix.Row) (T, error),
+	sortCompare func(sort string, a, b T) int, options ...TestDataOption) (filter.FilterDataRefIDResult[T], error) {
+	optns := parseOptions(options...)
+
+	var filterSortCompare func(a, b T) int
+	if optns.sort != "" && sortCompare != nil {
+		filterSortCompare = func(a, b T) int {
+			return sortCompare(optns.sort, a, b)
+		}
+	}
+
+	ret, err := filter.FilterDataRefID[T](filterDataGetData(optns),
+		tableID, f, filterSortCompare, optns.filterDataOptions...)
+	if err != nil {
+		return filter.FilterDataRefIDResult[T]{}, fmt.Errorf("error loading fixture for '%s`: %s", tableID, err)
+	}
+	return ret, nil
+}
+
+func filterDataGetData(optns testDataOptions) *debefix.Data {
+	return fixtures.MustResolveFixtures(
+		fixtures.WithTags(optns.resolveTags),
+		fixtures.WithResolvedData(optns.resolvedData))
 }
 
 func mapToStruct[T any](input any) (T, error) {
