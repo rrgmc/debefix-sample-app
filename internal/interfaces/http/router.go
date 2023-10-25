@@ -20,7 +20,7 @@ func NewHTTPHandler(tagService service.TagService) http.Handler {
 
 	router.Use(middlewares.Error)
 
-	api := router.Group("/api")
+	api := router.Group("/api/v1")
 
 	routes.TagsRoute(api.Group("/tags"),
 		tagService)
