@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
@@ -41,7 +41,7 @@ func testDBTagRepository(t *testing.T, testFn func(*gorm.DB, *debefix.Data, repo
 
 func TestDBTagRepositoryGetTagList(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
-		filter := model.TagFilter{
+		filter := entity.TagFilter{
 			Offset: 1,
 			Limit:  2,
 		}
@@ -83,7 +83,7 @@ func TestDBTagRepositoryGetTagByID(t *testing.T) {
 
 func TestDBTagRepositoryAddTag(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
-		newTag := model.Tag{
+		newTag := entity.Tag{
 			Name: "new tag",
 		}
 
@@ -101,7 +101,7 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedTag := model.Tag{
+		updatedTag := entity.Tag{
 			Name: "updated tag",
 		}
 
@@ -115,7 +115,7 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 
 func TestDBTagRepositoryUpdateTagByIDNotFound(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
-		updatedTag := model.Tag{
+		updatedTag := entity.Tag{
 			Name: "updated tag",
 		}
 

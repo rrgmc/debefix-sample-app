@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
@@ -40,7 +40,7 @@ func testDBCountryRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, r
 
 func TestDBCountryRepositoryGetCountrys(t *testing.T) {
 	testDBCountryRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CountryRepository) {
-		filter := model.CountryFilter{
+		filter := entity.CountryFilter{
 			Offset: 1,
 			Limit:  2,
 		}

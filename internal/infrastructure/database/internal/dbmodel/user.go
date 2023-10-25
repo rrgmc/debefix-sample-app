@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 )
 
 // data
@@ -22,8 +22,8 @@ func (User) TableName() string {
 	return "users"
 }
 
-func (m User) ToEntity() model.User {
-	return model.User{
+func (m User) ToEntity() entity.User {
+	return entity.User{
 		UserID:    m.UserID,
 		Name:      m.Name,
 		Email:     m.Email,
@@ -33,15 +33,15 @@ func (m User) ToEntity() model.User {
 	}
 }
 
-func UserListToEntity(list []User) []model.User {
-	var ret []model.User
+func UserListToEntity(list []User) []entity.User {
+	var ret []entity.User
 	for _, item := range list {
 		ret = append(ret, item.ToEntity())
 	}
 	return ret
 }
 
-func UserFromEntity(m model.User) User {
+func UserFromEntity(m entity.User) User {
 	return User{
 		UserID:    m.UserID,
 		Name:      m.Name,

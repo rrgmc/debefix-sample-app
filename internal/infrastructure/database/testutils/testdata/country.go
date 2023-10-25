@@ -5,14 +5,14 @@ import (
 	"strings"
 
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix/filter"
 )
 
-func GetCountryList(options ...TestDataOption) (filter.FilterDataRefIDResult[model.Country], error) {
-	ret, err := filterDataRefID[model.Country]("countries", func(row debefix.Row) (model.Country, error) {
-		return mapToStruct[model.Country](row.Fields)
-	}, func(sort string, a, b filter.FilterItem[model.Country]) int {
+func GetCountryList(options ...TestDataOption) (filter.FilterDataRefIDResult[entity.Country], error) {
+	ret, err := filterDataRefID[entity.Country]("countries", func(row debefix.Row) (entity.Country, error) {
+		return mapToStruct[entity.Country](row.Fields)
+	}, func(sort string, a, b filter.FilterItem[entity.Country]) int {
 		switch sort {
 		case "name":
 			return strings.Compare(a.Item.Name, b.Item.Name)
@@ -21,18 +21,18 @@ func GetCountryList(options ...TestDataOption) (filter.FilterDataRefIDResult[mod
 		}
 	}, options...)
 	if err != nil {
-		return filter.FilterDataRefIDResult[model.Country]{}, err
+		return filter.FilterDataRefIDResult[entity.Country]{}, err
 	}
 	return ret, nil
 }
 
-func GetCountry(options ...TestDataOption) (model.Country, error) {
+func GetCountry(options ...TestDataOption) (entity.Country, error) {
 	ret, err := GetCountryList(options...)
 	if err != nil {
-		return model.Country{}, err
+		return entity.Country{}, err
 	}
 	if len(ret.Data) != 1 {
-		return model.Country{}, fmt.Errorf("incorrect amount of data returned for 'Country': expected %d got %d", 1, len(ret.Data))
+		return entity.Country{}, fmt.Errorf("incorrect amount of data returned for 'Country': expected %d got %d", 1, len(ret.Data))
 	}
 	return ret.Data[0], nil
 }

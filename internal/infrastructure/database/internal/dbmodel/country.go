@@ -2,7 +2,7 @@ package dbmodel
 
 import (
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 )
 
 // data
@@ -16,22 +16,22 @@ func (Country) TableName() string {
 	return "countries"
 }
 
-func (m Country) ToEntity() model.Country {
-	return model.Country{
+func (m Country) ToEntity() entity.Country {
+	return entity.Country{
 		CountryID: m.CountryID,
 		Name:      m.Name,
 	}
 }
 
-func CountryListToEntity(list []Country) []model.Country {
-	var ret []model.Country
+func CountryListToEntity(list []Country) []entity.Country {
+	var ret []entity.Country
 	for _, item := range list {
 		ret = append(ret, item.ToEntity())
 	}
 	return ret
 }
 
-func CountryFromEntity(m model.Country) Country {
+func CountryFromEntity(m entity.Country) Country {
 	return Country{
 		CountryID: m.CountryID,
 		Name:      m.Name,

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
@@ -24,7 +24,7 @@ func NewPostRepository(db *gorm.DB) repository.PostRepository {
 	}
 }
 
-func (t postRepository) GetPostList(ctx context.Context, filter model.PostFilter) ([]model.Post, error) {
+func (t postRepository) GetPostList(ctx context.Context, filter entity.PostFilter) ([]entity.Post, error) {
 	var list []dbmodel.Post
 	result := t.db.WithContext(ctx).
 		Preload("Tags", func(db *gorm.DB) *gorm.DB {
@@ -40,7 +40,7 @@ func (t postRepository) GetPostList(ctx context.Context, filter model.PostFilter
 	return dbmodel.PostListToEntity(list), nil
 }
 
-func (t postRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (model.Post, error) {
+func (t postRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (entity.Post, error) {
 	var item dbmodel.Post
 	result := t.db.WithContext(ctx).
 		Preload("Tags", func(db *gorm.DB) *gorm.DB {
@@ -49,14 +49,14 @@ func (t postRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (mode
 		First(&item, postID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return model.Post{}, utils.ErrResourceNotFound
+			return entity.Post{}, utils.ErrResourceNotFound
 		}
-		return model.Post{}, result.Error
+		return entity.Post{}, result.Error
 	}
 	return item.ToEntity(), nil
 }
 
-func (t postRepository) AddPost(ctx context.Context, post model.Post) (model.Post, error) {
+func (t postRepository) AddPost(ctx context.Context, post entity.Post) (entity.Post, error) {
 	item := dbmodel.PostFromEntity(post)
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
@@ -66,13 +66,13 @@ func (t postRepository) AddPost(ctx context.Context, post model.Post) (model.Pos
 		Select("title", "text", "user_id", "created_at", "updated_at", "Tags").
 		Create(&item)
 	if result.Error != nil {
-		return model.Post{}, result.Error
+		return entity.Post{}, result.Error
 	}
 
 	return item.ToEntity(), nil
 }
 
-func (t postRepository) UpdatePostByID(ctx context.Context, postID uuid.UUID, post model.Post) (model.Post, error) {
+func (t postRepository) UpdatePostByID(ctx context.Context, postID uuid.UUID, post entity.Post) (entity.Post, error) {
 	item := dbmodel.PostFromEntity(post)
 	item.UpdatedAt = time.Now()
 
@@ -82,10 +82,10 @@ func (t postRepository) UpdatePostByID(ctx context.Context, postID uuid.UUID, po
 		Where("post_id = ?", postID).
 		Updates(&item)
 	if result.Error != nil {
-		return model.Post{}, result.Error
+		return entity.Post{}, result.Error
 	}
 	if result.RowsAffected != 1 {
-		return model.Post{}, utils.ErrResourceNotFound
+		return entity.Post{}, utils.ErrResourceNotFound
 	}
 
 	return item.ToEntity(), nil

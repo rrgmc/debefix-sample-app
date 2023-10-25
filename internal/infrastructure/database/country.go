@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
@@ -22,7 +22,7 @@ func NewCountryRepository(db *gorm.DB) repository.CountryRepository {
 	}
 }
 
-func (t countryRepository) GetCountryList(ctx context.Context, filter model.CountryFilter) ([]model.Country, error) {
+func (t countryRepository) GetCountryList(ctx context.Context, filter entity.CountryFilter) ([]entity.Country, error) {
 	var list []dbmodel.Country
 	result := t.db.WithContext(ctx).
 		Order("name").
@@ -35,15 +35,15 @@ func (t countryRepository) GetCountryList(ctx context.Context, filter model.Coun
 	return dbmodel.CountryListToEntity(list), nil
 }
 
-func (t countryRepository) GetCountryByID(ctx context.Context, countryID uuid.UUID) (model.Country, error) {
+func (t countryRepository) GetCountryByID(ctx context.Context, countryID uuid.UUID) (entity.Country, error) {
 	var item dbmodel.Country
 	result := t.db.WithContext(ctx).
 		First(&item, countryID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return model.Country{}, utils.ErrResourceNotFound
+			return entity.Country{}, utils.ErrResourceNotFound
 		}
-		return model.Country{}, result.Error
+		return entity.Country{}, result.Error
 	}
 	return item.ToEntity(), nil
 }

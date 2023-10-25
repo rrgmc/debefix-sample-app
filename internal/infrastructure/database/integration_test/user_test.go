@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
@@ -42,7 +42,7 @@ func testDBUserRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repo
 
 func TestDBUserRepositoryGetUserList(t *testing.T) {
 	testDBUserRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.UserRepository) {
-		filter := model.UserFilter{
+		filter := entity.UserFilter{
 			Offset: 1,
 			Limit:  1,
 		}
@@ -90,7 +90,7 @@ func TestDBUserRepositoryAddUser(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		newUser := model.User{
+		newUser := entity.User{
 			Name:      "new user",
 			Email:     "new email",
 			CountryID: findCountry.CountryID,
@@ -116,7 +116,7 @@ func TestDBUserRepositoryUpdateUserByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedUser := model.User{
+		updatedUser := entity.User{
 			Name:      "updated user",
 			Email:     "updated email",
 			CountryID: findCountry.CountryID,
@@ -138,7 +138,7 @@ func TestDBUserRepositoryUpdateUserByIDNotFound(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedUser := model.User{
+		updatedUser := entity.User{
 			Name:      "updated user",
 			Email:     "updated email",
 			CountryID: findCountry.CountryID,

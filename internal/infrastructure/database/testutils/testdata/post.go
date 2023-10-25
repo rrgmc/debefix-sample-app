@@ -6,14 +6,14 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix/filter"
 )
 
-func GetPostList(options ...TestDataOption) (filter.FilterDataRefIDResult[model.Post], error) {
-	ret, err := filterDataRefID[model.Post]("posts", func(row debefix.Row) (model.Post, error) {
-		return mapToStruct[model.Post](row.Fields)
-	}, func(sort string, a, b filter.FilterItem[model.Post]) int {
+func GetPostList(options ...TestDataOption) (filter.FilterDataRefIDResult[entity.Post], error) {
+	ret, err := filterDataRefID[entity.Post]("posts", func(row debefix.Row) (entity.Post, error) {
+		return mapToStruct[entity.Post](row.Fields)
+	}, func(sort string, a, b filter.FilterItem[entity.Post]) int {
 		switch sort {
 		case "title":
 			return strings.Compare(a.Item.Title, b.Item.Title)
@@ -22,29 +22,29 @@ func GetPostList(options ...TestDataOption) (filter.FilterDataRefIDResult[model.
 		}
 	}, options...)
 	if err != nil {
-		return filter.FilterDataRefIDResult[model.Post]{}, err
+		return filter.FilterDataRefIDResult[entity.Post]{}, err
 	}
 	for i := 0; i < len(ret.Data); i++ {
 		ret.Data[i].Tags, err = GetPostTagList(ret.Data[i].PostID, options...)
 		if err != nil {
-			return filter.FilterDataRefIDResult[model.Post]{}, err
+			return filter.FilterDataRefIDResult[entity.Post]{}, err
 		}
 	}
 	return ret, nil
 }
 
-func GetPost(options ...TestDataOption) (model.Post, error) {
+func GetPost(options ...TestDataOption) (entity.Post, error) {
 	ret, err := GetPostList(options...)
 	if err != nil {
-		return model.Post{}, err
+		return entity.Post{}, err
 	}
 	if len(ret.Data) != 1 {
-		return model.Post{}, fmt.Errorf("incorrect amount of data returned for 'post': expected %d got %d", 1, len(ret.Data))
+		return entity.Post{}, fmt.Errorf("incorrect amount of data returned for 'post': expected %d got %d", 1, len(ret.Data))
 	}
 	return ret.Data[0], nil
 }
 
-func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, error) {
+func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]entity.Tag, error) {
 	optns := parseOptions(options...)
 
 	postsTags, err := filterData[map[string]any]("posts_tags", func(row debefix.Row) (map[string]any, error) {

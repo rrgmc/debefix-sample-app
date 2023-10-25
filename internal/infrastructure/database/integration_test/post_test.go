@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
@@ -42,7 +42,7 @@ func testDBPostRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repo
 
 func TestDBPostRepositoryGetPosts(t *testing.T) {
 	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
-		filter := model.PostFilter{
+		filter := entity.PostFilter{
 			Offset: 1,
 			Limit:  2,
 		}
@@ -97,7 +97,7 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		newPost := model.Post{
+		newPost := entity.Post{
 			Title:  "new title",
 			Text:   "new text",
 			UserID: findUser.UserID,
@@ -125,7 +125,7 @@ func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedPost := model.Post{
+		updatedPost := entity.Post{
 			Title:  "updated title",
 			Text:   "updated text",
 			UserID: findUser.UserID,
@@ -148,7 +148,7 @@ func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedPost := model.Post{
+		updatedPost := entity.Post{
 			Title:  "updated title",
 			Text:   "updated text",
 			UserID: findUser.UserID,

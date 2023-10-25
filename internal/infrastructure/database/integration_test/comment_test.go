@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
@@ -42,7 +42,7 @@ func testDBCommentRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, r
 
 func TestDBCommentRepositoryGetComments(t *testing.T) {
 	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
-		filter := model.CommentFilter{
+		filter := entity.CommentFilter{
 			Offset: 1,
 			Limit:  2,
 		}
@@ -95,7 +95,7 @@ func TestDBCommentRepositoryAddComment(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		newComment := model.Comment{
+		newComment := entity.Comment{
 			PostID: findPost.PostID,
 			UserID: findUser.UserID,
 			Text:   "new text",
@@ -128,7 +128,7 @@ func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedComment := model.Comment{
+		updatedComment := entity.Comment{
 			PostID: findPost.PostID,
 			UserID: findUser.UserID,
 			Text:   "updated text",
@@ -155,7 +155,7 @@ func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedComment := model.Comment{
+		updatedComment := entity.Comment{
 			PostID: findPost.PostID,
 			UserID: findUser.UserID,
 			Text:   "updated text",

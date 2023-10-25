@@ -1,4 +1,4 @@
-package model
+package entity
 
 import (
 	"time"
@@ -8,16 +8,18 @@ import (
 
 // data
 
-type Tag struct {
-	TagID     uuid.UUID
+type User struct {
+	UserID    uuid.UUID
 	Name      string
+	Email     string
+	CountryID uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
 // helpers
 
-type TagFilter struct {
+type UserFilter struct {
 	Offset int
 	Limit  int
 }

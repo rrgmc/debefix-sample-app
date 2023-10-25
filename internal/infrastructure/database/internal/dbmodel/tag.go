@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 )
 
 type Tag struct {
@@ -18,8 +18,8 @@ func (Tag) TableName() string {
 	return "tags"
 }
 
-func (m Tag) ToEntity() model.Tag {
-	return model.Tag{
+func (m Tag) ToEntity() entity.Tag {
+	return entity.Tag{
 		TagID:     m.TagID,
 		Name:      m.Name,
 		CreatedAt: m.CreatedAt,
@@ -27,15 +27,15 @@ func (m Tag) ToEntity() model.Tag {
 	}
 }
 
-func TagListToEntity(list []Tag) []model.Tag {
-	var ret []model.Tag
+func TagListToEntity(list []Tag) []entity.Tag {
+	var ret []entity.Tag
 	for _, item := range list {
 		ret = append(ret, item.ToEntity())
 	}
 	return ret
 }
 
-func TagFromEntity(m model.Tag) Tag {
+func TagFromEntity(m entity.Tag) Tag {
 	return Tag{
 		TagID:     m.TagID,
 		Name:      m.Name,

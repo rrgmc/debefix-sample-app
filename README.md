@@ -20,7 +20,7 @@ storage separations.
 - `internal/infrastructure/database/testutils/testdata`: extract test data objects from fixtures, with a simple query filter to mimic some SQL operations.
 - `internal/infrastructure/database`: storage layer, the only part that has database access.
 - `internal/infrastructure/database/integration_test`: storage layer tests that uses a real database.
-- `internal/domain/model`: entities used by `storage` and `service` layers.
+- `internal/domain/entity`: entities used by `storage` and `service` layers.
 
 ## Task rules
 

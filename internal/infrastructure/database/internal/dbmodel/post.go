@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 )
 
 // data
@@ -25,13 +25,13 @@ func (Post) TableName() string {
 	return "posts"
 }
 
-func (m Post) ToEntity() model.Post {
-	var tags []model.Tag
+func (m Post) ToEntity() entity.Post {
+	var tags []entity.Tag
 	for _, tag := range m.Tags {
 		tags = append(tags, tag.ToEntity())
 	}
 
-	return model.Post{
+	return entity.Post{
 		PostID:    m.PostID,
 		Title:     m.Title,
 		Text:      m.Text,
@@ -42,15 +42,15 @@ func (m Post) ToEntity() model.Post {
 	}
 }
 
-func PostListToEntity(list []Post) []model.Post {
-	var ret []model.Post
+func PostListToEntity(list []Post) []entity.Post {
+	var ret []entity.Post
 	for _, item := range list {
 		ret = append(ret, item.ToEntity())
 	}
 	return ret
 }
 
-func PostFromEntity(m model.Post) Post {
+func PostFromEntity(m entity.Post) Post {
 	var tags []Tag
 	for _, tag := range m.Tags {
 		tags = append(tags, TagFromEntity(tag))

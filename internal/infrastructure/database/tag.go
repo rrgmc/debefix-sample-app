@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
@@ -24,7 +24,7 @@ func NewTagRepository(db *gorm.DB) repository.TagRepository {
 	}
 }
 
-func (t tagRepository) GetTagList(ctx context.Context, filter model.TagFilter) ([]model.Tag, error) {
+func (t tagRepository) GetTagList(ctx context.Context, filter entity.TagFilter) ([]entity.Tag, error) {
 	var list []dbmodel.Tag
 	result := t.db.WithContext(ctx).
 		Order("name").
@@ -37,20 +37,20 @@ func (t tagRepository) GetTagList(ctx context.Context, filter model.TagFilter) (
 	return dbmodel.TagListToEntity(list), nil
 }
 
-func (t tagRepository) GetTagByID(ctx context.Context, tagID uuid.UUID) (model.Tag, error) {
+func (t tagRepository) GetTagByID(ctx context.Context, tagID uuid.UUID) (entity.Tag, error) {
 	var item dbmodel.Tag
 	result := t.db.WithContext(ctx).
 		First(&item, tagID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return model.Tag{}, utils.ErrResourceNotFound
+			return entity.Tag{}, utils.ErrResourceNotFound
 		}
-		return model.Tag{}, result.Error
+		return entity.Tag{}, result.Error
 	}
 	return item.ToEntity(), nil
 }
 
-func (t tagRepository) AddTag(ctx context.Context, tag model.Tag) (model.Tag, error) {
+func (t tagRepository) AddTag(ctx context.Context, tag entity.Tag) (entity.Tag, error) {
 	item := dbmodel.TagFromEntity(tag)
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
@@ -60,13 +60,13 @@ func (t tagRepository) AddTag(ctx context.Context, tag model.Tag) (model.Tag, er
 		Select("name", "created_at", "updated_at").
 		Create(&item)
 	if result.Error != nil {
-		return model.Tag{}, result.Error
+		return entity.Tag{}, result.Error
 	}
 
 	return item.ToEntity(), nil
 }
 
-func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag model.Tag) (model.Tag, error) {
+func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag entity.Tag) (entity.Tag, error) {
 	item := dbmodel.TagFromEntity(tag)
 	item.UpdatedAt = time.Now()
 
@@ -76,10 +76,10 @@ func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag m
 		Where("tag_id = ?", tagID).
 		Updates(&item)
 	if result.Error != nil {
-		return model.Tag{}, result.Error
+		return entity.Tag{}, result.Error
 	}
 	if result.RowsAffected != 1 {
-		return model.Tag{}, utils.ErrResourceNotFound
+		return entity.Tag{}, utils.ErrResourceNotFound
 	}
 
 	return item.ToEntity(), nil

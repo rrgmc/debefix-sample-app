@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
@@ -24,7 +24,7 @@ func NewCommentRepository(db *gorm.DB) repository.CommentRepository {
 	}
 }
 
-func (t commentRepository) GetCommentList(ctx context.Context, filter model.CommentFilter) ([]model.Comment, error) {
+func (t commentRepository) GetCommentList(ctx context.Context, filter entity.CommentFilter) ([]entity.Comment, error) {
 	var list []dbmodel.Comment
 	result := t.db.WithContext(ctx).
 		Order("created_at").
@@ -37,20 +37,20 @@ func (t commentRepository) GetCommentList(ctx context.Context, filter model.Comm
 	return dbmodel.CommentListToEntity(list), nil
 }
 
-func (t commentRepository) GetCommentByID(ctx context.Context, commentID uuid.UUID) (model.Comment, error) {
+func (t commentRepository) GetCommentByID(ctx context.Context, commentID uuid.UUID) (entity.Comment, error) {
 	var item dbmodel.Comment
 	result := t.db.WithContext(ctx).
 		First(&item, commentID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return model.Comment{}, utils.ErrResourceNotFound
+			return entity.Comment{}, utils.ErrResourceNotFound
 		}
-		return model.Comment{}, result.Error
+		return entity.Comment{}, result.Error
 	}
 	return item.ToEntity(), nil
 }
 
-func (t commentRepository) AddComment(ctx context.Context, comment model.Comment) (model.Comment, error) {
+func (t commentRepository) AddComment(ctx context.Context, comment entity.Comment) (entity.Comment, error) {
 	item := dbmodel.CommentFromEntity(comment)
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
@@ -60,13 +60,13 @@ func (t commentRepository) AddComment(ctx context.Context, comment model.Comment
 		Select("post_id", "user_id", "text", "created_at", "updated_at").
 		Create(&item)
 	if result.Error != nil {
-		return model.Comment{}, result.Error
+		return entity.Comment{}, result.Error
 	}
 
 	return item.ToEntity(), nil
 }
 
-func (t commentRepository) UpdateCommentByID(ctx context.Context, commentID uuid.UUID, comment model.Comment) (model.Comment, error) {
+func (t commentRepository) UpdateCommentByID(ctx context.Context, commentID uuid.UUID, comment entity.Comment) (entity.Comment, error) {
 	item := dbmodel.CommentFromEntity(comment)
 	item.UpdatedAt = time.Now()
 
@@ -76,10 +76,10 @@ func (t commentRepository) UpdateCommentByID(ctx context.Context, commentID uuid
 		Where("comment_id = ?", commentID).
 		Updates(&item)
 	if result.Error != nil {
-		return model.Comment{}, result.Error
+		return entity.Comment{}, result.Error
 	}
 	if result.RowsAffected != 1 {
-		return model.Comment{}, utils.ErrResourceNotFound
+		return entity.Comment{}, utils.ErrResourceNotFound
 	}
 
 	return item.ToEntity(), nil
