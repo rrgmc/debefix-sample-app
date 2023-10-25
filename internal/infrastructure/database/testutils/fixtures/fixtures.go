@@ -46,7 +46,7 @@ func ResolveFixtures(options ...ResolveFixtureOption) (*debefix.Data, error) {
 		optns.tags = nil // don't filter tags if already resolved data
 	}
 
-	data, err := debefix.Resolve(sourceData, resolveCallback, debefix.WithResolveTags(optns.tags))
+	data, err := debefix.Resolve(sourceData, resolveFixturesCallback, debefix.WithResolveTags(optns.tags))
 	if err != nil {
 		return nil, fmt.Errorf("error resolving fixtures with tags '%s': %w", strings.Join(optns.tags, ", "), err)
 	}
@@ -94,7 +94,8 @@ type resolveFixturesOptions struct {
 	output       bool
 }
 
-func resolveCallback(ctx debefix.ResolveContext, fields map[string]any) error {
+// resolveFixturesCallback is used for in-memory fixture resolving, so we don't have a database to generate values.
+func resolveFixturesCallback(ctx debefix.ResolveContext, fields map[string]any) error {
 	for fn, fv := range fields {
 		if fresolve, ok := fv.(debefix.ResolveValue); ok {
 			switch fresolve.(type) {
