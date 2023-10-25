@@ -13,12 +13,14 @@ type TagService interface {
 }
 
 type tagService struct {
+	rctx          repository.Context
 	tagRepository repository.TagRepository
 	tagValidator  validator.TagValidator
 }
 
-func NewTagService(tagRepository repository.TagRepository) TagService {
+func NewTagService(rctx repository.Context, tagRepository repository.TagRepository) TagService {
 	return &tagService{
+		rctx:          rctx,
 		tagRepository: tagRepository,
 		tagValidator:  validator.NewTagValidator(),
 	}
@@ -29,5 +31,5 @@ func (d tagService) AddTag(ctx context.Context, tag entity.TagAdd) (entity.Tag, 
 	if err != nil {
 		return entity.Tag{}, err
 	}
-	return d.tagRepository.AddTag(ctx, tag)
+	return d.tagRepository.AddTag(ctx, d.rctx, tag)
 }

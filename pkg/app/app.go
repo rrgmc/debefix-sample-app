@@ -54,12 +54,15 @@ func (a *App) Run(ctx context.Context) error {
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: a.db,
 	}), &gorm.Config{
+		SkipDefaultTransaction: true,
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	tagRepository := database.NewTagRepository(gormDB)
+	rctx := database.NewContext(gormDB)
 
-	tagService := service.NewTagService(tagRepository)
+	tagRepository := database.NewTagRepository()
+
+	tagService := service.NewTagService(rctx, tagRepository)
 
 	httpRouter := http2.NewHTTPHandler(tagService)
 	err = http.ListenAndServe(":3980", httpRouter)
