@@ -1,31 +1,30 @@
 package database
 
 import (
-	gocontext "context"
+	"context"
 	"errors"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
-	"golang.org/x/net/context"
 	"gorm.io/gorm"
 )
 
-type contextGoRM struct {
+type contextDB struct {
 	db *gorm.DB
 }
 
 func NewContext(db *gorm.DB) repository.Context {
-	return &contextGoRM{
+	return &contextDB{
 		db: db,
 	}
 }
 
-func (r contextGoRM) StartUnitOfWork(ctx gocontext.Context, parent repository.Context) (repository.UnitOfWork, error) {
+func (r contextDB) StartUnitOfWork(ctx context.Context, parent repository.Context) (repository.UnitOfWork, error) {
 	var tx *gorm.DB
 	initial := false
 
 	switch pt := parent.(type) {
-	case *contextGoRM:
+	case *contextDB:
 		tx = r.db.Begin(nil)
 		if tx.Error != nil {
 			return nil, domain.NewError(errors.Join(domain.RepositoryError, tx.Error))
@@ -36,22 +35,22 @@ func (r contextGoRM) StartUnitOfWork(ctx gocontext.Context, parent repository.Co
 	default:
 		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
 	}
-	return &unitOfWork{contextGoRM{tx}, initial}, nil
+	return &unitOfWork{contextDB{tx}, initial}, nil
 }
 
 type unitOfWork struct {
-	contextGoRM
+	contextDB
 	initial bool
 }
 
-func (u unitOfWork) Commit(ctx gocontext.Context) error {
+func (u unitOfWork) Commit(ctx context.Context) error {
 	if !u.initial {
 		return nil
 	}
 	return u.db.Commit().Error
 }
 
-func (u unitOfWork) Cancel(ctx gocontext.Context) error {
+func (u unitOfWork) Cancel(ctx context.Context) error {
 	if !u.initial {
 		return nil
 	}
@@ -62,7 +61,7 @@ func getDB(rctx repository.Context) (*gorm.DB, error) {
 	switch t := rctx.(type) {
 	case *unitOfWork:
 		return t.db, nil
-	case *contextGoRM:
+	case *contextDB:
 		return t.db, nil
 	default:
 		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
