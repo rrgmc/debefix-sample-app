@@ -61,7 +61,7 @@ func TestDBTagRepositoryGetTagList(t *testing.T) {
 		assert.Assert(t, is.Len(returnedTags, 2))
 		assert.DeepEqual(t, expectedTags, returnedTags,
 			opt.TimeWithThreshold(time.Hour))
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBTagRepositoryGetTagByID(t *testing.T) {
@@ -77,7 +77,9 @@ func TestDBTagRepositoryGetTagByID(t *testing.T) {
 
 		assert.DeepEqual(t, expectedTag, returnedTag,
 			opt.TimeWithThreshold(time.Hour))
-	}, dbtest.WithDBForTestMergeData(dbTagRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbTagRepositoryTestMergeData()))
 }
 
 func TestDBTagRepositoryAddTag(t *testing.T) {
@@ -89,7 +91,7 @@ func TestDBTagRepositoryAddTag(t *testing.T) {
 		returnedTag, err := ts.AddTag(context.Background(), newTag)
 		assert.NilError(t, err)
 		assert.Equal(t, "new tag", returnedTag.Name)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
@@ -107,7 +109,9 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 		returnedTag, err := ts.UpdateTagByID(context.Background(), expectedTag.TagID, updatedTag)
 		assert.NilError(t, err)
 		assert.Equal(t, "updated tag", returnedTag.Name)
-	}, dbtest.WithDBForTestMergeData(dbTagRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbTagRepositoryTestMergeData()))
 }
 
 func TestDBTagRepositoryUpdateTagByIDNotFound(t *testing.T) {
@@ -118,7 +122,7 @@ func TestDBTagRepositoryUpdateTagByIDNotFound(t *testing.T) {
 
 		_, err := ts.UpdateTagByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedTag)
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBTagRepositoryDeleteTagByID(t *testing.T) {
@@ -131,14 +135,16 @@ func TestDBTagRepositoryDeleteTagByID(t *testing.T) {
 
 		err = ts.DeleteTagByID(context.Background(), expectedTag.TagID)
 		assert.NilError(t, err)
-	}, dbtest.WithDBForTestMergeData(dbTagRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbTagRepositoryTestMergeData()))
 }
 
 func TestDBTagRepositoryDeleteTagByIDNotFound(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
 		err := ts.DeleteTagByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func dbTagRepositoryTestMergeData() []string {

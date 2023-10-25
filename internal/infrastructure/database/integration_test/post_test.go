@@ -63,7 +63,7 @@ func TestDBPostRepositoryGetPosts(t *testing.T) {
 		assert.Assert(t, is.Len(returnedPosts, 1))
 		assert.DeepEqual(t, expectedPosts, returnedPosts,
 			opt.TimeWithThreshold(time.Hour))
-	}, dbtest.WithDBForTestFixturesTags([]string{"tests.lists"}))
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBPostRepositoryGetPostByID(t *testing.T) {
@@ -79,7 +79,9 @@ func TestDBPostRepositoryGetPostByID(t *testing.T) {
 
 		assert.DeepEqual(t, expectedPost, returnedPost,
 			opt.TimeWithThreshold(time.Hour))
-	}, dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
 }
 
 func TestDBPostRepositoryAddPost(t *testing.T) {
@@ -107,7 +109,7 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Equal(t, "new title", returnedPost.Title)
 		assert.Equal(t, "new text", returnedPost.Text)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
@@ -134,7 +136,9 @@ func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Equal(t, "updated title", returnedPost.Title)
 		assert.Equal(t, "updated text", returnedPost.Text)
-	}, dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
 }
 
 func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
@@ -153,7 +157,7 @@ func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
 
 		_, err = ts.UpdatePostByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedPost)
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBPostRepositoryDeletePostByID(t *testing.T) {
@@ -166,14 +170,16 @@ func TestDBPostRepositoryDeletePostByID(t *testing.T) {
 
 		err = ts.DeletePostByID(context.Background(), expectedPost.PostID)
 		assert.NilError(t, err)
-	}, dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
 }
 
 func TestDBPostRepositoryDeletePostByIDNotFound(t *testing.T) {
 	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
 		err := ts.DeletePostByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func dbPostRepositoryTestMergeData() []string {

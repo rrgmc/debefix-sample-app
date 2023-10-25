@@ -12,11 +12,7 @@ posts:
         posts_tags:
           rows:
             - post_id: !dbfexpr "parent:post_id"
-              tag_id: !dbfexpr "refid:tags:go:tag_id"
-            - post_id: !dbfexpr "parent:post_id"
               tag_id: !dbfexpr "refid:tags:javascript:tag_id"
-            - post_id: !dbfexpr "parent:post_id"
-              tag_id: !dbfexpr "refid:tags:cpp:tag_id"
         comments:
           rows:
             - comment_id: !dbfexpr "generated:uuid"
@@ -44,7 +40,11 @@ posts:
         posts_tags:
           rows:
             - post_id: !dbfexpr "parent:post_id"
+              tag_id: !dbfexpr "refid:tags:go:tag_id"
+            - post_id: !dbfexpr "parent:post_id"
               tag_id: !dbfexpr "refid:tags:javascript:tag_id"
+            - post_id: !dbfexpr "parent:post_id"
+              tag_id: !dbfexpr "refid:tags:cpp:tag_id"
         comments:
           rows:
             - comment_id: !dbfexpr "generated:uuid"
@@ -53,3 +53,25 @@ posts:
               text: "I liked this post!"
               created_at: !!timestamp 2023-01-01T16:31:12Z
               updated_at: !!timestamp 2023-01-01T16:31:12Z
+
+    - post_id: !dbfexpr "generated:uuid"
+      title: "Third post"
+      text: "This is the text of the third post"
+      user_id: !dbfexpr "refid:users:johndoe:user_id"
+      created_at: !!timestamp 2023-01-02T12:31:12Z
+      updated_at: !!timestamp 2023-01-02T12:31:12Z
+      _dbfconfig:
+        refid: "post_3"
+      _dbfdeps:
+        posts_tags:
+          rows:
+            - post_id: !dbfexpr "parent:post_id"
+              tag_id: !dbfexpr "refid:tags:cpp:tag_id"
+        comments:
+          rows:
+            - comment_id: !dbfexpr "generated:uuid"
+              post_id: !dbfexpr "parent:post_id"
+              user_id: !dbfexpr "refid:users:janedoe:user_id"
+              text: "This third post is awesome!"
+              created_at: !!timestamp 2023-01-01T16:34:12Z
+              updated_at: !!timestamp 2023-01-01T16:34:12Z

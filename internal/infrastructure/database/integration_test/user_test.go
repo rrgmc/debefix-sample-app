@@ -62,7 +62,7 @@ func TestDBUserRepositoryGetUserList(t *testing.T) {
 		assert.Assert(t, is.Len(returnedUsers, 1))
 		assert.DeepEqual(t, expectedUsers, returnedUsers,
 			opt.TimeWithThreshold(time.Hour))
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBUserRepositoryGetUserByID(t *testing.T) {
@@ -78,7 +78,9 @@ func TestDBUserRepositoryGetUserByID(t *testing.T) {
 
 		assert.DeepEqual(t, expectedUser, returnedUser,
 			opt.TimeWithThreshold(time.Hour))
-	}, dbtest.WithDBForTestMergeData(dbUserRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbUserRepositoryTestMergeData()))
 }
 
 func TestDBUserRepositoryAddUser(t *testing.T) {
@@ -98,7 +100,7 @@ func TestDBUserRepositoryAddUser(t *testing.T) {
 		returnedUser, err := ts.AddUser(context.Background(), newUser)
 		assert.NilError(t, err)
 		assert.Equal(t, "new user", returnedUser.Name)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBUserRepositoryUpdateUserByID(t *testing.T) {
@@ -124,7 +126,9 @@ func TestDBUserRepositoryUpdateUserByID(t *testing.T) {
 		returnedUser, err := ts.UpdateUserByID(context.Background(), expectedUser.UserID, updatedUser)
 		assert.NilError(t, err)
 		assert.Equal(t, "updated user", returnedUser.Name)
-	}, dbtest.WithDBForTestMergeData(dbUserRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbUserRepositoryTestMergeData()))
 }
 
 func TestDBUserRepositoryUpdateUserByIDNotFound(t *testing.T) {
@@ -143,7 +147,7 @@ func TestDBUserRepositoryUpdateUserByIDNotFound(t *testing.T) {
 
 		_, err = ts.UpdateUserByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedUser)
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBUserRepositoryDeleteUserByID(t *testing.T) {
@@ -156,14 +160,16 @@ func TestDBUserRepositoryDeleteUserByID(t *testing.T) {
 
 		err = ts.DeleteUserByID(context.Background(), expectedUser.UserID)
 		assert.NilError(t, err)
-	}, dbtest.WithDBForTestMergeData(dbUserRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbUserRepositoryTestMergeData()))
 }
 
 func TestDBUserRepositoryDeleteUserByIDNotFound(t *testing.T) {
 	testDBUserRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.UserRepository) {
 		err := ts.DeleteUserByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func dbUserRepositoryTestMergeData() []string {

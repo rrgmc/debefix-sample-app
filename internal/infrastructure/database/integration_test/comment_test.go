@@ -63,7 +63,7 @@ func TestDBCommentRepositoryGetComments(t *testing.T) {
 		assert.Assert(t, is.Len(returnedComments, 1))
 		assert.DeepEqual(t, expectedComments, returnedComments,
 			opt.TimeWithThreshold(time.Hour))
-	}, dbtest.WithDBForTestFixturesTags([]string{"tests.lists"}))
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBCommentRepositoryGetCommentByID(t *testing.T) {
@@ -79,7 +79,9 @@ func TestDBCommentRepositoryGetCommentByID(t *testing.T) {
 
 		assert.DeepEqual(t, expectedComment, returnedComment,
 			opt.TimeWithThreshold(time.Hour))
-	}, dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
 }
 
 func TestDBCommentRepositoryAddComment(t *testing.T) {
@@ -104,7 +106,9 @@ func TestDBCommentRepositoryAddComment(t *testing.T) {
 		returnedComment, err := ts.AddComment(context.Background(), newComment)
 		assert.NilError(t, err)
 		assert.Equal(t, "new text", returnedComment.Text)
-	}, dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
 }
 
 func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
@@ -135,7 +139,9 @@ func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
 		returnedComment, err := ts.UpdateCommentByID(context.Background(), expectedComment.CommentID, updatedComment)
 		assert.NilError(t, err)
 		assert.Equal(t, "updated text", returnedComment.Text)
-	}, dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
 }
 
 func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
@@ -159,7 +165,9 @@ func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
 
 		_, err = ts.UpdateCommentByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedComment)
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	}, dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
 }
 
 func TestDBCommentRepositoryDeleteCommentByID(t *testing.T) {
@@ -172,14 +180,16 @@ func TestDBCommentRepositoryDeleteCommentByID(t *testing.T) {
 
 		err = ts.DeleteCommentByID(context.Background(), expectedComment.CommentID)
 		assert.NilError(t, err)
-	}, dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
+	},
+		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
+		dbtest.WithDBForTestMergeData(dbCommentRepositoryTestMergeData()))
 }
 
 func TestDBCommentRepositoryDeleteCommentByIDNotFound(t *testing.T) {
 	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		err := ts.DeleteCommentByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
-	})
+	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func dbCommentRepositoryTestMergeData() []string {
