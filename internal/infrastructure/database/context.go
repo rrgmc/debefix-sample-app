@@ -24,14 +24,17 @@ func (r contextGoRM) StartUnitOfWork(ctx gocontext.Context, parent repository.Co
 	var tx *gorm.DB
 	initial := false
 
-	parentUow, ok := parent.(*unitOfWork)
-	if parent == nil || !ok {
+	switch pt := parent.(type) {
+	case *contextGoRM:
 		tx = r.db.Begin(nil)
+		if tx.Error != nil {
+			return nil, domain.NewError(errors.Join(domain.RepositoryError, tx.Error))
+		}
 		initial = true
-	} else if !ok {
+	case *unitOfWork:
+		tx = pt.db
+	default:
 		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
-	} else {
-		tx = parentUow.db
 	}
 	return &unitOfWork{contextGoRM{tx}, initial}, nil
 }
