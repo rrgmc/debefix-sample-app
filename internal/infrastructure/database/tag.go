@@ -51,8 +51,8 @@ func (t tagRepository) GetTagByID(ctx context.Context, tagID uuid.UUID) (entity.
 	return item.ToEntity(), nil
 }
 
-func (t tagRepository) AddTag(ctx context.Context, tag entity.TagChange) (entity.Tag, error) {
-	item := dbmodel.TagChangeFromEntity(tag)
+func (t tagRepository) AddTag(ctx context.Context, tag entity.TagAdd) (entity.Tag, error) {
+	item := dbmodel.TagAddFromEntity(tag)
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
 
@@ -68,8 +68,8 @@ func (t tagRepository) AddTag(ctx context.Context, tag entity.TagChange) (entity
 	return item.ToEntity(), nil
 }
 
-func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag entity.TagChange) (entity.Tag, error) {
-	item := dbmodel.TagChangeFromEntity(tag)
+func (t tagRepository) UpdateTagByID(ctx context.Context, tagID uuid.UUID, tag entity.TagUpdate) (entity.Tag, error) {
+	item := dbmodel.TagUpdateFromEntity(tag)
 	item.UpdatedAt = time.Now()
 
 	result := t.db.

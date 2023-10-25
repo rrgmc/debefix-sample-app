@@ -44,8 +44,12 @@ func TagFromEntity(m entity.Tag) Tag {
 	}
 }
 
-func TagChangeFromEntity(m entity.TagChange) Tag {
+func TagAddFromEntity(m entity.TagAdd) Tag {
 	return Tag{
 		Name: m.Name,
 	}
+}
+
+func TagUpdateFromEntity(m entity.TagUpdate) Tag {
+	return TagAddFromEntity(m)
 }
