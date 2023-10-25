@@ -9,9 +9,11 @@ type Tag struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-type TagChange struct {
+type TagAdd struct {
 	Name string `json:"name"`
 }
+
+type TagUpdate = TagAdd
 
 // helpers
 
