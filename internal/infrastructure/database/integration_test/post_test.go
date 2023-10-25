@@ -44,24 +44,22 @@ func TestDBPostRepositoryGetPosts(t *testing.T) {
 	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
 		filter := model.PostFilter{
 			Offset: 1,
-			Limit:  1,
+			Limit:  2,
 		}
 
 		expectedPosts, err := testdata.GetPostList(
-			testdata.WithFilterAll(true),
-			testdata.WithSort("title"),
-			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
+			testdata.WithFilterRefIDs([]string{"post_2", "post_3"}),
+			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
-			testdata.WithResolveTags([]string{"tests.lists"}),
 		)
 		assert.NilError(t, err)
-		assert.Assert(t, is.Len(expectedPosts, 1))
+		assert.Assert(t, is.Len(expectedPosts.Data, 2))
 
 		returnedPosts, err := ts.GetPostList(context.Background(), filter)
 		assert.NilError(t, err)
 
-		assert.Assert(t, is.Len(returnedPosts, 1))
-		assert.DeepEqual(t, expectedPosts, returnedPosts,
+		assert.Assert(t, is.Len(returnedPosts, 2))
+		assert.DeepEqual(t, expectedPosts.Data, returnedPosts,
 			opt.TimeWithThreshold(time.Hour))
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }

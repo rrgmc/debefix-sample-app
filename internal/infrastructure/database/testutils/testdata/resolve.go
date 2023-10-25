@@ -3,6 +3,7 @@ package testdata
 import (
 	"fmt"
 	"reflect"
+	"slices"
 
 	"github.com/google/uuid"
 	"github.com/iancoleman/strcase"
@@ -51,13 +52,22 @@ func filterDataRows[T any](tableID string, f func(row debefix.Row) (T, error),
 }
 
 func filterDataRefID[T any](tableID string, f func(row debefix.Row) (T, error),
-	sortCompare func(sort string, a, b T) int, options ...TestDataOption) (filter.FilterDataRefIDResult[T], error) {
+	sortCompare func(sort string, a, b filter.FilterItem[T]) int, options ...TestDataOption) (filter.FilterDataRefIDResult[T], error) {
 	optns := parseOptions(options...)
 
-	var filterSortCompare func(a, b T) int
-	if optns.sort != "" && sortCompare != nil {
-		filterSortCompare = func(a, b T) int {
-			return sortCompare(optns.sort, a, b)
+	var filterSortCompare func(a, b filter.FilterItem[T]) int
+	if optns.sort != "" {
+		if optns.sort == "refid" {
+			filterSortCompare = func(a, b filter.FilterItem[T]) int {
+				if slices.Index(optns.filterRefIDs, a.Row.Config.RefID) > slices.Index(optns.filterRefIDs, b.Row.Config.RefID) {
+					return 1
+				}
+				return -1
+			}
+		} else if sortCompare != nil {
+			filterSortCompare = func(a, b filter.FilterItem[T]) int {
+				return sortCompare(optns.sort, a, b)
+			}
 		}
 	}
 

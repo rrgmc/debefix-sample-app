@@ -8,6 +8,7 @@ import (
 
 type testDataOptions struct {
 	filterDataOptions []filter.FilterDataOption
+	filterRefIDs      []string
 	resolvedData      *debefix.Data
 	resolveTags       []string
 	sort              string
@@ -15,6 +16,7 @@ type testDataOptions struct {
 
 type TestDataOption func(*testDataOptions)
 
+// WithResolvedData sets the resolved data. If set, tag filtering by "WithResolveTags" will be disabled.
 func WithResolvedData(data *debefix.Data) TestDataOption {
 	return func(o *testDataOptions) {
 		o.resolvedData = data
@@ -34,6 +36,7 @@ func WithFilterAll(filterAll bool) TestDataOption {
 func WithFilterRefIDs(refIDs []string) TestDataOption {
 	return func(o *testDataOptions) {
 		o.filterDataOptions = append(o.filterDataOptions, filter.WithFilterRefIDs(refIDs))
+		o.filterRefIDs = refIDs
 	}
 }
 

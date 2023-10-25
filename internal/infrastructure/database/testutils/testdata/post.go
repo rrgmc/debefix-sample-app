@@ -7,26 +7,27 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/model"
+	"github.com/rrgmc/debefix/filter"
 )
 
-func GetPostList(options ...TestDataOption) ([]model.Post, error) {
-	ret, err := filterData[model.Post]("posts", func(row debefix.Row) (model.Post, error) {
+func GetPostList(options ...TestDataOption) (filter.FilterDataRefIDResult[model.Post], error) {
+	ret, err := filterDataRefID[model.Post]("posts", func(row debefix.Row) (model.Post, error) {
 		return mapToStruct[model.Post](row.Fields)
-	}, func(sort string, a, b model.Post) int {
+	}, func(sort string, a, b filter.FilterItem[model.Post]) int {
 		switch sort {
 		case "title":
-			return strings.Compare(a.Title, b.Title)
+			return strings.Compare(a.Item.Title, b.Item.Title)
 		default:
 			panic(fmt.Sprintf("unknown sort '%s' for 'post' testdata", sort))
 		}
 	}, options...)
 	if err != nil {
-		return nil, err
+		return filter.FilterDataRefIDResult[model.Post]{}, err
 	}
-	for i := 0; i < len(ret); i++ {
-		ret[i].Tags, err = GetPostTagList(ret[i].PostID, options...)
+	for i := 0; i < len(ret.Data); i++ {
+		ret.Data[i].Tags, err = GetPostTagList(ret.Data[i].PostID, options...)
 		if err != nil {
-			return nil, err
+			return filter.FilterDataRefIDResult[model.Post]{}, err
 		}
 	}
 	return ret, nil
@@ -37,10 +38,10 @@ func GetPost(options ...TestDataOption) (model.Post, error) {
 	if err != nil {
 		return model.Post{}, err
 	}
-	if len(ret) != 1 {
-		return model.Post{}, fmt.Errorf("incorrect amount of data returned for 'post': expected %d got %d", 1, len(ret))
+	if len(ret.Data) != 1 {
+		return model.Post{}, fmt.Errorf("incorrect amount of data returned for 'post': expected %d got %d", 1, len(ret.Data))
 	}
-	return ret[0], nil
+	return ret.Data[0], nil
 }
 
 func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, error) {
