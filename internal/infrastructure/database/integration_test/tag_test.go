@@ -22,7 +22,7 @@ import (
 	"gotest.tools/v3/assert/opt"
 )
 
-func testDBTagRepository(t *testing.T, testFn func(*gorm.DB, *debefix.Data, repository.TagRepository),
+func testDBTagRepository(t *testing.T, testFn func(repository.Context, *debefix.Data, repository.TagRepository),
 	options ...dbtest.DBForTestOption) {
 	db, resolvedData, dbCloseFunc, err := dbtest.DBForTest("debefix-sample-app", options...)
 	assert.NilError(t, err)
@@ -34,13 +34,15 @@ func testDBTagRepository(t *testing.T, testFn func(*gorm.DB, *debefix.Data, repo
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	ts := database.NewTagRepository(gormDB)
+	rctx := database.NewContext(gormDB)
 
-	testFn(gormDB, resolvedData, ts)
+	ts := database.NewTagRepository()
+
+	testFn(rctx, resolvedData, ts)
 }
 
 func TestDBTagRepositoryGetTagList(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
 		filter := entity.TagFilter{
 			Offset: 1,
 			Limit:  2,
@@ -54,7 +56,7 @@ func TestDBTagRepositoryGetTagList(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Assert(t, is.Len(expectedTags.Data, 2))
 
-		returnedTags, err := ts.GetTagList(context.Background(), filter)
+		returnedTags, err := ts.GetTagList(context.Background(), rctx, filter)
 		assert.NilError(t, err)
 
 		assert.Assert(t, is.Len(returnedTags, 2))
@@ -64,14 +66,14 @@ func TestDBTagRepositoryGetTagList(t *testing.T) {
 }
 
 func TestDBTagRepositoryGetTagByID(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
 		expectedTag, err := testdata.GetTag(
 			testdata.WithFilterRefIDs([]string{"test.DBTagRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		returnedTag, err := ts.GetTagByID(context.Background(), expectedTag.TagID)
+		returnedTag, err := ts.GetTagByID(context.Background(), rctx, expectedTag.TagID)
 		assert.NilError(t, err)
 
 		assert.DeepEqual(t, expectedTag, returnedTag,
@@ -82,19 +84,19 @@ func TestDBTagRepositoryGetTagByID(t *testing.T) {
 }
 
 func TestDBTagRepositoryAddTag(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
 		newTag := entity.TagAdd{
 			Name: "new tag",
 		}
 
-		returnedTag, err := ts.AddTag(context.Background(), newTag)
+		returnedTag, err := ts.AddTag(context.Background(), rctx, newTag)
 		assert.NilError(t, err)
 		assert.Equal(t, "new tag", returnedTag.Name)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
 		expectedTag, err := testdata.GetTag(
 			testdata.WithFilterRefIDs([]string{"test.DBTagRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
@@ -105,7 +107,7 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 			Name: "updated tag",
 		}
 
-		returnedTag, err := ts.UpdateTagByID(context.Background(), expectedTag.TagID, updatedTag)
+		returnedTag, err := ts.UpdateTagByID(context.Background(), rctx, expectedTag.TagID, updatedTag)
 		assert.NilError(t, err)
 		assert.Equal(t, "updated tag", returnedTag.Name)
 	},
@@ -114,25 +116,25 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 }
 
 func TestDBTagRepositoryUpdateTagByIDNotFound(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
 		updatedTag := entity.TagUpdate{
 			Name: "updated tag",
 		}
 
-		_, err := ts.UpdateTagByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedTag)
+		_, err := ts.UpdateTagByID(context.Background(), rctx, uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedTag)
 		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBTagRepositoryDeleteTagByID(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
 		expectedTag, err := testdata.GetTag(
 			testdata.WithFilterRefIDs([]string{"test.DBTagRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		err = ts.DeleteTagByID(context.Background(), expectedTag.TagID)
+		err = ts.DeleteTagByID(context.Background(), rctx, expectedTag.TagID)
 		assert.NilError(t, err)
 	},
 		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
@@ -140,8 +142,8 @@ func TestDBTagRepositoryDeleteTagByID(t *testing.T) {
 }
 
 func TestDBTagRepositoryDeleteTagByIDNotFound(t *testing.T) {
-	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
-		err := ts.DeleteTagByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
+	testDBTagRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.TagRepository) {
+		err := ts.DeleteTagByID(context.Background(), rctx, uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }

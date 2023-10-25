@@ -69,7 +69,7 @@ func (t tagRepository) AddTag(ctx context.Context, rctx repository.Context, tag 
 	var item dbmodel.Tag
 
 	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
-		item := dbmodel.TagAddFromEntity(tag)
+		item = dbmodel.TagAddFromEntity(tag)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
 

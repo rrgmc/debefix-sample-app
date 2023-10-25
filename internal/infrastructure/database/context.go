@@ -28,10 +28,9 @@ func (r contextGoRM) StartUnitOfWork(ctx gocontext.Context, parent repository.Co
 	if parent == nil || !ok {
 		tx = r.db.Begin(nil)
 		initial = true
+	} else if !ok {
+		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
 	} else {
-		if !ok {
-			return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
-		}
 		tx = parentUow.db
 	}
 	return &unitOfWork{contextGoRM{tx}, initial}, nil
@@ -58,9 +57,9 @@ func (u unitOfWork) Cancel(ctx gocontext.Context) error {
 
 func getDB(rctx repository.Context) (*gorm.DB, error) {
 	switch t := rctx.(type) {
-	case unitOfWork:
+	case *unitOfWork:
 		return t.db, nil
-	case contextGoRM:
+	case *contextGoRM:
 		return t.db, nil
 	default:
 		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
