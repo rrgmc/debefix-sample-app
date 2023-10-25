@@ -43,3 +43,9 @@ func TagFromEntity(m entity.Tag) Tag {
 		UpdatedAt: m.UpdatedAt,
 	}
 }
+
+func TagChangeFromEntity(m entity.TagChange) Tag {
+	return Tag{
+		Name: m.Name,
+	}
+}

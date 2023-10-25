@@ -21,3 +21,7 @@ type TagFilter struct {
 	Offset int
 	Limit  int
 }
+
+type TagChange struct {
+	Name string
+}

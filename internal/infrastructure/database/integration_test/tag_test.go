@@ -83,7 +83,7 @@ func TestDBTagRepositoryGetTagByID(t *testing.T) {
 
 func TestDBTagRepositoryAddTag(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
-		newTag := entity.Tag{
+		newTag := entity.TagChange{
 			Name: "new tag",
 		}
 
@@ -101,7 +101,7 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedTag := entity.Tag{
+		updatedTag := entity.TagChange{
 			Name: "updated tag",
 		}
 
@@ -115,7 +115,7 @@ func TestDBTagRepositoryUpdateTagByID(t *testing.T) {
 
 func TestDBTagRepositoryUpdateTagByIDNotFound(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
-		updatedTag := entity.Tag{
+		updatedTag := entity.TagChange{
 			Name: "updated tag",
 		}
 

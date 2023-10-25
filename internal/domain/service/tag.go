@@ -8,7 +8,7 @@ import (
 )
 
 type TagService interface {
-	AddTag(ctx context.Context, tag entity.Tag) (entity.Tag, error)
+	AddTag(ctx context.Context, tag entity.TagChange) (entity.Tag, error)
 }
 
 type tagService struct {
@@ -21,6 +21,6 @@ func NewTagService(tagRepository repository.TagRepository) TagService {
 	}
 }
 
-func (d tagService) AddTag(ctx context.Context, tag entity.Tag) (entity.Tag, error) {
+func (d tagService) AddTag(ctx context.Context, tag entity.TagChange) (entity.Tag, error) {
 	return d.tagRepository.AddTag(ctx, tag)
 }
