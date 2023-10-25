@@ -21,10 +21,6 @@ type TagAdd struct {
 	Name string
 }
 
-func (c TagAdd) Validate() error {
-	return nil
-}
-
 type TagUpdate = TagAdd
 
 // helpers
