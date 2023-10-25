@@ -92,6 +92,7 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 
 		findTags, err := testdata.GetTagList(
 			testdata.WithFilterRefIDs([]string{"javascript", "go"}),
+			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
@@ -100,7 +101,7 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 			Title:  "new title",
 			Text:   "new text",
 			UserID: findUser.UserID,
-			Tags:   findTags,
+			Tags:   findTags.Data,
 		}
 
 		returnedPost, err := ts.AddPost(context.Background(), newPost)

@@ -67,8 +67,8 @@ func GetPostTagList(postID uuid.UUID, options ...TestDataOption) ([]model.Tag, e
 	if err != nil {
 		return nil, err
 	}
-	if len(tags) != len(postsTags) {
-		return nil, fmt.Errorf("unexpected amount of records returned, expected %d got %d", len(postsTags), len(tags))
+	if len(tags.Data) != len(postsTags) {
+		return nil, fmt.Errorf("unexpected amount of records returned, expected %d got %d", len(postsTags), len(tags.Data))
 	}
-	return tags, nil
+	return tags.Data, nil
 }

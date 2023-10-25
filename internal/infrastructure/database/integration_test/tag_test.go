@@ -47,19 +47,18 @@ func TestDBTagRepositoryGetTagList(t *testing.T) {
 		}
 
 		expectedTags, err := testdata.GetTagList(
-			testdata.WithFilterAll(true),
-			testdata.WithSort("name"),
-			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
+			testdata.WithFilterRefIDs([]string{"go", "javascript"}),
+			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
-		assert.Assert(t, is.Len(expectedTags, 2))
+		assert.Assert(t, is.Len(expectedTags.Data, 2))
 
 		returnedTags, err := ts.GetTagList(context.Background(), filter)
 		assert.NilError(t, err)
 
 		assert.Assert(t, is.Len(returnedTags, 2))
-		assert.DeepEqual(t, expectedTags, returnedTags,
+		assert.DeepEqual(t, expectedTags.Data, returnedTags,
 			opt.TimeWithThreshold(time.Hour))
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
