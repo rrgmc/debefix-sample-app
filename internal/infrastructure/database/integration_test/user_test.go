@@ -48,19 +48,18 @@ func TestDBUserRepositoryGetUserList(t *testing.T) {
 		}
 
 		expectedUsers, err := testdata.GetUserList(
-			testdata.WithFilterAll(true),
-			testdata.WithSort("name"),
-			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
+			testdata.WithFilterRefIDs([]string{"johndoe"}),
+			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
-		assert.Assert(t, is.Len(expectedUsers, 1))
+		assert.Assert(t, is.Len(expectedUsers.Data, 1))
 
 		returnedUsers, err := ts.GetUserList(context.Background(), filter)
 		assert.NilError(t, err)
 
 		assert.Assert(t, is.Len(returnedUsers, 1))
-		assert.DeepEqual(t, expectedUsers, returnedUsers,
+		assert.DeepEqual(t, expectedUsers.Data, returnedUsers,
 			opt.TimeWithThreshold(time.Hour))
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }

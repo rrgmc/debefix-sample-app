@@ -44,24 +44,22 @@ func TestDBCommentRepositoryGetComments(t *testing.T) {
 	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		filter := model.CommentFilter{
 			Offset: 1,
-			Limit:  1,
+			Limit:  2,
 		}
 
 		expectedComments, err := testdata.GetCommentList(
-			testdata.WithFilterAll(true),
-			testdata.WithSort("created_at"),
-			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
+			testdata.WithFilterRefIDs([]string{"post_1_comment_2", "post_2_comment_1"}),
+			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
-			testdata.WithResolveTags([]string{"tests.lists"}),
 		)
 		assert.NilError(t, err)
-		assert.Assert(t, is.Len(expectedComments, 1))
+		assert.Assert(t, is.Len(expectedComments.Data, 2))
 
 		returnedComments, err := ts.GetCommentList(context.Background(), filter)
 		assert.NilError(t, err)
 
-		assert.Assert(t, is.Len(returnedComments, 1))
-		assert.DeepEqual(t, expectedComments, returnedComments,
+		assert.Assert(t, is.Len(returnedComments, 2))
+		assert.DeepEqual(t, expectedComments.Data, returnedComments,
 			opt.TimeWithThreshold(time.Hour))
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }

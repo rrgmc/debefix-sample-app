@@ -46,19 +46,18 @@ func TestDBCountryRepositoryGetCountrys(t *testing.T) {
 		}
 
 		expectedCountrys, err := testdata.GetCountryList(
-			testdata.WithFilterAll(true),
-			testdata.WithSort("name"),
-			testdata.WithOffsetLimit(filter.Offset, filter.Limit),
+			testdata.WithFilterRefIDs([]string{"uk", "usa"}),
+			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
-		assert.Assert(t, is.Len(expectedCountrys, 2))
+		assert.Assert(t, is.Len(expectedCountrys.Data, 2))
 
 		returnedCountrys, err := ts.GetCountryList(context.Background(), filter)
 		assert.NilError(t, err)
 
 		assert.Assert(t, is.Len(returnedCountrys, 2))
-		assert.DeepEqual(t, expectedCountrys, returnedCountrys,
+		assert.DeepEqual(t, expectedCountrys.Data, returnedCountrys,
 			opt.TimeWithThreshold(time.Hour))
 	})
 }
