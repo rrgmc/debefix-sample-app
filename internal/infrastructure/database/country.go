@@ -5,10 +5,10 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -41,7 +41,7 @@ func (t countryRepository) GetCountryByID(ctx context.Context, countryID uuid.UU
 		First(&item, countryID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return entity.Country{}, utils.ErrResourceNotFound
+			return entity.Country{}, domain.NewError(domain.NotFound)
 		}
 		return entity.Country{}, result.Error
 	}

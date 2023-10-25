@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -43,7 +43,7 @@ func (t commentRepository) GetCommentByID(ctx context.Context, commentID uuid.UU
 		First(&item, commentID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return entity.Comment{}, utils.ErrResourceNotFound
+			return entity.Comment{}, domain.NewError(domain.NotFound)
 		}
 		return entity.Comment{}, result.Error
 	}
@@ -79,7 +79,7 @@ func (t commentRepository) UpdateCommentByID(ctx context.Context, commentID uuid
 		return entity.Comment{}, result.Error
 	}
 	if result.RowsAffected != 1 {
-		return entity.Comment{}, utils.ErrResourceNotFound
+		return entity.Comment{}, domain.NewError(domain.NotFound)
 	}
 
 	return item.ToEntity(), nil
@@ -93,7 +93,7 @@ func (t commentRepository) DeleteCommentByID(ctx context.Context, commentID uuid
 		return result.Error
 	}
 	if result.RowsAffected != 1 {
-		return utils.ErrResourceNotFound
+		return domain.NewError(domain.NotFound)
 	}
 	return nil
 }

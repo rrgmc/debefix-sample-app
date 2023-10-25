@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/internal/dbmodel"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -49,7 +49,7 @@ func (t postRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (enti
 		First(&item, postID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return entity.Post{}, utils.ErrResourceNotFound
+			return entity.Post{}, domain.NewError(domain.NotFound)
 		}
 		return entity.Post{}, result.Error
 	}
@@ -85,7 +85,7 @@ func (t postRepository) UpdatePostByID(ctx context.Context, postID uuid.UUID, po
 		return entity.Post{}, result.Error
 	}
 	if result.RowsAffected != 1 {
-		return entity.Post{}, utils.ErrResourceNotFound
+		return entity.Post{}, domain.NewError(domain.NotFound)
 	}
 
 	return item.ToEntity(), nil
@@ -99,7 +99,7 @@ func (t postRepository) DeletePostByID(ctx context.Context, postID uuid.UUID) er
 		return result.Error
 	}
 	if result.RowsAffected != 1 {
-		return utils.ErrResourceNotFound
+		return domain.NewError(domain.NotFound)
 	}
 	return nil
 }

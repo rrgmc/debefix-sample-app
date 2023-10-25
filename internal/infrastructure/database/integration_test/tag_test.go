@@ -9,12 +9,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
+	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/dbtest"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
-	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gotest.tools/v3/assert"
@@ -120,7 +120,7 @@ func TestDBTagRepositoryUpdateTagByIDNotFound(t *testing.T) {
 		}
 
 		_, err := ts.UpdateTagByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedTag)
-		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
+		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
@@ -142,7 +142,7 @@ func TestDBTagRepositoryDeleteTagByID(t *testing.T) {
 func TestDBTagRepositoryDeleteTagByIDNotFound(t *testing.T) {
 	testDBTagRepository(t, func(db *gorm.DB, resolvedData *debefix.Data, ts repository.TagRepository) {
 		err := ts.DeleteTagByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
-		assert.ErrorIs(t, err, utils.ErrResourceNotFound)
+		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
