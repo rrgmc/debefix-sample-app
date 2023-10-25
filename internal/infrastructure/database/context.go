@@ -88,6 +88,13 @@ func doInUnitOfWork(ctx context.Context, rctx repository.Context, f func(db *gor
 		return err
 	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			_ = uow.Cancel(ctx)
+			panic(r) // rethrow
+		}
+	}()
+
 	err = f(db)
 	if err != nil {
 		_ = uow.Cancel(ctx)
