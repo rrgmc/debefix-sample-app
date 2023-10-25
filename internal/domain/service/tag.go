@@ -11,10 +11,16 @@ type TagService interface {
 	AddTag(ctx context.Context, tag entity.Tag) (entity.Tag, error)
 }
 
-type DefaultTagService struct {
-	Repository repository.TagRepository
+type tagService struct {
+	tagRepository repository.TagRepository
 }
 
-func (d DefaultTagService) AddTag(ctx context.Context, tag entity.Tag) (entity.Tag, error) {
-	return d.Repository.AddTag(ctx, tag)
+func NewTagService(tagRepository repository.TagRepository) TagService {
+	return &tagService{
+		tagRepository: tagRepository,
+	}
+}
+
+func (d tagService) AddTag(ctx context.Context, tag entity.Tag) (entity.Tag, error) {
+	return d.tagRepository.AddTag(ctx, tag)
 }
