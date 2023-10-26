@@ -27,3 +27,12 @@ type TagFilter struct {
 type TagGetListRequest struct {
 	Filter TagFilter
 }
+
+func NewTagGetListRequest() TagGetListRequest {
+	return TagGetListRequest{
+		Filter: TagFilter{
+			Offset: 0,
+			Limit:  100,
+		},
+	}
+}

@@ -12,7 +12,7 @@ import (
 
 func TagsRoute(group *gin.RouterGroup, tagService service.TagService) {
 	group.GET("/", func(c *gin.Context) {
-		var request payload.TagGetListRequest
+		request := payload.NewTagGetListRequest()
 
 		if err := c.Bind(&request); err != nil {
 			appError := domain.NewError(domain.ValidationError, err)
@@ -27,6 +27,9 @@ func TagsRoute(group *gin.RouterGroup, tagService service.TagService) {
 			_ = c.Error(err)
 			return
 		}
-		c.JSON(http.StatusOK, list)
+
+		output := mapper.TagListFromEntity(list)
+
+		c.JSON(http.StatusOK, output)
 	})
 }

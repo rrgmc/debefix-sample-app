@@ -10,11 +10,11 @@ import (
 
 func init() {
 	validatordeps.Validate.RegisterStructValidationMapRules(map[string]string{
-		"Offset": "required,min=0",
-		"Limit":  "required,min=10,max=500",
+		"Offset": "min=0",
+		"Limit":  "min=10,max=500",
 	}, entity.TagFilter{})
 	validatordeps.Validate.RegisterStructValidationMapRules(map[string]string{
-		"Name": "required,min=1,max=100",
+		"Name": "required,min=3,max=100",
 	}, entity.TagAdd{}, entity.TagUpdate{})
 }
 
