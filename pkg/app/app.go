@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"
@@ -65,6 +66,7 @@ func (a *App) Run(ctx context.Context) error {
 	tagService := service.NewTagService(rctx, tagRepository)
 
 	httpRouter := http2.NewHTTPHandler(tagService)
+	fmt.Printf("Listening at http://localhost:3980...\n")
 	err = http.ListenAndServe(":3980", httpRouter)
 	if err != nil {
 		panic(err)

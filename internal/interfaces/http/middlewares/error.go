@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
+	"github.com/rrgmc/debefix-sample-app/internal/interfaces/http/payload"
 )
 
 // Error is Gin middleware to handle errors.
@@ -19,28 +20,28 @@ func Error(c *gin.Context) {
 		var err *domain.Error
 		if errors.As(errs[0].Err, &err) {
 			if errors.Is(err, domain.NotFound) {
-				c.JSON(http.StatusNotFound, err.Error())
+				c.JSON(http.StatusNotFound, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.ValidationError) {
-				c.JSON(http.StatusBadRequest, err.Error())
+				c.JSON(http.StatusBadRequest, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.ResourceAlreadyExists) {
-				c.JSON(http.StatusConflict, err.Error())
+				c.JSON(http.StatusConflict, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.NotAuthenticated) {
-				c.JSON(http.StatusUnauthorized, err.Error())
+				c.JSON(http.StatusUnauthorized, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.NotAuthorized) {
-				c.JSON(http.StatusForbidden, err.Error())
+				c.JSON(http.StatusForbidden, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.RepositoryError) {
-				c.JSON(http.StatusInternalServerError, err.Error())
+				c.JSON(http.StatusInternalServerError, payload.Error{ErrorMessage: err.Error()})
 				return
 			}
 		}
 
 		// Error is not AppError, return a generic internal server error
-		c.JSON(http.StatusInternalServerError, "Internal Server Errror")
+		c.JSON(http.StatusInternalServerError, payload.Error{ErrorMessage: "Internal Server Errror"})
 		return
 	}
 }

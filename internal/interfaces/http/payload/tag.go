@@ -18,8 +18,12 @@ type TagUpdate = TagAdd
 // helpers
 
 type TagFilter struct {
-	Offset int
-	Limit  int
+	Offset int `form:"offset"`
+	Limit  int `form:"limit"`
 }
 
 // request/response
+
+type TagGetListRequest struct {
+	Filter TagFilter
+}

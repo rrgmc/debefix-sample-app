@@ -9,6 +9,7 @@ import (
 )
 
 type TagService interface {
+	GetTagList(ctx context.Context, filter entity.TagFilter) ([]entity.Tag, error)
 	AddTag(ctx context.Context, tag entity.TagAdd) (entity.Tag, error)
 }
 
@@ -24,6 +25,14 @@ func NewTagService(rctx repository.Context, tagRepository repository.TagReposito
 		tagRepository: tagRepository,
 		tagValidator:  validator.NewTagValidator(),
 	}
+}
+
+func (d tagService) GetTagList(ctx context.Context, filter entity.TagFilter) ([]entity.Tag, error) {
+	err := d.tagValidator.ValidateTagFilter(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	return d.tagRepository.GetTagList(ctx, d.rctx, filter)
 }
 
 func (d tagService) AddTag(ctx context.Context, tag entity.TagAdd) (entity.Tag, error) {

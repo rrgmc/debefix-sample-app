@@ -18,6 +18,14 @@ func TagFromEntity(tag entity.Tag) payload.Tag {
 	}
 }
 
+func TagListFromEntity(tagList []entity.Tag) []payload.Tag {
+	var list []payload.Tag
+	for _, item := range tagList {
+		list = append(list, TagFromEntity(item))
+	}
+	return list
+}
+
 // To entity
 
 func TagAddToEntity(tag payload.TagAdd) entity.TagAdd {
@@ -28,4 +36,11 @@ func TagAddToEntity(tag payload.TagAdd) entity.TagAdd {
 
 func TagUpdateToEntity(tag payload.TagUpdate) entity.TagUpdate {
 	return TagAddToEntity(tag)
+}
+
+func TagFilterToEntity(tagFilter payload.TagFilter) entity.TagFilter {
+	return entity.TagFilter{
+		Offset: tagFilter.Offset,
+		Limit:  tagFilter.Limit,
+	}
 }
