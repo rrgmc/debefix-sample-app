@@ -36,3 +36,11 @@ func NewTagGetListRequest() TagGetListRequest {
 		},
 	}
 }
+
+type TagAddRequest struct {
+	Tag TagAdd
+}
+
+type TagUpdateRequest struct {
+	Tag TagUpdate
+}
