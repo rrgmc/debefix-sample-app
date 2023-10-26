@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/interfaces/http/payload"
 )
@@ -23,6 +24,21 @@ func Error(c *gin.Context) {
 				c.JSON(http.StatusNotFound, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.ValidationError) {
+				var verr validator.ValidationErrors
+				if errors.As(err, &verr) {
+					verrorMsg := map[string]string{}
+					for _, field := range verr {
+						verrorMsg[field.Field()] = field.Error()
+					}
+
+					c.JSON(http.StatusBadRequest, payload.ErrorValidation{
+						Error: payload.Error{
+							ErrorMessage: domain.ValidationError.Error(),
+						},
+						Validation: verrorMsg,
+					})
+					return
+				}
 				c.JSON(http.StatusBadRequest, payload.Error{ErrorMessage: err.Error()})
 				return
 			} else if errors.Is(err, domain.ResourceAlreadyExists) {
