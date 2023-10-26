@@ -4,7 +4,6 @@ package integration_test
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 	"time"
 
@@ -23,7 +22,7 @@ import (
 	"gotest.tools/v3/assert/opt"
 )
 
-func testDBPostRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repository.PostRepository),
+func testDBPostRepository(t *testing.T, testFn func(repository.Context, *debefix.Data, repository.PostRepository),
 	options ...dbtest.DBForTestOption) {
 	db, resolvedData, dbCloseFunc, err := dbtest.DBForTest("debefix-sample-app", options...)
 	assert.NilError(t, err)
@@ -35,13 +34,15 @@ func testDBPostRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repo
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	ts := database.NewPostRepository(gormDB)
+	rctx := database.NewContext(gormDB)
 
-	testFn(db, resolvedData, ts)
+	ts := database.NewPostRepository()
+
+	testFn(rctx, resolvedData, ts)
 }
 
 func TestDBPostRepositoryGetPosts(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		filter := entity.PostFilter{
 			Offset: 1,
 			Limit:  2,
@@ -55,7 +56,7 @@ func TestDBPostRepositoryGetPosts(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Assert(t, is.Len(expectedPosts.Data, 2))
 
-		returnedPosts, err := ts.GetPostList(context.Background(), filter)
+		returnedPosts, err := ts.GetPostList(context.Background(), rctx, filter)
 		assert.NilError(t, err)
 
 		assert.Assert(t, is.Len(returnedPosts, 2))
@@ -65,14 +66,14 @@ func TestDBPostRepositoryGetPosts(t *testing.T) {
 }
 
 func TestDBPostRepositoryGetPostByID(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		expectedPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		returnedPost, err := ts.GetPostByID(context.Background(), expectedPost.PostID)
+		returnedPost, err := ts.GetPostByID(context.Background(), rctx, expectedPost.PostID)
 		assert.NilError(t, err)
 
 		assert.DeepEqual(t, expectedPost, returnedPost,
@@ -83,7 +84,7 @@ func TestDBPostRepositoryGetPostByID(t *testing.T) {
 }
 
 func TestDBPostRepositoryAddPost(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		findUser, err := testdata.GetUser(
 			testdata.WithFilterRefIDs([]string{"janedoe"}),
 			testdata.WithResolvedData(resolvedData),
@@ -104,7 +105,7 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 			Tags:   findTags.Data,
 		}
 
-		returnedPost, err := ts.AddPost(context.Background(), newPost)
+		returnedPost, err := ts.AddPost(context.Background(), rctx, newPost)
 		assert.NilError(t, err)
 		assert.Equal(t, "new title", returnedPost.Title)
 		assert.Equal(t, "new text", returnedPost.Text)
@@ -112,7 +113,7 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 }
 
 func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		findUser, err := testdata.GetUser(
 			testdata.WithFilterRefIDs([]string{"janedoe"}),
 			testdata.WithResolvedData(resolvedData),
@@ -131,7 +132,7 @@ func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
 			UserID: findUser.UserID,
 		}
 
-		returnedPost, err := ts.UpdatePostByID(context.Background(), expectedPost.PostID, updatedPost)
+		returnedPost, err := ts.UpdatePostByID(context.Background(), rctx, expectedPost.PostID, updatedPost)
 		assert.NilError(t, err)
 		assert.Equal(t, "updated title", returnedPost.Title)
 		assert.Equal(t, "updated text", returnedPost.Text)
@@ -141,7 +142,7 @@ func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
 }
 
 func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		findUser, err := testdata.GetUser(
 			testdata.WithFilterRefIDs([]string{"janedoe"}),
 			testdata.WithResolvedData(resolvedData),
@@ -154,20 +155,20 @@ func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
 			UserID: findUser.UserID,
 		}
 
-		_, err = ts.UpdatePostByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedPost)
+		_, err = ts.UpdatePostByID(context.Background(), rctx, uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedPost)
 		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBPostRepositoryDeletePostByID(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		expectedPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		err = ts.DeletePostByID(context.Background(), expectedPost.PostID)
+		err = ts.DeletePostByID(context.Background(), rctx, expectedPost.PostID)
 		assert.NilError(t, err)
 	},
 		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
@@ -175,8 +176,8 @@ func TestDBPostRepositoryDeletePostByID(t *testing.T) {
 }
 
 func TestDBPostRepositoryDeletePostByIDNotFound(t *testing.T) {
-	testDBPostRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.PostRepository) {
-		err := ts.DeletePostByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
+	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
+		err := ts.DeletePostByID(context.Background(), rctx, uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }

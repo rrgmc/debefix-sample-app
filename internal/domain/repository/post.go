@@ -8,9 +8,9 @@ import (
 )
 
 type PostRepository interface {
-	GetPostList(ctx context.Context, filter entity.PostFilter) ([]entity.Post, error)
-	GetPostByID(ctx context.Context, postID uuid.UUID) (entity.Post, error)
-	AddPost(ctx context.Context, post entity.Post) (entity.Post, error)
-	UpdatePostByID(ctx context.Context, postID uuid.UUID, post entity.Post) (entity.Post, error)
-	DeletePostByID(ctx context.Context, postID uuid.UUID) error
+	GetPostList(ctx context.Context, rctx Context, filter entity.PostFilter) ([]entity.Post, error)
+	GetPostByID(ctx context.Context, rctx Context, postID uuid.UUID) (entity.Post, error)
+	AddPost(ctx context.Context, rctx Context, post entity.Post) (entity.Post, error)
+	UpdatePostByID(ctx context.Context, rctx Context, postID uuid.UUID, post entity.Post) (entity.Post, error)
+	DeletePostByID(ctx context.Context, rctx Context, postID uuid.UUID) error
 }

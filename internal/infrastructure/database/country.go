@@ -13,18 +13,21 @@ import (
 )
 
 type countryRepository struct {
-	db *gorm.DB
 }
 
-func NewCountryRepository(db *gorm.DB) repository.CountryRepository {
-	return &countryRepository{
-		db: db,
+func NewCountryRepository() repository.CountryRepository {
+	return &countryRepository{}
+}
+
+func (t countryRepository) GetCountryList(ctx context.Context, rctx repository.Context, filter entity.CountryFilter) ([]entity.Country, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func (t countryRepository) GetCountryList(ctx context.Context, filter entity.CountryFilter) ([]entity.Country, error) {
 	var list []dbmodel.Country
-	result := t.db.WithContext(ctx).
+	result := db.
+		WithContext(ctx).
 		Order("name").
 		Offset(filter.Offset).
 		Limit(filter.Limit).
@@ -35,9 +38,15 @@ func (t countryRepository) GetCountryList(ctx context.Context, filter entity.Cou
 	return dbmodel.CountryListToEntity(list), nil
 }
 
-func (t countryRepository) GetCountryByID(ctx context.Context, countryID uuid.UUID) (entity.Country, error) {
+func (t countryRepository) GetCountryByID(ctx context.Context, rctx repository.Context, countryID uuid.UUID) (entity.Country, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return entity.Country{}, err
+	}
+
 	var item dbmodel.Country
-	result := t.db.WithContext(ctx).
+	result := db.WithContext(ctx).
+		WithContext(ctx).
 		First(&item, countryID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {

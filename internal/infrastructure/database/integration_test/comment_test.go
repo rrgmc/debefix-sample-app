@@ -4,7 +4,6 @@ package integration_test
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 	"time"
 
@@ -23,7 +22,7 @@ import (
 	"gotest.tools/v3/assert/opt"
 )
 
-func testDBCommentRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, repository.CommentRepository),
+func testDBCommentRepository(t *testing.T, testFn func(repository.Context, *debefix.Data, repository.CommentRepository),
 	options ...dbtest.DBForTestOption) {
 	db, resolvedData, dbCloseFunc, err := dbtest.DBForTest("debefix-sample-app", options...)
 	assert.NilError(t, err)
@@ -35,13 +34,15 @@ func testDBCommentRepository(t *testing.T, testFn func(*sql.DB, *debefix.Data, r
 		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	ts := database.NewCommentRepository(gormDB)
+	rctx := database.NewContext(gormDB)
 
-	testFn(db, resolvedData, ts)
+	ts := database.NewCommentRepository()
+
+	testFn(rctx, resolvedData, ts)
 }
 
 func TestDBCommentRepositoryGetComments(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		filter := entity.CommentFilter{
 			Offset: 1,
 			Limit:  2,
@@ -55,7 +56,7 @@ func TestDBCommentRepositoryGetComments(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Assert(t, is.Len(expectedComments.Data, 2))
 
-		returnedComments, err := ts.GetCommentList(context.Background(), filter)
+		returnedComments, err := ts.GetCommentList(context.Background(), rctx, filter)
 		assert.NilError(t, err)
 
 		assert.Assert(t, is.Len(returnedComments, 2))
@@ -65,14 +66,14 @@ func TestDBCommentRepositoryGetComments(t *testing.T) {
 }
 
 func TestDBCommentRepositoryGetCommentByID(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		expectedComment, err := testdata.GetComment(
 			testdata.WithFilterRefIDs([]string{"test.DBCommentRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		returnedComment, err := ts.GetCommentByID(context.Background(), expectedComment.CommentID)
+		returnedComment, err := ts.GetCommentByID(context.Background(), rctx, expectedComment.CommentID)
 		assert.NilError(t, err)
 
 		assert.DeepEqual(t, expectedComment, returnedComment,
@@ -83,7 +84,7 @@ func TestDBCommentRepositoryGetCommentByID(t *testing.T) {
 }
 
 func TestDBCommentRepositoryAddComment(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		findPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
@@ -101,7 +102,7 @@ func TestDBCommentRepositoryAddComment(t *testing.T) {
 			Text:   "new text",
 		}
 
-		returnedComment, err := ts.AddComment(context.Background(), newComment)
+		returnedComment, err := ts.AddComment(context.Background(), rctx, newComment)
 		assert.NilError(t, err)
 		assert.Equal(t, "new text", returnedComment.Text)
 	},
@@ -110,7 +111,7 @@ func TestDBCommentRepositoryAddComment(t *testing.T) {
 }
 
 func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		findPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
@@ -134,7 +135,7 @@ func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
 			Text:   "updated text",
 		}
 
-		returnedComment, err := ts.UpdateCommentByID(context.Background(), expectedComment.CommentID, updatedComment)
+		returnedComment, err := ts.UpdateCommentByID(context.Background(), rctx, expectedComment.CommentID, updatedComment)
 		assert.NilError(t, err)
 		assert.Equal(t, "updated text", returnedComment.Text)
 	},
@@ -143,7 +144,7 @@ func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
 }
 
 func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		findPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
@@ -161,7 +162,7 @@ func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
 			Text:   "updated text",
 		}
 
-		_, err = ts.UpdateCommentByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedComment)
+		_, err = ts.UpdateCommentByID(context.Background(), rctx, uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"), updatedComment)
 		assert.ErrorIs(t, err, domain.NotFound)
 	},
 		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
@@ -169,14 +170,14 @@ func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
 }
 
 func TestDBCommentRepositoryDeleteCommentByID(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
 		expectedComment, err := testdata.GetComment(
 			testdata.WithFilterRefIDs([]string{"test.DBCommentRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		err = ts.DeleteCommentByID(context.Background(), expectedComment.CommentID)
+		err = ts.DeleteCommentByID(context.Background(), rctx, expectedComment.CommentID)
 		assert.NilError(t, err)
 	},
 		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
@@ -184,8 +185,8 @@ func TestDBCommentRepositoryDeleteCommentByID(t *testing.T) {
 }
 
 func TestDBCommentRepositoryDeleteCommentByIDNotFound(t *testing.T) {
-	testDBCommentRepository(t, func(db *sql.DB, resolvedData *debefix.Data, ts repository.CommentRepository) {
-		err := ts.DeleteCommentByID(context.Background(), uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
+	testDBCommentRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.CommentRepository) {
+		err := ts.DeleteCommentByID(context.Background(), rctx, uuid.MustParse("0379ca21-7ed0-45e7-8812-4a6944f2c198"))
 		assert.ErrorIs(t, err, domain.NotFound)
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }

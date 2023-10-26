@@ -15,85 +15,115 @@ import (
 )
 
 type commentRepository struct {
-	db *gorm.DB
 }
 
-func NewCommentRepository(db *gorm.DB) repository.CommentRepository {
-	return &commentRepository{
-		db: db,
+func NewCommentRepository() repository.CommentRepository {
+	return &commentRepository{}
+}
+
+func (t commentRepository) GetCommentList(ctx context.Context, rctx repository.Context, filter entity.CommentFilter) ([]entity.Comment, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func (t commentRepository) GetCommentList(ctx context.Context, filter entity.CommentFilter) ([]entity.Comment, error) {
 	var list []dbmodel.Comment
-	result := t.db.WithContext(ctx).
+	result := db.
+		WithContext(ctx).
 		Order("created_at").
 		Offset(filter.Offset).
 		Limit(filter.Limit).
 		Find(&list)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, domain.NewError(domain.RepositoryError, result.Error)
 	}
 	return dbmodel.CommentListToEntity(list), nil
 }
 
-func (t commentRepository) GetCommentByID(ctx context.Context, commentID uuid.UUID) (entity.Comment, error) {
+func (t commentRepository) GetCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID) (entity.Comment, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return entity.Comment{}, err
+	}
+
 	var item dbmodel.Comment
-	result := t.db.WithContext(ctx).
+	result := db.
+		WithContext(ctx).
 		First(&item, commentID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entity.Comment{}, domain.NewError(domain.NotFound)
 		}
-		return entity.Comment{}, result.Error
+		return entity.Comment{}, domain.NewError(domain.RepositoryError, result.Error)
 	}
 	return item.ToEntity(), nil
 }
 
-func (t commentRepository) AddComment(ctx context.Context, comment entity.Comment) (entity.Comment, error) {
-	item := dbmodel.CommentFromEntity(comment)
-	item.CreatedAt = time.Now()
-	item.UpdatedAt = time.Now()
+func (t commentRepository) AddComment(ctx context.Context, rctx repository.Context, comment entity.Comment) (entity.Comment, error) {
+	var item dbmodel.Comment
 
-	result := t.db.
-		Clauses(clause.Returning{}).
-		Select("post_id", "user_id", "text", "created_at", "updated_at").
-		Create(&item)
-	if result.Error != nil {
-		return entity.Comment{}, result.Error
+	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+		item = dbmodel.CommentFromEntity(comment)
+		item.CreatedAt = time.Now()
+		item.UpdatedAt = time.Now()
+
+		result := db.
+			WithContext(ctx).
+			Clauses(clause.Returning{}).
+			Select("post_id", "user_id", "text", "created_at", "updated_at").
+			Create(&item)
+		if result.Error != nil {
+			return domain.NewError(domain.RepositoryError, result.Error)
+		}
+		return nil
+	})
+	if err != nil {
+		return entity.Comment{}, err
 	}
 
 	return item.ToEntity(), nil
 }
 
-func (t commentRepository) UpdateCommentByID(ctx context.Context, commentID uuid.UUID, comment entity.Comment) (entity.Comment, error) {
-	item := dbmodel.CommentFromEntity(comment)
-	item.UpdatedAt = time.Now()
+func (t commentRepository) UpdateCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID, comment entity.Comment) (entity.Comment, error) {
+	var item dbmodel.Comment
 
-	result := t.db.
-		Clauses(clause.Returning{}).
-		Select("post_id", "user_id", "text", "created_at", "updated_at").
-		Where("comment_id = ?", commentID).
-		Updates(&item)
-	if result.Error != nil {
-		return entity.Comment{}, result.Error
-	}
-	if result.RowsAffected != 1 {
-		return entity.Comment{}, domain.NewError(domain.NotFound)
+	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+		item = dbmodel.CommentFromEntity(comment)
+		item.UpdatedAt = time.Now()
+
+		result := db.
+			WithContext(ctx).
+			Clauses(clause.Returning{}).
+			Select("post_id", "user_id", "text", "created_at", "updated_at").
+			Where("comment_id = ?", commentID).
+			Updates(&item)
+		if result.Error != nil {
+			return domain.NewError(domain.RepositoryError, result.Error)
+		}
+		if result.RowsAffected != 1 {
+			return domain.NewError(domain.NotFound)
+		}
+		return nil
+	})
+	if err != nil {
+		return entity.Comment{}, err
 	}
 
 	return item.ToEntity(), nil
 
 }
 
-func (t commentRepository) DeleteCommentByID(ctx context.Context, commentID uuid.UUID) error {
-	result := t.db.
-		Delete(dbmodel.Comment{}, commentID)
-	if result.Error != nil {
-		return result.Error
-	}
-	if result.RowsAffected != 1 {
-		return domain.NewError(domain.NotFound)
-	}
-	return nil
+func (t commentRepository) DeleteCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID) error {
+	return doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+		result := db.
+			WithContext(ctx).
+			Delete(dbmodel.Comment{}, commentID)
+		if result.Error != nil {
+			return domain.NewError(domain.RepositoryError, result.Error)
+		}
+		if result.RowsAffected != 1 {
+			return domain.NewError(domain.NotFound)
+		}
+		return nil
+	})
 }
