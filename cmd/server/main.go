@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/rrgmc/debefix-sample-app/pkg/app"
@@ -18,7 +19,9 @@ func main() {
 
 	ctx := context.Background()
 
-	serverApp, err := app.NewApp(ctx, cfg)
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	serverApp, err := app.NewApp(ctx, logger, cfg)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "error running application: %s", err)
 		os.Exit(1)

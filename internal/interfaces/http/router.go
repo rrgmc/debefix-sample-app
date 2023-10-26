@@ -1,6 +1,7 @@
 package http
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -8,10 +9,15 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/domain/service"
 	"github.com/rrgmc/debefix-sample-app/internal/interfaces/http/middlewares"
 	"github.com/rrgmc/debefix-sample-app/internal/interfaces/http/routes"
+	sloggin "github.com/samber/slog-gin"
 )
 
-func NewHTTPHandler(tagService service.TagService) http.Handler {
-	router := gin.Default()
+func NewHTTPHandler(logger *slog.Logger,
+	tagService service.TagService) http.Handler {
+	router := gin.New()
+
+	router.Use(sloggin.New(logger))
+	router.Use(gin.Recovery())
 
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true

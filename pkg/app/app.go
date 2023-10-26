@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"
@@ -19,12 +19,14 @@ import (
 )
 
 type App struct {
+	logger *slog.Logger
 	config config.Config
 	db     *sql.DB
 }
 
-func NewApp(ctx context.Context, cfg config.Config) (*App, error) {
+func NewApp(ctx context.Context, logger *slog.Logger, cfg config.Config) (*App, error) {
 	app := &App{
+		logger: logger,
 		config: cfg,
 	}
 	return app, app.init(ctx)
@@ -65,8 +67,8 @@ func (a *App) Run(ctx context.Context) error {
 
 	tagService := service.NewTagService(rctx, tagRepository)
 
-	httpRouter := http2.NewHTTPHandler(tagService)
-	fmt.Printf("Listening at http://localhost:3980...\n")
+	httpRouter := http2.NewHTTPHandler(a.logger, tagService)
+	a.logger.Info("listening at http://localhost:3980...")
 	err = http.ListenAndServe(":3980", httpRouter)
 	if err != nil {
 		panic(err)
