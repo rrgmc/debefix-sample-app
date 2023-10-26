@@ -15,14 +15,7 @@ import (
 )
 
 type tagRepository struct {
-	// db *gorm.DB
 }
-
-// func NewTagRepository(db *gorm.DB) repository.TagRepository {
-// 	return &tagRepository{
-// 		db: db,
-// 	}
-// }
 
 func NewTagRepository() repository.TagRepository {
 	return &tagRepository{}
@@ -35,13 +28,14 @@ func (t tagRepository) GetTagList(ctx context.Context, rctx repository.Context, 
 	}
 
 	var list []dbmodel.Tag
-	result := db.WithContext(ctx).
+	result := db.
+		WithContext(ctx).
 		Order("name").
 		Offset(filter.Offset).
 		Limit(filter.Limit).
 		Find(&list)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, domain.NewError(domain.RepositoryError, result.Error)
 	}
 	return dbmodel.TagListToEntity(list), nil
 }
@@ -60,7 +54,7 @@ func (t tagRepository) GetTagByID(ctx context.Context, rctx repository.Context, 
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entity.Tag{}, domain.NewError(domain.NotFound)
 		}
-		return entity.Tag{}, result.Error
+		return entity.Tag{}, domain.NewError(domain.RepositoryError, result.Error)
 	}
 	return item.ToEntity(), nil
 }
@@ -79,7 +73,7 @@ func (t tagRepository) AddTag(ctx context.Context, rctx repository.Context, tag 
 			Select("name", "created_at", "updated_at").
 			Create(&item)
 		if result.Error != nil {
-			return result.Error
+			return domain.NewError(domain.RepositoryError, result.Error)
 		}
 		return nil
 	})
@@ -103,7 +97,7 @@ func (t tagRepository) UpdateTagByID(ctx context.Context, rctx repository.Contex
 			Where("tag_id = ?", tagID).
 			Updates(&item)
 		if result.Error != nil {
-			return result.Error
+			return domain.NewError(domain.RepositoryError, result.Error)
 		}
 		if result.RowsAffected != 1 {
 			return domain.NewError(domain.NotFound)
@@ -122,7 +116,7 @@ func (t tagRepository) DeleteTagByID(ctx context.Context, rctx repository.Contex
 		result := db.
 			Delete(dbmodel.Tag{}, tagID)
 		if result.Error != nil {
-			return result.Error
+			return domain.NewError(domain.RepositoryError, result.Error)
 		}
 		if result.RowsAffected != 1 {
 			return domain.NewError(domain.NotFound)
