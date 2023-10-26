@@ -33,7 +33,7 @@ func (r contextDB) StartUnitOfWork(ctx context.Context, parent repository.Contex
 	case *unitOfWork:
 		tx = pt.db
 	default:
-		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
+		return nil, domain.NewError(domain.RepositoryError, errors.New("incompatible repository context type"))
 	}
 	return &unitOfWork{contextDB{tx}, initial}, nil
 }
@@ -64,7 +64,7 @@ func getDB(rctx repository.Context) (*gorm.DB, error) {
 	case *contextDB:
 		return t.db, nil
 	default:
-		return nil, domain.NewError(errors.Join(domain.RepositoryError, errors.New("incompatible repository context type")))
+		return nil, domain.NewError(domain.RepositoryError, errors.New("incompatible repository context type"))
 	}
 }
 

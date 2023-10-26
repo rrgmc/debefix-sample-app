@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +15,7 @@ func TagsRoute(group *gin.RouterGroup, tagService service.TagService) {
 		var request payload.TagGetListRequest
 
 		if err := c.Bind(&request); err != nil {
-			appError := domain.NewError(errors.Join(domain.ValidationError, err))
+			appError := domain.NewError(domain.ValidationError, err)
 			_ = c.Error(appError)
 			return
 		}

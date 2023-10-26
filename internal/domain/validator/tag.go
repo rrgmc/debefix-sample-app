@@ -2,7 +2,6 @@ package validator
 
 import (
 	"context"
-	"errors"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
@@ -35,7 +34,7 @@ func NewTagValidator() TagValidator {
 func (t tagValidator) ValidateTagFilter(ctx context.Context, tagFilter entity.TagFilter) error {
 	err := validatordeps.Validate.StructCtx(ctx, tagFilter)
 	if err != nil {
-		return domain.NewError(errors.Join(domain.ValidationError, err))
+		return domain.NewError(domain.ValidationError, err)
 	}
 	return nil
 }
@@ -43,7 +42,7 @@ func (t tagValidator) ValidateTagFilter(ctx context.Context, tagFilter entity.Ta
 func (t tagValidator) ValidateTagAdd(ctx context.Context, tag entity.TagAdd) error {
 	err := validatordeps.Validate.StructCtx(ctx, tag)
 	if err != nil {
-		return domain.NewError(errors.Join(domain.ValidationError, err))
+		return domain.NewError(domain.ValidationError, err)
 	}
 	return nil
 }
@@ -51,7 +50,7 @@ func (t tagValidator) ValidateTagAdd(ctx context.Context, tag entity.TagAdd) err
 func (t tagValidator) ValidateTagUpdate(ctx context.Context, tag entity.TagUpdate) error {
 	err := validatordeps.Validate.StructCtx(ctx, tag)
 	if err != nil {
-		return domain.NewError(errors.Join(domain.ValidationError, err))
+		return domain.NewError(domain.ValidationError, err)
 	}
 	return nil
 }
