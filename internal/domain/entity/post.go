@@ -18,6 +18,17 @@ type Post struct {
 	UpdatedAt time.Time
 }
 
+// data change
+
+type PostAdd struct {
+	Title  string
+	Text   string
+	UserID uuid.UUID
+	Tags   []uuid.UUID
+}
+
+type PostUpdate = PostAdd
+
 // helpers
 
 type PostFilter struct {

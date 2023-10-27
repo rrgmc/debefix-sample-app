@@ -62,7 +62,7 @@ func (t tagRepository) GetTagByID(ctx context.Context, rctx repository.Context, 
 func (t tagRepository) AddTag(ctx context.Context, rctx repository.Context, tag entity.TagAdd) (entity.Tag, error) {
 	var item dbmodel.Tag
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		item = dbmodel.TagAddFromEntity(tag)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
@@ -87,7 +87,7 @@ func (t tagRepository) AddTag(ctx context.Context, rctx repository.Context, tag 
 func (t tagRepository) UpdateTagByID(ctx context.Context, rctx repository.Context, tagID uuid.UUID, tag entity.TagUpdate) (entity.Tag, error) {
 	var item dbmodel.Tag
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		item = dbmodel.TagUpdateFromEntity(tag)
 		item.UpdatedAt = time.Now()
 
@@ -112,7 +112,7 @@ func (t tagRepository) UpdateTagByID(ctx context.Context, rctx repository.Contex
 }
 
 func (t tagRepository) DeleteTagByID(ctx context.Context, rctx repository.Context, tagID uuid.UUID) error {
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		result := db.
 			Delete(dbmodel.Tag{}, tagID)
 		if result.Error != nil {

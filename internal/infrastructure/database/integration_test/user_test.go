@@ -36,7 +36,7 @@ func testDBUserRepository(t *testing.T, testFn func(repository.Context, *debefix
 
 	rctx := database.NewContext(gormDB)
 
-	ts := database.NewUserRepository(gormDB)
+	ts := database.NewUserRepository()
 
 	testFn(rctx, resolvedData, ts)
 }
@@ -91,7 +91,7 @@ func TestDBUserRepositoryAddUser(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		newUser := entity.User{
+		newUser := entity.UserAdd{
 			Name:      "new user",
 			Email:     "new email",
 			CountryID: findCountry.CountryID,
@@ -117,7 +117,7 @@ func TestDBUserRepositoryUpdateUserByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedUser := entity.User{
+		updatedUser := entity.UserUpdate{
 			Name:      "updated user",
 			Email:     "updated email",
 			CountryID: findCountry.CountryID,
@@ -139,7 +139,7 @@ func TestDBUserRepositoryUpdateUserByIDNotFound(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedUser := entity.User{
+		updatedUser := entity.UserUpdate{
 			Name:      "updated user",
 			Email:     "updated email",
 			CountryID: findCountry.CountryID,

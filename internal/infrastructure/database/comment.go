@@ -62,7 +62,7 @@ func (t commentRepository) GetCommentByID(ctx context.Context, rctx repository.C
 func (t commentRepository) AddComment(ctx context.Context, rctx repository.Context, comment entity.Comment) (entity.Comment, error) {
 	var item dbmodel.Comment
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		item = dbmodel.CommentFromEntity(comment)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
@@ -87,7 +87,7 @@ func (t commentRepository) AddComment(ctx context.Context, rctx repository.Conte
 func (t commentRepository) UpdateCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID, comment entity.Comment) (entity.Comment, error) {
 	var item dbmodel.Comment
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		item = dbmodel.CommentFromEntity(comment)
 		item.UpdatedAt = time.Now()
 
@@ -114,7 +114,7 @@ func (t commentRepository) UpdateCommentByID(ctx context.Context, rctx repositor
 }
 
 func (t commentRepository) DeleteCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID) error {
-	return doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	return doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		result := db.
 			WithContext(ctx).
 			Delete(dbmodel.Comment{}, commentID)

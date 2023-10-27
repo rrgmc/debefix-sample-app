@@ -17,6 +17,8 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+// data change
+
 type UserAdd struct {
 	Name      string
 	Email     string

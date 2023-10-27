@@ -62,7 +62,7 @@ func (t userRepository) GetUserByID(ctx context.Context, rctx repository.Context
 func (t userRepository) AddUser(ctx context.Context, rctx repository.Context, user entity.UserAdd) (entity.User, error) {
 	var item dbmodel.User
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		item = dbmodel.UserAddFromEntity(user)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
@@ -87,7 +87,7 @@ func (t userRepository) AddUser(ctx context.Context, rctx repository.Context, us
 func (t userRepository) UpdateUserByID(ctx context.Context, rctx repository.Context, userID uuid.UUID, user entity.UserUpdate) (entity.User, error) {
 	var item dbmodel.User
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		item = dbmodel.UserUpdateFromEntity(user)
 		item.UpdatedAt = time.Now()
 
@@ -114,7 +114,7 @@ func (t userRepository) UpdateUserByID(ctx context.Context, rctx repository.Cont
 }
 
 func (t userRepository) DeleteUserByID(ctx context.Context, rctx repository.Context, userID uuid.UUID) error {
-	return doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	return doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		result := db.
 			WithContext(ctx).
 			Delete(dbmodel.User{}, userID)

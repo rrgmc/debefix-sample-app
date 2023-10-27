@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
@@ -17,6 +18,7 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database/testutils/testdata"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gotest.tools/v3/assert"
 	is "gotest.tools/v3/assert/cmp"
 	"gotest.tools/v3/assert/opt"
@@ -31,7 +33,7 @@ func testDBPostRepository(t *testing.T, testFn func(repository.Context, *debefix
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		// Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	rctx := database.NewContext(gormDB)
@@ -92,50 +94,78 @@ func TestDBPostRepositoryAddPost(t *testing.T) {
 		assert.NilError(t, err)
 
 		findTags, err := testdata.GetTagList(
-			testdata.WithFilterRefIDs([]string{"javascript", "go"}),
+			testdata.WithFilterRefIDs([]string{"go", "javascript"}),
 			testdata.WithSort("refid"),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		newPost := entity.Post{
+		expectedPost := entity.Post{
 			Title:  "new title",
 			Text:   "new text",
 			UserID: findUser.UserID,
 			Tags:   findTags.Data,
 		}
 
+		newPost := entity.PostAdd{
+			Title:  expectedPost.Title,
+			Text:   expectedPost.Text,
+			UserID: expectedPost.UserID,
+		}
+		for _, tag := range expectedPost.Tags {
+			newPost.Tags = append(newPost.Tags, tag.TagID)
+		}
+
 		returnedPost, err := ts.AddPost(context.Background(), rctx, newPost)
 		assert.NilError(t, err)
-		assert.Equal(t, "new title", returnedPost.Title)
-		assert.Equal(t, "new text", returnedPost.Text)
+		assert.DeepEqual(t, expectedPost, returnedPost,
+			cmpopts.IgnoreFields(entity.Post{}, "PostID"),
+			cmpopts.IgnoreTypes(time.Time{}))
 	}, dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}))
 }
 
 func TestDBPostRepositoryUpdatePostByID(t *testing.T) {
 	testDBPostRepository(t, func(rctx repository.Context, resolvedData *debefix.Data, ts repository.PostRepository) {
 		findUser, err := testdata.GetUser(
-			testdata.WithFilterRefIDs([]string{"janedoe"}),
+			testdata.WithFilterRefIDs([]string{"johndoe"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		expectedPost, err := testdata.GetPost(
+		findTags, err := testdata.GetTagList(
+			testdata.WithFilterRefIDs([]string{"go"}),
+			testdata.WithSort("refid"),
+			testdata.WithResolvedData(resolvedData),
+		)
+		assert.NilError(t, err)
+
+		currentPost, err := testdata.GetPost(
 			testdata.WithFilterRefIDs([]string{"test.DBPostRepositoryTestMergeData"}),
 			testdata.WithResolvedData(resolvedData),
 		)
 		assert.NilError(t, err)
 
-		updatedPost := entity.Post{
+		expectedPost := entity.Post{
 			Title:  "updated title",
 			Text:   "updated text",
 			UserID: findUser.UserID,
+			Tags:   findTags.Data,
 		}
 
-		returnedPost, err := ts.UpdatePostByID(context.Background(), rctx, expectedPost.PostID, updatedPost)
+		updatedPost := entity.PostUpdate{
+			Title:  expectedPost.Title,
+			Text:   expectedPost.Text,
+			UserID: expectedPost.UserID,
+		}
+		for _, tag := range expectedPost.Tags {
+			updatedPost.Tags = append(updatedPost.Tags, tag.TagID)
+		}
+
+		returnedPost, err := ts.UpdatePostByID(context.Background(), rctx, currentPost.PostID, updatedPost)
 		assert.NilError(t, err)
-		assert.Equal(t, "updated title", returnedPost.Title)
-		assert.Equal(t, "updated text", returnedPost.Text)
+		assert.DeepEqual(t, expectedPost, returnedPost,
+			cmpopts.IgnoreFields(entity.Post{}, "PostID"),
+			cmpopts.IgnoreTypes(time.Time{}))
 	},
 		dbtest.WithDBForTestFixturesTags([]string{"tests.crud"}),
 		dbtest.WithDBForTestMergeData(dbPostRepositoryTestMergeData()))
@@ -149,7 +179,7 @@ func TestDBPostRepositoryUpdatePostByIDNotFound(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedPost := entity.Post{
+		updatedPost := entity.PostUpdate{
 			Title:  "updated title",
 			Text:   "updated text",
 			UserID: findUser.UserID,

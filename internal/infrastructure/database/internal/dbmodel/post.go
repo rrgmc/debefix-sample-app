@@ -14,11 +14,12 @@ type Post struct {
 	Title     string
 	Text      string
 	UserID    uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `gorm:"autoCreateTime:false"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime:false"`
 
-	User *User `gorm:"references:UserID"`
-	Tags []Tag `gorm:"many2many:posts_tags;foreignKey:PostID;joinForeignKey:PostID;References:TagID;joinReferences:TagID"`
+	User   *User     `gorm:"references:UserID"`
+	Tags   []Tag     `gorm:"many2many:posts_tags;foreignKey:PostID;joinForeignKey:PostID;References:TagID;joinReferences:TagID"`
+	TagIDs []PostTag `gorm:"foreignKey:PostID;references:PostID"`
 }
 
 func (Post) TableName() string {
@@ -50,19 +51,46 @@ func PostListToEntity(list []Post) []entity.Post {
 	return ret
 }
 
-func PostFromEntity(m entity.Post) Post {
-	var tags []Tag
+func PostAddFromEntity(m entity.PostAdd) Post {
+	var tags []PostTag
 	for _, tag := range m.Tags {
-		tags = append(tags, TagFromEntity(tag))
+		tags = append(tags, PostTag{
+			TagID: tag,
+		})
 	}
 
 	return Post{
-		PostID:    m.PostID,
-		Title:     m.Title,
-		Text:      m.Text,
-		UserID:    m.UserID,
-		Tags:      tags,
-		CreatedAt: m.CreatedAt,
-		UpdatedAt: m.UpdatedAt,
+		Title:  m.Title,
+		Text:   m.Text,
+		UserID: m.UserID,
+		TagIDs: tags,
 	}
+}
+
+func PostUpdateFromEntity(postID uuid.UUID, m entity.PostUpdate) Post {
+	var tags []PostTag
+	for _, tag := range m.Tags {
+		tags = append(tags, PostTag{
+			PostID: postID,
+			TagID:  tag,
+		})
+	}
+
+	return Post{
+		Title:  m.Title,
+		Text:   m.Text,
+		UserID: m.UserID,
+		TagIDs: tags,
+	}
+}
+
+// PostTag
+
+type PostTag struct {
+	PostID uuid.UUID `gorm:"primaryKey"`
+	TagID  uuid.UUID `gorm:"primaryKey"`
+}
+
+func (PostTag) TableName() string {
+	return "posts_tags"
 }

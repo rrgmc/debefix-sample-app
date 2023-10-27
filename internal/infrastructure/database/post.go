@@ -65,18 +65,20 @@ func (t postRepository) GetPostByID(ctx context.Context, rctx repository.Context
 	return item.ToEntity(), nil
 }
 
-func (t postRepository) AddPost(ctx context.Context, rctx repository.Context, post entity.Post) (entity.Post, error) {
+func (t postRepository) AddPost(ctx context.Context, rctx repository.Context, post entity.PostAdd) (entity.Post, error) {
 	var item dbmodel.Post
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
-		item = dbmodel.PostFromEntity(post)
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
+		item = dbmodel.PostAddFromEntity(post)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
 
 		result := db.
 			WithContext(ctx).
-			Clauses(clause.Returning{}).
-			Select("title", "text", "user_id", "created_at", "updated_at", "Tags").
+			Clauses(clause.Returning{
+				Columns: []clause.Column{{Name: "post_id"}},
+			}).
+			Select("title", "text", "user_id", "created_at", "updated_at", "TagIDs").
 			Create(&item)
 		if result.Error != nil {
 			return domain.NewError(domain.RepositoryError, result.Error)
@@ -87,19 +89,21 @@ func (t postRepository) AddPost(ctx context.Context, rctx repository.Context, po
 		return entity.Post{}, err
 	}
 
-	return item.ToEntity(), nil
+	return t.GetPostByID(ctx, rctx, item.PostID)
 }
 
-func (t postRepository) UpdatePostByID(ctx context.Context, rctx repository.Context, postID uuid.UUID, post entity.Post) (entity.Post, error) {
+func (t postRepository) UpdatePostByID(ctx context.Context, rctx repository.Context, postID uuid.UUID, post entity.PostUpdate) (entity.Post, error) {
 	var item dbmodel.Post
 
-	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
-		item = dbmodel.PostFromEntity(post)
+	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
+		item = dbmodel.PostUpdateFromEntity(postID, post)
 		item.UpdatedAt = time.Now()
 
 		result := db.
-			Clauses(clause.Returning{}).
-			Select("title", "text", "user_id", "created_at", "updated_at").
+			Clauses(clause.Returning{
+				Columns: []clause.Column{{Name: "post_id"}},
+			}).
+			Select("title", "text", "user_id", "updated_at").
 			Where("post_id = ?", postID).
 			Updates(&item)
 		if result.Error != nil {
@@ -108,17 +112,25 @@ func (t postRepository) UpdatePostByID(ctx context.Context, rctx repository.Cont
 		if result.RowsAffected != 1 {
 			return domain.NewError(domain.NotFound)
 		}
+
+		// https://github.com/go-gorm/gorm/issues/6308
+		err := db.Model(&item).
+			Association("TagIDs").Unscoped().Replace(item.TagIDs)
+		if err != nil {
+			return domain.NewError(domain.RepositoryError, err)
+		}
+
 		return nil
 	})
 	if err != nil {
 		return entity.Post{}, err
 	}
 
-	return item.ToEntity(), nil
+	return t.GetPostByID(ctx, rctx, item.PostID)
 }
 
 func (t postRepository) DeletePostByID(ctx context.Context, rctx repository.Context, postID uuid.UUID) error {
-	return doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
+	return doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
 		result := db.
 			Delete(dbmodel.Post{}, postID)
 		if result.Error != nil {

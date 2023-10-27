@@ -84,7 +84,7 @@ func startUnitOfWork(ctx context.Context, rctx repository.Context) (*gorm.DB, re
 	return db, uow, err
 }
 
-func doInUnitOfWork(ctx context.Context, rctx repository.Context, f func(db *gorm.DB) error) error {
+func doInUnitOfWork(ctx context.Context, rctx repository.Context, f func(urctx repository.Context, db *gorm.DB) error) error {
 	db, uow, err := startUnitOfWork(ctx, rctx)
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func doInUnitOfWork(ctx context.Context, rctx repository.Context, f func(db *gor
 		}
 	}()
 
-	err = f(db)
+	err = f(uow, db)
 	if err != nil {
 		_ = uow.Cancel(ctx)
 	} else {
