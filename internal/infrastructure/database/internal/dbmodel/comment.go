@@ -41,13 +41,14 @@ func CommentListToEntity(list []Comment) []entity.Comment {
 	return ret
 }
 
-func CommentFromEntity(m entity.Comment) Comment {
+func CommentAddFromEntity(m entity.CommentAdd) Comment {
 	return Comment{
-		CommentID: m.CommentID,
-		PostID:    m.PostID,
-		UserID:    m.UserID,
-		Text:      m.Text,
-		CreatedAt: m.CreatedAt,
-		UpdatedAt: m.UpdatedAt,
+		PostID: m.PostID,
+		UserID: m.UserID,
+		Text:   m.Text,
 	}
+}
+
+func CommentUpdateFromEntity(m entity.CommentUpdate) Comment {
+	return CommentAddFromEntity(m)
 }

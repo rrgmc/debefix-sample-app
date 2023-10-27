@@ -96,7 +96,7 @@ func TestDBCommentRepositoryAddComment(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		newComment := entity.Comment{
+		newComment := entity.CommentAdd{
 			PostID: findPost.PostID,
 			UserID: findUser.UserID,
 			Text:   "new text",
@@ -129,7 +129,7 @@ func TestDBCommentRepositoryUpdateCommentByID(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedComment := entity.Comment{
+		updatedComment := entity.CommentUpdate{
 			PostID: findPost.PostID,
 			UserID: findUser.UserID,
 			Text:   "updated text",
@@ -156,7 +156,7 @@ func TestDBCommentRepositoryUpdateCommentByIDNotFound(t *testing.T) {
 		)
 		assert.NilError(t, err)
 
-		updatedComment := entity.Comment{
+		updatedComment := entity.CommentUpdate{
 			PostID: findPost.PostID,
 			UserID: findUser.UserID,
 			Text:   "updated text",

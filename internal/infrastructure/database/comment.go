@@ -59,11 +59,11 @@ func (t commentRepository) GetCommentByID(ctx context.Context, rctx repository.C
 	return item.ToEntity(), nil
 }
 
-func (t commentRepository) AddComment(ctx context.Context, rctx repository.Context, comment entity.Comment) (entity.Comment, error) {
+func (t commentRepository) AddComment(ctx context.Context, rctx repository.Context, comment entity.CommentAdd) (entity.Comment, error) {
 	var item dbmodel.Comment
 
 	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
-		item = dbmodel.CommentFromEntity(comment)
+		item = dbmodel.CommentAddFromEntity(comment)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
 
@@ -84,17 +84,18 @@ func (t commentRepository) AddComment(ctx context.Context, rctx repository.Conte
 	return item.ToEntity(), nil
 }
 
-func (t commentRepository) UpdateCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID, comment entity.Comment) (entity.Comment, error) {
+func (t commentRepository) UpdateCommentByID(ctx context.Context, rctx repository.Context,
+	commentID uuid.UUID, comment entity.CommentUpdate) (entity.Comment, error) {
 	var item dbmodel.Comment
 
 	err := doInUnitOfWork(ctx, rctx, func(urctx repository.Context, db *gorm.DB) error {
-		item = dbmodel.CommentFromEntity(comment)
+		item = dbmodel.CommentUpdateFromEntity(comment)
 		item.UpdatedAt = time.Now()
 
 		result := db.
 			WithContext(ctx).
 			Clauses(clause.Returning{}).
-			Select("post_id", "user_id", "text", "created_at", "updated_at").
+			Select("post_id", "user_id", "text", "updated_at").
 			Where("comment_id = ?", commentID).
 			Updates(&item)
 		if result.Error != nil {

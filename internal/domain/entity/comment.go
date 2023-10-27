@@ -17,6 +17,16 @@ type Comment struct {
 	UpdatedAt time.Time
 }
 
+// data change
+
+type CommentAdd struct {
+	PostID uuid.UUID
+	UserID uuid.UUID
+	Text   string
+}
+
+type CommentUpdate = CommentAdd
+
 // helpers
 
 type CommentFilter struct {
