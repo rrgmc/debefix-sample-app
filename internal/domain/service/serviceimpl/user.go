@@ -16,11 +16,12 @@ type userService struct {
 	userValidator  validator.UserValidator
 }
 
-func NewUserService(rctx repository.Context, userRepository repository.UserRepository) service.UserService {
+func NewUserService(rctx repository.Context, userRepository repository.UserRepository,
+	countryService service.CountryService) service.UserService {
 	return &userService{
 		rctx:           rctx,
 		userRepository: userRepository,
-		userValidator:  validator.NewUserValidator(),
+		userValidator:  validator.NewUserValidator(countryService),
 	}
 }
 

@@ -71,9 +71,9 @@ func (a *App) Run(ctx context.Context) error {
 
 	countryService := serviceimpl.NewCountryService(rctx, countryRepository)
 	tagService := serviceimpl.NewTagService(rctx, tagRepository)
-	userService := serviceimpl.NewUserService(rctx, userRepository)
+	userService := serviceimpl.NewUserService(rctx, userRepository, countryService)
 	postService := serviceimpl.NewPostService(rctx, postRepository, tagService, userService)
-	commentService := serviceimpl.NewCommentService(rctx, commentRepository)
+	commentService := serviceimpl.NewCommentService(rctx, commentRepository, postService, userService)
 
 	httpRouter := http2.NewHTTPHandler(a.logger,
 		countryService,

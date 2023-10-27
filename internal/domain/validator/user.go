@@ -2,9 +2,11 @@ package validator
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/service"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/validator/validatordeps"
 )
 
@@ -27,10 +29,13 @@ type UserValidator interface {
 }
 
 type userValidator struct {
+	countryService service.CountryService
 }
 
-func NewUserValidator() UserValidator {
-	return &userValidator{}
+func NewUserValidator(countryService service.CountryService) UserValidator {
+	return &userValidator{
+		countryService: countryService,
+	}
 }
 
 func (t userValidator) ValidateUserFilter(ctx context.Context, userFilter entity.UserFilter) error {
@@ -46,13 +51,15 @@ func (t userValidator) ValidateUserAdd(ctx context.Context, user entity.UserAdd)
 	if err != nil {
 		return domain.NewError(domain.ValidationError, err)
 	}
+
+	_, err = t.countryService.GetCountryByID(ctx, user.CountryID)
+	if err != nil {
+		return domain.NewError(domain.ValidationError, fmt.Errorf("country_id: %w", err))
+	}
+
 	return nil
 }
 
 func (t userValidator) ValidateUserUpdate(ctx context.Context, user entity.UserUpdate) error {
-	err := validatordeps.Validate.StructCtx(ctx, user)
-	if err != nil {
-		return domain.NewError(domain.ValidationError, err)
-	}
-	return nil
+	return t.ValidateUserAdd(ctx, user)
 }

@@ -16,11 +16,12 @@ type commentService struct {
 	commentValidator  validator.CommentValidator
 }
 
-func NewCommentService(rctx repository.Context, commentRepository repository.CommentRepository) service.CommentService {
+func NewCommentService(rctx repository.Context, commentRepository repository.CommentRepository,
+	postService service.PostService, userService service.UserService) service.CommentService {
 	return &commentService{
 		rctx:              rctx,
 		commentRepository: commentRepository,
-		commentValidator:  validator.NewCommentValidator(),
+		commentValidator:  validator.NewCommentValidator(postService, userService),
 	}
 }
 

@@ -2,9 +2,11 @@ package validator
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/service"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/validator/validatordeps"
 )
 
@@ -27,10 +29,16 @@ type CommentValidator interface {
 }
 
 type commentValidator struct {
+	postService service.PostService
+	userService service.UserService
 }
 
-func NewCommentValidator() CommentValidator {
-	return &commentValidator{}
+func NewCommentValidator(postService service.PostService,
+	userService service.UserService) CommentValidator {
+	return &commentValidator{
+		postService: postService,
+		userService: userService,
+	}
 }
 
 func (t commentValidator) ValidateCommentFilter(ctx context.Context, commentFilter entity.CommentFilter) error {
@@ -46,13 +54,20 @@ func (t commentValidator) ValidateCommentAdd(ctx context.Context, comment entity
 	if err != nil {
 		return domain.NewError(domain.ValidationError, err)
 	}
+
+	_, err = t.postService.GetPostByID(ctx, comment.PostID)
+	if err != nil {
+		return domain.NewError(domain.ValidationError, fmt.Errorf("post_id: %w", err))
+	}
+
+	_, err = t.userService.GetUserByID(ctx, comment.UserID)
+	if err != nil {
+		return domain.NewError(domain.ValidationError, fmt.Errorf("user_id: %w", err))
+	}
+
 	return nil
 }
 
 func (t commentValidator) ValidateCommentUpdate(ctx context.Context, comment entity.CommentUpdate) error {
-	err := validatordeps.Validate.StructCtx(ctx, comment)
-	if err != nil {
-		return domain.NewError(domain.ValidationError, err)
-	}
-	return nil
+	return t.ValidateCommentUpdate(ctx, comment)
 }
