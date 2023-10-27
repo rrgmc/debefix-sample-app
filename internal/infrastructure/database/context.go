@@ -24,7 +24,7 @@ func (r contextDB) StartUnitOfWork(ctx context.Context, parent repository.Contex
 	initial := false
 
 	switch pt := parent.(type) {
-	case *contextDB:
+	case nil, *contextDB:
 		tx = r.db.Begin(nil)
 		if tx.Error != nil {
 			return nil, domain.NewError(errors.Join(domain.RepositoryError, tx.Error))
