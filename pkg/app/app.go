@@ -65,13 +65,16 @@ func (a *App) Run(ctx context.Context) error {
 
 	tagRepository := database.NewTagRepository()
 	userRepository := database.NewUserRepository()
+	postRepository := database.NewPostRepository()
 
 	tagService := service.NewTagService(rctx, tagRepository)
 	userService := service.NewUserService(rctx, userRepository)
+	postService := service.NewPostService(rctx, postRepository)
 
 	httpRouter := http2.NewHTTPHandler(a.logger,
 		tagService,
 		userService,
+		postService,
 	)
 
 	a.logger.Info("listening at http://localhost:3980...")

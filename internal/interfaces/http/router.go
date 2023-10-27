@@ -15,6 +15,7 @@ import (
 func NewHTTPHandler(logger *slog.Logger,
 	tagService service.TagService,
 	userService service.UserService,
+	postService service.PostService,
 ) http.Handler {
 	router := gin.New()
 
