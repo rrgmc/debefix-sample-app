@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rrgmc/debefix"
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
+	"github.com/rrgmc/debefix/value"
 )
 
 var (
@@ -26,7 +27,7 @@ func init() {
 		debefix.NewDirectoryFileProvider(curDir,
 			debefix.WithDirectoryTagFunc(debefix.StripNumberPunctuationPrefixDirectoryTagFunc)),
 		debefix.WithLoadTaggedValueParser(
-			debefix.ValueParserUUID(),
+			value.ValueParserUUID(),
 		))
 	if err != nil {
 		panic(fmt.Sprintf("error loading test fixtures: %s", err))

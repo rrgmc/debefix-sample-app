@@ -8,6 +8,7 @@ import (
 	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	sql2 "github.com/rrgmc/debefix/db/sql"
 	"github.com/rrgmc/debefix/db/sql/postgres"
+	"github.com/rrgmc/debefix/value"
 )
 
 func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data, error) {
@@ -36,5 +37,5 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 				fmt.Printf("Loading table '%s'...\n", tableName)
 			}
 		}),
-		debefix.WithResolvedValueParser(&debefix.ResolvedValueParserUUID{}))
+		debefix.WithResolvedValueParser(&value.ResolvedValueParserUUID{}))
 }
