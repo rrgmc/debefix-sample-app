@@ -2,9 +2,11 @@ package validator
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/entity"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/service"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/validator/validatordeps"
 )
 
@@ -26,10 +28,15 @@ type PostValidator interface {
 }
 
 type postValidator struct {
+	tagService  service.TagService
+	userService service.UserService
 }
 
-func NewPostValidator() PostValidator {
-	return &postValidator{}
+func NewPostValidator(tagService service.TagService, userService service.UserService) PostValidator {
+	return &postValidator{
+		tagService:  tagService,
+		userService: userService,
+	}
 }
 
 func (t postValidator) ValidatePostFilter(ctx context.Context, postFilter entity.PostFilter) error {
@@ -37,6 +44,14 @@ func (t postValidator) ValidatePostFilter(ctx context.Context, postFilter entity
 	if err != nil {
 		return domain.NewError(domain.ValidationError, err)
 	}
+
+	if postFilter.UserID != nil {
+		_, err = t.userService.GetUserByID(ctx, *postFilter.UserID)
+		if err != nil {
+			return domain.NewError(domain.ValidationError, fmt.Errorf("user_id: %w", err))
+		}
+	}
+
 	return nil
 }
 
@@ -45,13 +60,22 @@ func (t postValidator) ValidatePostAdd(ctx context.Context, post entity.PostAdd)
 	if err != nil {
 		return domain.NewError(domain.ValidationError, err)
 	}
+
+	_, err = t.userService.GetUserByID(ctx, post.UserID)
+	if err != nil {
+		return domain.NewError(domain.ValidationError, fmt.Errorf("user_id: %w", err))
+	}
+
+	for _, tag := range post.Tags {
+		_, err = t.tagService.GetTagByID(ctx, tag)
+		if err != nil {
+			return domain.NewError(domain.ValidationError, fmt.Errorf("tag_id: %w", err))
+		}
+	}
+
 	return nil
 }
 
 func (t postValidator) ValidatePostUpdate(ctx context.Context, post entity.PostUpdate) error {
-	err := validatordeps.Validate.StructCtx(ctx, post)
-	if err != nil {
-		return domain.NewError(domain.ValidationError, err)
-	}
-	return nil
+	return t.ValidatePostAdd(ctx, post)
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	stdlib "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
-	"github.com/rrgmc/debefix-sample-app/internal/domain/service"
+	"github.com/rrgmc/debefix-sample-app/internal/domain/service/serviceimpl"
 	"github.com/rrgmc/debefix-sample-app/internal/infrastructure/database"
 	http2 "github.com/rrgmc/debefix-sample-app/internal/interfaces/http"
 	"github.com/rrgmc/debefix-sample-app/pkg/config"
@@ -69,11 +69,11 @@ func (a *App) Run(ctx context.Context) error {
 	postRepository := database.NewPostRepository()
 	commentRepository := database.NewCommentRepository()
 
-	countryService := service.NewCountryService(rctx, countryRepository)
-	tagService := service.NewTagService(rctx, tagRepository)
-	userService := service.NewUserService(rctx, userRepository)
-	postService := service.NewPostService(rctx, postRepository)
-	commentService := service.NewCommentService(rctx, commentRepository)
+	countryService := serviceimpl.NewCountryService(rctx, countryRepository)
+	tagService := serviceimpl.NewTagService(rctx, tagRepository)
+	userService := serviceimpl.NewUserService(rctx, userRepository)
+	postService := serviceimpl.NewPostService(rctx, postRepository, tagService, userService)
+	commentService := serviceimpl.NewCommentService(rctx, commentRepository)
 
 	httpRouter := http2.NewHTTPHandler(a.logger,
 		countryService,

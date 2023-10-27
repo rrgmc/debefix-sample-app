@@ -6,6 +6,7 @@ import (
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
 	"github.com/rrgmc/debefix-sample-app/internal/domain/repository"
+	"github.com/rrgmc/debefix-sample-app/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -29,7 +30,7 @@ func (r contextDB) StartUnitOfWork(ctx context.Context, parent repository.Contex
 	case *contextDB:
 		tx = r.db.Begin(nil)
 		if tx.Error != nil {
-			return nil, domain.NewError(errors.Join(domain.RepositoryError, tx.Error))
+			return nil, domain.NewError(utils.JoinErrors(domain.RepositoryError, tx.Error))
 		}
 		initial = true
 	case *unitOfWork:
