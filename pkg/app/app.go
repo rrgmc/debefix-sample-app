@@ -64,10 +64,16 @@ func (a *App) Run(ctx context.Context) error {
 	rctx := database.NewContext(gormDB)
 
 	tagRepository := database.NewTagRepository()
+	userRepository := database.NewUserRepository()
 
 	tagService := service.NewTagService(rctx, tagRepository)
+	userService := service.NewUserService(rctx, userRepository)
 
-	httpRouter := http2.NewHTTPHandler(a.logger, tagService)
+	httpRouter := http2.NewHTTPHandler(a.logger,
+		tagService,
+		userService,
+	)
+
 	a.logger.Info("listening at http://localhost:3980...")
 	err = http.ListenAndServe(":3980", httpRouter)
 	if err != nil {

@@ -41,13 +41,14 @@ func UserListToEntity(list []User) []entity.User {
 	return ret
 }
 
-func UserFromEntity(m entity.User) User {
+func UserAddFromEntity(m entity.UserAdd) User {
 	return User{
-		UserID:    m.UserID,
 		Name:      m.Name,
 		Email:     m.Email,
 		CountryID: m.CountryID,
-		CreatedAt: m.CreatedAt,
-		UpdatedAt: m.UpdatedAt,
 	}
+}
+
+func UserUpdateFromEntity(m entity.UserAdd) User {
+	return UserAddFromEntity(m)
 }

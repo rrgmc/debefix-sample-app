@@ -17,6 +17,14 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+type UserAdd struct {
+	Name      string
+	Email     string
+	CountryID uuid.UUID
+}
+
+type UserUpdate = UserAdd
+
 // helpers
 
 type UserFilter struct {

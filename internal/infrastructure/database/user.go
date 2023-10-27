@@ -17,7 +17,7 @@ import (
 type userRepository struct {
 }
 
-func NewUserRepository(db *gorm.DB) repository.UserRepository {
+func NewUserRepository() repository.UserRepository {
 	return &userRepository{}
 }
 
@@ -59,11 +59,11 @@ func (t userRepository) GetUserByID(ctx context.Context, rctx repository.Context
 	return item.ToEntity(), nil
 }
 
-func (t userRepository) AddUser(ctx context.Context, rctx repository.Context, user entity.User) (entity.User, error) {
+func (t userRepository) AddUser(ctx context.Context, rctx repository.Context, user entity.UserAdd) (entity.User, error) {
 	var item dbmodel.User
 
 	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
-		item = dbmodel.UserFromEntity(user)
+		item = dbmodel.UserAddFromEntity(user)
 		item.CreatedAt = time.Now()
 		item.UpdatedAt = time.Now()
 
@@ -84,17 +84,17 @@ func (t userRepository) AddUser(ctx context.Context, rctx repository.Context, us
 	return item.ToEntity(), nil
 }
 
-func (t userRepository) UpdateUserByID(ctx context.Context, rctx repository.Context, userID uuid.UUID, user entity.User) (entity.User, error) {
+func (t userRepository) UpdateUserByID(ctx context.Context, rctx repository.Context, userID uuid.UUID, user entity.UserUpdate) (entity.User, error) {
 	var item dbmodel.User
 
 	err := doInUnitOfWork(ctx, rctx, func(db *gorm.DB) error {
-		item = dbmodel.UserFromEntity(user)
+		item = dbmodel.UserUpdateFromEntity(user)
 		item.UpdatedAt = time.Now()
 
 		result := db.
 			WithContext(ctx).
 			Clauses(clause.Returning{}).
-			Select("name", "email", "country_id", "created_at", "updated_at").
+			Select("name", "email", "country_id", "updated_at").
 			Where("user_id = ?", userID).
 			Updates(&item)
 		if result.Error != nil {
