@@ -37,6 +37,10 @@ func (d postService) GetPostByID(ctx context.Context, postID uuid.UUID) (entity.
 	return d.postRepository.GetPostByID(ctx, d.rctx, postID)
 }
 
+func (d postService) ExistsPostByID(ctx context.Context, postID uuid.UUID) (bool, error) {
+	return d.postRepository.ExistsPostByID(ctx, d.rctx, postID)
+}
+
 func (d postService) AddPost(ctx context.Context, post entity.PostAdd) (entity.Post, error) {
 	err := d.postValidator.ValidatePostAdd(ctx, post)
 	if err != nil {

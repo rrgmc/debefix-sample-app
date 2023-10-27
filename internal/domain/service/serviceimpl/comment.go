@@ -37,6 +37,10 @@ func (d commentService) GetCommentByID(ctx context.Context, commentID uuid.UUID)
 	return d.commentRepository.GetCommentByID(ctx, d.rctx, commentID)
 }
 
+func (d commentService) ExistsCommentByID(ctx context.Context, commentID uuid.UUID) (bool, error) {
+	return d.commentRepository.ExistsCommentByID(ctx, d.rctx, commentID)
+}
+
 func (d commentService) AddComment(ctx context.Context, comment entity.CommentAdd) (entity.Comment, error) {
 	err := d.commentValidator.ValidateCommentAdd(ctx, comment)
 	if err != nil {

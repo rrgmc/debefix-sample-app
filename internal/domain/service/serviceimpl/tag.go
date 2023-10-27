@@ -36,6 +36,10 @@ func (d tagService) GetTagByID(ctx context.Context, tagID uuid.UUID) (entity.Tag
 	return d.tagRepository.GetTagByID(ctx, d.rctx, tagID)
 }
 
+func (d tagService) ExistsTagByID(ctx context.Context, tagID uuid.UUID) (bool, error) {
+	return d.tagRepository.ExistsTagByID(ctx, d.rctx, tagID)
+}
+
 func (d tagService) AddTag(ctx context.Context, tag entity.TagAdd) (entity.Tag, error) {
 	err := d.tagValidator.ValidateTagAdd(ctx, tag)
 	if err != nil {

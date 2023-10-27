@@ -35,3 +35,7 @@ func (d countryService) GetCountryList(ctx context.Context, filter entity.Countr
 func (d countryService) GetCountryByID(ctx context.Context, countryID uuid.UUID) (entity.Country, error) {
 	return d.countryRepository.GetCountryByID(ctx, d.rctx, countryID)
 }
+
+func (d countryService) ExistsCountryByID(ctx context.Context, countryID uuid.UUID) (bool, error) {
+	return d.countryRepository.ExistsCountryByID(ctx, d.rctx, countryID)
+}
