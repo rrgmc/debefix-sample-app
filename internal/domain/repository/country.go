@@ -10,4 +10,5 @@ import (
 type CountryRepository interface {
 	GetCountryList(ctx context.Context, rctx Context, filter entity.CountryFilter) ([]entity.Country, error)
 	GetCountryByID(ctx context.Context, rctx Context, CountryID uuid.UUID) (entity.Country, error)
+	ExistsCountryByID(ctx context.Context, rctx Context, CountryID uuid.UUID) (bool, error)
 }

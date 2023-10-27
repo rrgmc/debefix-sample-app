@@ -59,6 +59,25 @@ func (t tagRepository) GetTagByID(ctx context.Context, rctx repository.Context, 
 	return item.ToEntity(), nil
 }
 
+func (t tagRepository) ExistsTagByID(ctx context.Context, rctx repository.Context, tagID uuid.UUID) (bool, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return false, err
+	}
+
+	var item dbmodel.Tag
+	result := db.
+		WithContext(ctx).
+		First(&item, tagID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, domain.NewError(domain.RepositoryError, result.Error)
+	}
+	return true, nil
+}
+
 func (t tagRepository) AddTag(ctx context.Context, rctx repository.Context, tag entity.TagAdd) (entity.Tag, error) {
 	var item dbmodel.Tag
 

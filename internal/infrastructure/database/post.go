@@ -71,6 +71,28 @@ func (t postRepository) GetPostByID(ctx context.Context, rctx repository.Context
 	return item.ToEntity(), nil
 }
 
+func (t postRepository) ExistsPostByID(ctx context.Context, rctx repository.Context, postID uuid.UUID) (bool, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return false, err
+	}
+
+	var item dbmodel.Post
+	result := db.
+		WithContext(ctx).
+		Preload("Tags", func(db *gorm.DB) *gorm.DB {
+			return db.Order("tags.name")
+		}).
+		First(&item, postID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, domain.NewError(domain.RepositoryError, result.Error)
+	}
+	return true, nil
+}
+
 func (t postRepository) AddPost(ctx context.Context, rctx repository.Context, post entity.PostAdd) (entity.Post, error) {
 	var item dbmodel.Post
 

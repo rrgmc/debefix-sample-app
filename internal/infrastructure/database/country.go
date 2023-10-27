@@ -56,3 +56,22 @@ func (t countryRepository) GetCountryByID(ctx context.Context, rctx repository.C
 	}
 	return item.ToEntity(), nil
 }
+
+func (t countryRepository) ExistsCountryByID(ctx context.Context, rctx repository.Context, countryID uuid.UUID) (bool, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return false, err
+	}
+
+	var item dbmodel.Country
+	result := db.WithContext(ctx).
+		WithContext(ctx).
+		First(&item, countryID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}

@@ -68,6 +68,26 @@ func (t commentRepository) GetCommentByID(ctx context.Context, rctx repository.C
 	return item.ToEntity(), nil
 }
 
+func (t commentRepository) ExistsCommentByID(ctx context.Context, rctx repository.Context, commentID uuid.UUID) (bool, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return false, err
+	}
+
+	var item dbmodel.Comment
+	result := db.
+		WithContext(ctx).
+		Select("comment_id").
+		First(&item, commentID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, domain.NewError(domain.RepositoryError, result.Error)
+	}
+	return true, nil
+}
+
 func (t commentRepository) AddComment(ctx context.Context, rctx repository.Context, comment entity.CommentAdd) (entity.Comment, error) {
 	var item dbmodel.Comment
 
