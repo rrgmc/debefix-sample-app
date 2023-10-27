@@ -37,6 +37,10 @@ func (d userService) GetUserByID(ctx context.Context, userID uuid.UUID) (entity.
 	return d.userRepository.GetUserByID(ctx, d.rctx, userID)
 }
 
+func (d userService) ExistsUserByID(ctx context.Context, userID uuid.UUID) (bool, error) {
+	return d.userRepository.ExistsUserByID(ctx, d.rctx, userID)
+}
+
 func (d userService) AddUser(ctx context.Context, user entity.UserAdd) (entity.User, error) {
 	err := d.userValidator.ValidateUserAdd(ctx, user)
 	if err != nil {

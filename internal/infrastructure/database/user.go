@@ -59,6 +59,26 @@ func (t userRepository) GetUserByID(ctx context.Context, rctx repository.Context
 	return item.ToEntity(), nil
 }
 
+func (t userRepository) ExistsUserByID(ctx context.Context, rctx repository.Context, userID uuid.UUID) (bool, error) {
+	db, err := getDB(rctx)
+	if err != nil {
+		return false, err
+	}
+
+	var item dbmodel.User
+	result := db.
+		WithContext(ctx).
+		Select("user_id").
+		First(&item, userID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, domain.NewError(domain.RepositoryError, result.Error)
+	}
+	return true, nil
+}
+
 func (t userRepository) AddUser(ctx context.Context, rctx repository.Context, user entity.UserAdd) (entity.User, error) {
 	var item dbmodel.User
 

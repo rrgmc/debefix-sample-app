@@ -2,6 +2,7 @@ package validator
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
@@ -46,9 +47,11 @@ func (t postValidator) ValidatePostFilter(ctx context.Context, postFilter entity
 	}
 
 	if postFilter.UserID != nil {
-		_, err = t.userService.GetUserByID(ctx, *postFilter.UserID)
+		found, err := t.userService.ExistsUserByID(ctx, *postFilter.UserID)
 		if err != nil {
 			return domain.NewError(domain.ValidationError, fmt.Errorf("user_id: %w", err))
+		} else if !found {
+			return domain.NewError(domain.ValidationError, errors.New("user_id: not found"))
 		}
 	}
 
@@ -61,9 +64,11 @@ func (t postValidator) ValidatePostAdd(ctx context.Context, post entity.PostAdd)
 		return domain.NewError(domain.ValidationError, err)
 	}
 
-	_, err = t.userService.GetUserByID(ctx, post.UserID)
+	found, err := t.userService.ExistsUserByID(ctx, post.UserID)
 	if err != nil {
 		return domain.NewError(domain.ValidationError, fmt.Errorf("user_id: %w", err))
+	} else if !found {
+		return domain.NewError(domain.ValidationError, errors.New("user_id: not found"))
 	}
 
 	for _, tag := range post.Tags {
