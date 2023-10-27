@@ -31,8 +31,12 @@ func NewHTTPHandler(logger *slog.Logger,
 
 	api := router.Group("/api/v1")
 
-	routes.TagsRoute(api.Group("/tags"),
+	routes.TagsRoute(
+		api.Group("/tags"),
 		tagService)
+	routes.UsersRoute(
+		api.Group("/users"),
+		userService)
 
 	return router
 }
