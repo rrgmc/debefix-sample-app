@@ -2,6 +2,7 @@ package validator
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
@@ -55,14 +56,18 @@ func (t commentValidator) ValidateCommentAdd(ctx context.Context, comment entity
 		return domain.NewError(domain.ValidationError, err)
 	}
 
-	_, err = t.postService.GetPostByID(ctx, comment.PostID)
+	found, err := t.postService.ExistsPostByID(ctx, comment.PostID)
 	if err != nil {
 		return domain.NewError(domain.ValidationError, fmt.Errorf("post_id: %w", err))
+	} else if !found {
+		return domain.NewError(domain.ValidationError, errors.New("post_id: not found"))
 	}
 
-	_, err = t.userService.GetUserByID(ctx, comment.UserID)
+	found, err = t.userService.ExistsUserByID(ctx, comment.UserID)
 	if err != nil {
 		return domain.NewError(domain.ValidationError, fmt.Errorf("user_id: %w", err))
+	} else if !found {
+		return domain.NewError(domain.ValidationError, errors.New("user_id: not found"))
 	}
 
 	return nil

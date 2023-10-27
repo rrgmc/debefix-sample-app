@@ -2,6 +2,7 @@ package validator
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/rrgmc/debefix-sample-app/internal/domain"
@@ -52,9 +53,11 @@ func (t userValidator) ValidateUserAdd(ctx context.Context, user entity.UserAdd)
 		return domain.NewError(domain.ValidationError, err)
 	}
 
-	_, err = t.countryService.GetCountryByID(ctx, user.CountryID)
+	found, err := t.countryService.ExistsCountryByID(ctx, user.CountryID)
 	if err != nil {
 		return domain.NewError(domain.ValidationError, fmt.Errorf("country_id: %w", err))
+	} else if !found {
+		return domain.NewError(domain.ValidationError, errors.New("country_id: not found"))
 	}
 
 	return nil
