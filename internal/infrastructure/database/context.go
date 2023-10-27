@@ -24,7 +24,9 @@ func (r contextDB) StartUnitOfWork(ctx context.Context, parent repository.Contex
 	initial := false
 
 	switch pt := parent.(type) {
-	case nil, *contextDB:
+	case nil:
+		return nil, domain.NewError(domain.RepositoryError, errors.New("parent context cannot be nil"))
+	case *contextDB:
 		tx = r.db.Begin(nil)
 		if tx.Error != nil {
 			return nil, domain.NewError(errors.Join(domain.RepositoryError, tx.Error))
