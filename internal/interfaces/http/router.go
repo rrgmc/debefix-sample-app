@@ -13,9 +13,11 @@ import (
 )
 
 func NewHTTPHandler(logger *slog.Logger,
+	countryService service.CountryService,
 	tagService service.TagService,
 	userService service.UserService,
 	postService service.PostService,
+	commentService service.CommentService,
 ) http.Handler {
 	router := gin.New()
 
@@ -31,12 +33,21 @@ func NewHTTPHandler(logger *slog.Logger,
 
 	api := router.Group("/api/v1")
 
+	routes.CountriesRoute(
+		api.Group("/countries"),
+		countryService)
 	routes.TagsRoute(
 		api.Group("/tags"),
 		tagService)
 	routes.UsersRoute(
 		api.Group("/users"),
 		userService)
+	routes.PostsRoute(
+		api.Group("/posts"),
+		postService)
+	routes.CommentsRoute(
+		api.Group("/comments"),
+		commentService)
 
 	return router
 }

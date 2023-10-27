@@ -63,18 +63,24 @@ func (a *App) Run(ctx context.Context) error {
 
 	rctx := database.NewContext(gormDB)
 
+	countryRepository := database.NewCountryRepository()
 	tagRepository := database.NewTagRepository()
 	userRepository := database.NewUserRepository()
 	postRepository := database.NewPostRepository()
+	commentRepository := database.NewCommentRepository()
 
+	countryService := service.NewCountryService(rctx, countryRepository)
 	tagService := service.NewTagService(rctx, tagRepository)
 	userService := service.NewUserService(rctx, userRepository)
 	postService := service.NewPostService(rctx, postRepository)
+	commentService := service.NewCommentService(rctx, commentRepository)
 
 	httpRouter := http2.NewHTTPHandler(a.logger,
+		countryService,
 		tagService,
 		userService,
 		postService,
+		commentService,
 	)
 
 	a.logger.Info("listening at http://localhost:3980...")

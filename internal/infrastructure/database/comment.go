@@ -28,11 +28,20 @@ func (t commentRepository) GetCommentList(ctx context.Context, rctx repository.C
 	}
 
 	var list []dbmodel.Comment
-	result := db.
+	q := db.
 		WithContext(ctx).
 		Order("created_at").
 		Offset(filter.Offset).
-		Limit(filter.Limit).
+		Limit(filter.Limit)
+
+	if filter.PostID != nil {
+		q = q.Where(`post_id = ?`, *filter.PostID)
+	}
+	if filter.UserID != nil {
+		q = q.Where(`user_id = ?`, *filter.UserID)
+	}
+
+	result := q.
 		Find(&list)
 	if result.Error != nil {
 		return nil, domain.NewError(domain.RepositoryError, result.Error)

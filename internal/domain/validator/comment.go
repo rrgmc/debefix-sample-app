@@ -11,13 +11,11 @@ import (
 func init() {
 	validatordeps.Validate.RegisterStructValidationMapRules(map[string]string{
 		"Offset": "min=0",
-		"Limit":  "min=10,max=500",
-		"PostID": "uuid4",
-		"UserID": "uuid4",
+		"Limit":  "min=1,max=500",
 	}, entity.CommentFilter{})
 	validatordeps.Validate.RegisterStructValidationMapRules(map[string]string{
-		"PostID": "required,uuid4",
-		"UserID": "required,uuid4",
+		"PostID": "required",
+		"UserID": "required",
 		"Text":   "required,min=3,max=1000",
 	}, entity.CommentAdd{}, entity.CommentUpdate{})
 }

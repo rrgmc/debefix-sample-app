@@ -28,14 +28,20 @@ func (t postRepository) GetPostList(ctx context.Context, rctx repository.Context
 	}
 
 	var list []dbmodel.Post
-	result := db.
+	q := db.
 		WithContext(ctx).
 		Preload("Tags", func(db *gorm.DB) *gorm.DB {
 			return db.Order("tags.name")
 		}).
 		Order("title").
 		Offset(filter.Offset).
-		Limit(filter.Limit).
+		Limit(filter.Limit)
+
+	if filter.UserID != nil {
+		q = q.Where(`user_id = ?`, *filter.UserID)
+	}
+
+	result := q.
 		Find(&list)
 	if result.Error != nil {
 		return nil, domain.NewError(domain.RepositoryError, result.Error)
