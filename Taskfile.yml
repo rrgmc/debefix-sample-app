@@ -22,7 +22,7 @@ tasks:
     cmds:
       - "go test -count=1 -race --tags=dbmigrationtest ./internal/infrastructure/database/storage/integration_test/..."
 
-  local-deps:
+  local-deps-start:
     cmds:
       - "docker-compose -p debefix-sample-app-deps -f ./scripts/local-deps/docker-compose.yml up -d"
   local-deps-stop:
@@ -34,7 +34,7 @@ tasks:
   local-deps-setup:
     cmds:
       - task: local-deps-destroy
-      - task: local-deps
+      - task: local-deps-start
       - "sleep 3" # wait db initialization
       - task: db-migration-up
       - task: db-seed

@@ -4,7 +4,7 @@ This is a real-world sample of the [debefix](https://github.com/rrgmc/debefix) G
 
 debefix is a Go library to seed database data and/or create fixtures for DB tests.
 
-It is a simple blog REST microservice, based on a layered architecture, with endpoint, service, and 
+It is a simple blog REST microservice, based on clean architecture, with transport, service, and 
 storage separations.
 
 ## Layout
@@ -14,13 +14,15 @@ storage separations.
 - `scripts/db-migrations`: database migrations using `golang-migrate`.
 - `scripts/db-seed`: database seeding using `debefix` fixtures.
 - `scripts/local-deps`: `docker-compose` scripts to run the local dependencies (PostgreSQL).
-- `internal/infrastructure/database/testutils/fixtures`: fixtures for tests and seeding using `debefix`.
-- `internal/infrastructure/database/testutils/dbtest`: `testcontainers-go` method to start a test PostgreSQL server, run the migrations, and 
-  apply the fixtures. The database is created in a `tmpfs` to be faster and avoid disk usage.
-- `internal/infrastructure/database/testutils/testdata`: extract test data objects from fixtures, with a simple query filter to mimic some SQL operations.
+- `internal/domain`: entity, repository and services layers.
+- `internal/interfaces/http`: http interface
 - `internal/infrastructure/database`: storage layer, the only part that has database access.
-- `internal/infrastructure/database/integration_test`: storage layer tests that uses a real database.
-- `internal/domain/entity`: entities used by `storage` and `service` layers.
+- `internal/infrastructure/database/testutils/fixtures`: fixtures for tests and seeding using `debefix`.
+- `internal/infrastructure/database/testutils/dbtest`: `testcontainers-go` method to start a test PostgreSQL server, 
+  run the migrations, and apply the fixtures. The database is created in a `tmpfs` to be faster and avoid disk usage.
+- `internal/infrastructure/database/testutils/testdata`: extract test data objects from fixtures, with a simple query 
+  filter to mimic some SQL operations.
+- `internal/infrastructure/database/integration_test`: storage layer tests using a real database.
 
 ## Task rules
 
@@ -28,7 +30,7 @@ storage separations.
 
 - `task gen`: generate mocks.
 - `task local-deps-setup`: setup the local dependencies, creating, migrating and seeding the database.
-- `task local-deps`: start a previously-setup local dependencies.
+- `task local-deps-start`: start a previously-setup local dependencies.
 - `task db-migration-up`: execute pending database migrations.
 - `task test`: execute only the non-database-based tests.
 - `task test-db`: execute only the database-based tests.
