@@ -5,7 +5,7 @@ This is a real-world sample of the [debefix](https://github.com/rrgmc/debefix) G
 debefix is a Go library to seed database data and/or create fixtures for DB tests.
 
 It is a simple blog REST microservice, based on clean architecture, with transport, service, and 
-storage separations.
+storage separations. It uses `debefix` for seeding, test fixtures, and integration tests
 
 ## Layout
 
