@@ -18,9 +18,9 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/rrgmc/debefix v0.15.0
-	github.com/rrgmc/debefix/filter v0.15.0
-	github.com/rrgmc/debefix/value v0.15.0
+	github.com/rrgmc/debefix v0.17.0
+	github.com/rrgmc/debefix/filter v0.17.0
+	github.com/rrgmc/debefix/value v0.17.0
 	github.com/samber/slog-gin v1.5.0
 	github.com/testcontainers/testcontainers-go v0.25.0
 	github.com/vektra/mockery/v2 v2.35.4
