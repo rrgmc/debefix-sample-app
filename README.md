@@ -14,7 +14,7 @@ storage separations. It uses `debefix` for seeding, test fixtures, and integrati
 - `scripts/db-migrations`: database migrations using `golang-migrate`.
 - `scripts/db-seed`: database seeding using `debefix` fixtures.
 - `scripts/local-deps`: `docker-compose` scripts to run the local dependencies (PostgreSQL).
-- `internal/domain`: entity, repository and services layers.
+- `internal/domain`: entity, repository and service layers.
 - `internal/interfaces/http`: http interface
 - `internal/infrastructure/database`: storage layer, the only part that has database access.
 - `internal/infrastructure/database/testutils/fixtures`: fixtures for tests and seeding using `debefix`.
