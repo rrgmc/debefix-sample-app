@@ -37,5 +37,5 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 				fmt.Printf("Loading table '%s'...\n", tableName)
 			}
 		}),
-		debefix.WithResolvedValueParser(&value.ResolvedValueParserUUID{}))
+		debefix.WithResolvedValueParser(&value.ValueUUID{}))
 }

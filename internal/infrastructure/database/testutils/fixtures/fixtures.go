@@ -26,8 +26,8 @@ func init() {
 	fixtures, err = debefix.Load(
 		debefix.NewDirectoryFileProvider(curDir,
 			debefix.WithDirectoryTagFunc(debefix.StripNumberPunctuationPrefixDirectoryTagFunc)),
-		debefix.WithLoadTaggedValueParser(
-			value.ValueParserUUID(),
+		debefix.WithLoadValueParser(
+			value.ValueUUID{},
 		))
 	if err != nil {
 		panic(fmt.Sprintf("error loading test fixtures: %s", err))
