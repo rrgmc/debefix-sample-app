@@ -6,9 +6,11 @@ posts:
       user_id: !dbfexpr "refid:users:johndoe:user_id"
       created_at: !!timestamp 2023-01-01T12:30:12Z
       updated_at: !!timestamp 2023-01-01T12:30:12Z
-      _dbfconfig:
+      config:
+        !dbfconfig
         refid: "post_1"
-      _dbfdeps:
+      deps:
+        !dbfdeps
         posts_tags:
           rows:
             - post_id: !dbfexpr "parent:post_id"
@@ -21,7 +23,8 @@ posts:
               text: "Good post!"
               created_at: !!timestamp 2023-01-01T12:31:12Z
               updated_at: !!timestamp 2023-01-01T12:31:12Z
-              _dbfconfig:
+              config:
+                !dbfconfig
                 refid: "post_1_comment_1"
             - comment_id: !dbfexpr "generated:uuid"
               post_id: !dbfexpr "parent:post_id"
@@ -29,7 +32,8 @@ posts:
               text: "Thanks!"
               created_at: !!timestamp 2023-01-01T12:35:12Z
               updated_at: !!timestamp 2023-01-01T12:35:12Z
-              _dbfconfig:
+              config:
+                !dbfconfig
                 refid: "post_1_comment_2"
 
     - post_id: !dbfexpr "generated:uuid"
@@ -38,9 +42,11 @@ posts:
       user_id: !dbfexpr "refid:users:johndoe:user_id"
       created_at: !!timestamp 2023-01-02T12:30:12Z
       updated_at: !!timestamp 2023-01-02T12:30:12Z
-      _dbfconfig:
+      config:
+        !dbfconfig
         refid: "post_2"
-      _dbfdeps:
+      deps:
+        !dbfdeps
         posts_tags:
           rows:
             - post_id: !dbfexpr "parent:post_id"
@@ -57,7 +63,8 @@ posts:
               text: "I liked this post!"
               created_at: !!timestamp 2023-01-01T16:36:12Z
               updated_at: !!timestamp 2023-01-01T16:36:12Z
-              _dbfconfig:
+              config:
+                !dbfconfig
                 refid: "post_2_comment_1"
 
     - post_id: !dbfexpr "generated:uuid"
@@ -66,9 +73,11 @@ posts:
       user_id: !dbfexpr "refid:users:johndoe:user_id"
       created_at: !!timestamp 2023-01-02T12:31:12Z
       updated_at: !!timestamp 2023-01-02T12:31:12Z
-      _dbfconfig:
+      config:
+        !dbfconfig
         refid: "post_3"
-      _dbfdeps:
+      deps:
+        !dbfdeps
         posts_tags:
           rows:
             - post_id: !dbfexpr "parent:post_id"
@@ -81,5 +90,6 @@ posts:
               text: "This third post is awesome!"
               created_at: !!timestamp 2023-01-01T16:38:12Z
               updated_at: !!timestamp 2023-01-01T16:38:12Z
-              _dbfconfig:
+              config:
+                !dbfconfig
                 refid: "post_3_comment_1"

@@ -222,9 +222,11 @@ posts:
       user_id: !dbfexpr "refid:users:janedoe:user_id"
       created_at: !!timestamp 2023-03-01T12:30:12Z
       updated_at: !!timestamp 2023-03-01T12:30:12Z
-      _dbfconfig:
+      config:
+        !dbfconfig
         refid: "test.DBPostRepositoryTestMergeData"
-      _dbfdeps:
+      deps:
+        !dbfdeps
         posts_tags:
           rows:
             - post_id: !dbfexpr "parent:post_id"

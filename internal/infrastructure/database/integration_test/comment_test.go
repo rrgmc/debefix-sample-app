@@ -201,7 +201,8 @@ comments:
       text: "Test Text"
       created_at: !!timestamp 2023-03-04T12:30:12Z
       updated_at: !!timestamp 2023-03-04T12:30:12Z
-      _dbfconfig:
+      config:
+        !dbfconfig
         refid: "test.DBCommentRepositoryTestMergeData"
 `)
 }
