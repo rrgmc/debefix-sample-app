@@ -1,6 +1,7 @@
 package fixtures
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/rrgmc/debefix/value"
 )
 
-func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data, error) {
+func DBSeedFixtures(ctx context.Context, db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data, error) {
 	var optns resolveFixturesOptions
 	for _, opt := range options {
 		opt(&optns)
@@ -30,7 +31,7 @@ func DBSeedFixtures(db *sql.DB, options ...ResolveFixtureOption) (*debefix.Data,
 	qi := sql2.NewSQLQueryInterface(db)
 	// qi = sql2.NewDebugResultQueryInterface(qi, nil)
 
-	return postgres.Resolve(qi, sourceData,
+	return postgres.Resolve(ctx, qi, sourceData,
 		debefix.WithResolveTags(optns.tags),
 		debefix.WithResolveProgress(func(tableID, tableName string) {
 			if optns.output {

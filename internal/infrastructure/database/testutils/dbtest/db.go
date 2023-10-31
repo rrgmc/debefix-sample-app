@@ -75,7 +75,7 @@ func DBForTest(name string, opts ...DBForTestOption) (db *sql.DB, resolvedData *
 	}
 
 	// load fixtures
-	resolvedData, err = fixtures.DBSeedFixtures(db,
+	resolvedData, err = fixtures.DBSeedFixtures(ctx, db,
 		fixtures.WithTags(optns.fixturesTags),
 		fixtures.WithOutput(optns.debugOutput),
 		fixtures.WithMergeData(optns.mergeData),
