@@ -20,7 +20,7 @@ tasks:
       - "go test -count=1 -race --tags=dbtest ./internal/infrastructure/database/integration_test/..."
   test-db-migrations:
     cmds:
-      - "go test -count=1 -race --tags=dbmigrationtest ./internal/infrastructure/database/storage/integration_test/..."
+      - "go test -count=1 -race --tags=dbmigrationtest ./internal/infrastructure/database/integration_test/..."
 
   local-deps-start:
     cmds:

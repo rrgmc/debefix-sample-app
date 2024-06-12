@@ -33,7 +33,7 @@ func DBSeedFixtures(ctx context.Context, db *sql.DB, options ...ResolveFixtureOp
 
 	return postgres.Resolve(ctx, qi, sourceData,
 		debefix.WithResolveTags(optns.tags),
-		debefix.WithResolveProgress(func(tableID, tableName string) {
+		debefix.WithResolveProgress(func(tableID, databaseName, tableName string) {
 			if optns.output {
 				fmt.Printf("Loading table '%s'...\n", tableName)
 			}
