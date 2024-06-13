@@ -193,14 +193,15 @@ func TestDBCommentRepositoryDeleteCommentByIDNotFound(t *testing.T) {
 
 func dbCommentRepositoryTestMergeData() []string {
 	return append(dbPostRepositoryTestMergeData(), `
-comments:
-  rows:
-    - comment_id: !expr generated:uuid
-      _refid: !refid "test.DBCommentRepositoryTestMergeData"
-      post_id: !expr "refid:posts:test.DBPostRepositoryTestMergeData:post_id"
-      user_id: !expr "refid:users:janedoe:user_id"
-      text: "Test Text"
-      created_at: !!timestamp 2023-03-04T12:30:12Z
-      updated_at: !!timestamp 2023-03-04T12:30:12Z
+tables:
+  comments:
+    rows:
+      - comment_id: !expr generated:uuid
+        _refid: !refid "test.DBCommentRepositoryTestMergeData"
+        post_id: !expr "refid:posts:test.DBPostRepositoryTestMergeData:post_id"
+        user_id: !expr "refid:users:janedoe:user_id"
+        text: "Test Text"
+        created_at: !!timestamp 2023-03-04T12:30:12Z
+        updated_at: !!timestamp 2023-03-04T12:30:12Z
 `)
 }

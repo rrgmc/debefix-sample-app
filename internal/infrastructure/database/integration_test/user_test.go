@@ -174,14 +174,15 @@ func TestDBUserRepositoryDeleteUserByIDNotFound(t *testing.T) {
 
 func dbUserRepositoryTestMergeData() []string {
 	return []string{`
-users:
-  rows:
-    - user_id: !expr generated:uuid
-      _refid: !refid "test.DBUserRepositoryTestMergeData"
-      name: "Test User"
-      email: "Test Email"
-      country_id: !expr "refid:countries:usa:country_id"
-      created_at: !!timestamp 2023-03-04T12:30:12Z
-      updated_at: !!timestamp 2023-03-04T12:30:12Z
+tables:
+  users:
+    rows:
+      - user_id: !expr generated:uuid
+        _refid: !refid "test.DBUserRepositoryTestMergeData"
+        name: "Test User"
+        email: "Test Email"
+        country_id: !expr "refid:countries:usa:country_id"
+        created_at: !!timestamp 2023-03-04T12:30:12Z
+        updated_at: !!timestamp 2023-03-04T12:30:12Z
 `}
 }

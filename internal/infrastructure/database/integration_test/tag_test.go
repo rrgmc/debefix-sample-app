@@ -150,12 +150,13 @@ func TestDBTagRepositoryDeleteTagByIDNotFound(t *testing.T) {
 
 func dbTagRepositoryTestMergeData() []string {
 	return []string{`
-tags:
-  rows:
-    - tag_id: !expr generated:uuid
-      _refid: !refid "test.DBTagRepositoryTestMergeData"
-      name: "Test Tag"
-      created_at: !!timestamp 2023-03-01T12:30:12Z
-      updated_at: !!timestamp 2023-03-01T12:30:12Z
+tables:
+  tags:
+    rows:
+      - tag_id: !expr generated:uuid
+        _refid: !refid "test.DBTagRepositoryTestMergeData"
+        name: "Test Tag"
+        created_at: !!timestamp 2023-03-01T12:30:12Z
+        updated_at: !!timestamp 2023-03-01T12:30:12Z
 `}
 }
