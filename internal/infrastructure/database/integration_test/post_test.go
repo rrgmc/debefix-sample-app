@@ -216,20 +216,18 @@ func dbPostRepositoryTestMergeData() []string {
 	return []string{`
 posts:
   rows:
-    - post_id: !dbfexpr generated:uuid
+    - post_id: !expr generated:uuid
+      _refid: !refid "test.DBPostRepositoryTestMergeData"
       title: "Test Title"
       text: "Test Text"
-      user_id: !dbfexpr "refid:users:janedoe:user_id"
+      user_id: !expr "refid:users:janedoe:user_id"
       created_at: !!timestamp 2023-03-01T12:30:12Z
       updated_at: !!timestamp 2023-03-01T12:30:12Z
-      config:
-        !dbfconfig
-        refid: "test.DBPostRepositoryTestMergeData"
       deps:
-        !dbfdeps
+        !deps
         posts_tags:
           rows:
-            - post_id: !dbfexpr "parent:post_id"
-              tag_id: !dbfexpr "refid:tags:javascript:tag_id"
+            - post_id: !expr "parent:post_id"
+              tag_id: !expr "refid:tags:javascript:tag_id"
 `}
 }

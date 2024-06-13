@@ -2,17 +2,11 @@ tables:
   countries:
     rows:
       - country_id: !uuid "f6934bb4-7a7b-4e53-aa4f-e8b05f4589de"
+        _refid: !refid "usa"
         name: "United States"
-        config:
-          !dbfconfig
-          refid: "usa"
       - country_id: !uuid "fd471f73-1984-485f-9e4a-059364b3d112"
+        _refid: !refid "uk"
         name: "United Kingdom"
-        config:
-          !dbfconfig
-          refid: "uk"
       - country_id: !uuid "8c5c6b89-6bde-48ca-8325-01bb233cafec"
+        _refid: !refid "brazil"
         name: "Brazil"
-        config:
-          !dbfconfig
-          refid: "brazil"

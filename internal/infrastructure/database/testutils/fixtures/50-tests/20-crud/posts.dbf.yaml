@@ -1,96 +1,82 @@
 tables:
   posts:
     rows:
-      - post_id: !dbfexpr "generated:uuid"
+      - post_id: !expr "generated:uuid"
+        _refid: !refid "post_1"
         title: "First post"
         text: "This is the text of the first post"
-        user_id: !dbfexpr "refid:users:johndoe:user_id"
+        user_id: !expr "refid:users:johndoe:user_id"
         created_at: !!timestamp 2023-01-01T12:30:12Z
         updated_at: !!timestamp 2023-01-01T12:30:12Z
-        config:
-          !dbfconfig
-          refid: "post_1"
         deps:
-          !dbfdeps
+          !deps
           posts_tags:
             rows:
-              - post_id: !dbfexpr "parent:post_id"
-                tag_id: !dbfexpr "refid:tags:javascript:tag_id"
+              - post_id: !expr "parent:post_id"
+                tag_id: !expr "refid:tags:javascript:tag_id"
           comments:
             rows:
-              - comment_id: !dbfexpr "generated:uuid"
-                post_id: !dbfexpr "parent:post_id"
-                user_id: !dbfexpr "refid:users:janedoe:user_id"
+              - comment_id: !expr "generated:uuid"
+                _refid: !refid "post_1_comment_1"
+                post_id: !expr "parent:post_id"
+                user_id: !expr "refid:users:janedoe:user_id"
                 text: "Good post!"
                 created_at: !!timestamp 2023-01-01T12:31:12Z
                 updated_at: !!timestamp 2023-01-01T12:31:12Z
-                config:
-                  !dbfconfig
-                  refid: "post_1_comment_1"
-              - comment_id: !dbfexpr "generated:uuid"
-                post_id: !dbfexpr "parent:post_id"
-                user_id: !dbfexpr "refid:users:johndoe:user_id"
+              - comment_id: !expr "generated:uuid"
+                _refid: !refid "post_1_comment_2"
+                post_id: !expr "parent:post_id"
+                user_id: !expr "refid:users:johndoe:user_id"
                 text: "Thanks!"
                 created_at: !!timestamp 2023-01-01T12:35:12Z
                 updated_at: !!timestamp 2023-01-01T12:35:12Z
-                config:
-                  !dbfconfig
-                  refid: "post_1_comment_2"
 
-      - post_id: !dbfexpr "generated:uuid"
+      - post_id: !expr "generated:uuid"
+        _refid: !refid "post_2"
         title: "Second post"
         text: "This is the text of the second post"
-        user_id: !dbfexpr "refid:users:johndoe:user_id"
+        user_id: !expr "refid:users:johndoe:user_id"
         created_at: !!timestamp 2023-01-02T12:30:12Z
         updated_at: !!timestamp 2023-01-02T12:30:12Z
-        config:
-          !dbfconfig
-          refid: "post_2"
         deps:
-          !dbfdeps
+          !deps
           posts_tags:
             rows:
-              - post_id: !dbfexpr "parent:post_id"
-                tag_id: !dbfexpr "refid:tags:go:tag_id"
-              - post_id: !dbfexpr "parent:post_id"
-                tag_id: !dbfexpr "refid:tags:javascript:tag_id"
-              - post_id: !dbfexpr "parent:post_id"
-                tag_id: !dbfexpr "refid:tags:cpp:tag_id"
+              - post_id: !expr "parent:post_id"
+                tag_id: !expr "refid:tags:go:tag_id"
+              - post_id: !expr "parent:post_id"
+                tag_id: !expr "refid:tags:javascript:tag_id"
+              - post_id: !expr "parent:post_id"
+                tag_id: !expr "refid:tags:cpp:tag_id"
           comments:
             rows:
-              - comment_id: !dbfexpr "generated:uuid"
-                post_id: !dbfexpr "parent:post_id"
-                user_id: !dbfexpr "refid:users:janedoe:user_id"
+              - comment_id: !expr "generated:uuid"
+                _refid: !refid "post_2_comment_1"
+                post_id: !expr "parent:post_id"
+                user_id: !expr "refid:users:janedoe:user_id"
                 text: "I liked this post!"
                 created_at: !!timestamp 2023-01-01T16:36:12Z
                 updated_at: !!timestamp 2023-01-01T16:36:12Z
-                config:
-                  !dbfconfig
-                  refid: "post_2_comment_1"
 
-      - post_id: !dbfexpr "generated:uuid"
+      - post_id: !expr "generated:uuid"
+        _refid: !refid "post_3"
         title: "Third post"
         text: "This is the text of the third post"
-        user_id: !dbfexpr "refid:users:johndoe:user_id"
+        user_id: !expr "refid:users:johndoe:user_id"
         created_at: !!timestamp 2023-01-02T12:31:12Z
         updated_at: !!timestamp 2023-01-02T12:31:12Z
-        config:
-          !dbfconfig
-          refid: "post_3"
         deps:
-          !dbfdeps
+          !deps
           posts_tags:
             rows:
-              - post_id: !dbfexpr "parent:post_id"
-                tag_id: !dbfexpr "refid:tags:cpp:tag_id"
+              - post_id: !expr "parent:post_id"
+                tag_id: !expr "refid:tags:cpp:tag_id"
           comments:
             rows:
-              - comment_id: !dbfexpr "generated:uuid"
-                post_id: !dbfexpr "parent:post_id"
-                user_id: !dbfexpr "refid:users:janedoe:user_id"
+              - comment_id: !expr "generated:uuid"
+                _refid: !refid "post_3_comment_1"
+                post_id: !expr "parent:post_id"
+                user_id: !expr "refid:users:janedoe:user_id"
                 text: "This third post is awesome!"
                 created_at: !!timestamp 2023-01-01T16:38:12Z
                 updated_at: !!timestamp 2023-01-01T16:38:12Z
-                config:
-                  !dbfconfig
-                  refid: "post_3_comment_1"
